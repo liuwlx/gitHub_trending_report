@@ -14,9 +14,9 @@
 ## 最新报告
 
 <!-- latest-report:start -->
-- 报告日期：**2026-05-30**
-- [查看 Markdown 报告](md/github_trending_report_2026-05-30.md)
-- [查看 HTML 源文件](html/github_trending_report_2026-05-30.html)
+- 报告日期：**2026-07-12**
+- [查看 Markdown 报告](md/github_trending_report_2026-07-12.md)
+- [查看 HTML 源文件](html/github_trending_report_2026-07-12.html)
 <!-- latest-report:end -->
 
 > GitHub 默认会把 HTML 当作源码显示。下载 `.html` 文件后用浏览器打开，可以查看完整的主题切换和项目详情展开效果。
