@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 - 2026-03-17</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --muted: #8b949e;
+    --text: #c9d1d9;
+    --line: #30363d;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --gold: #d29922;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font: 14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  .hero { padding: 40px 0 24px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  .hero h1 { margin: 0 0 8px; font-size: 30px; color: #fff; }
+  .hero p { margin: 0; color: var(--muted); }
+  .badge { display: inline-block; margin-top: 12px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 24px 0 32px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+  .stat .n { font-size: 28px; font-weight: 700; color: var(--blue); }
+  .stat .t { color: var(--muted); margin-top: 4px; }
+  .section { margin: 32px 0; }
+  .section h2 { margin: 0 0 16px; font-size: 21px; color: #fff; }
+  .insights, .list, .explore { display: grid; gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .insight-title { color: var(--blue); font-weight: 700; margin-bottom: 6px; }
+  .repo { display: flex; gap: 14px; align-items: flex-start; }
+  .rank { width: 42px; flex: 0 0 42px; font-size: 22px; font-weight: 800; color: var(--gold); }
+  .rank.top1 { color: #ffd700; }
+  .rank.top2 { color: #c0c0c0; }
+  .rank.top3 { color: #cd7f32; }
+  .repo-main { flex: 1; }
+  .repo-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .repo-name a { color: #fff; text-decoration: none; }
+  .repo-name a:hover { color: var(--blue); }
+  .desc { color: var(--muted); margin-bottom: 10px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .meta strong { color: var(--green); }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { padding: 3px 10px; border-radius: 999px; background: #1f2937; border: 1px solid #2c3d55; color: var(--blue); font-size: 12px; }
+  .bar-row { display: grid; grid-template-columns: 120px 1fr 90px; gap: 12px; align-items: center; margin-bottom: 10px; }
+  .bar-bg { height: 16px; background: #21262d; border-radius: 999px; overflow: hidden; }
+  .bar { height: 100%; border-radius: 999px; }
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  a { color: var(--blue); }
+  @media (max-width: 720px) {
+    .bar-row { grid-template-columns: 90px 1fr 70px; }
+    .rank { width: 34px; flex-basis: 34px; font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>GitHub Trending 日报</h1>
+      <p>基于 GitHub Trending 与 Explore 的今日热门项目快照</p>
+      <div class="badge">日期：2026-03-17</div>
+    </div>
+
+    <div class="grid">
+      <div class="stat"><div class="n">12</div><div class="t">Trending 项目</div></div>
+      <div class="stat"><div class="n">89k</div><div class="t">最高 Star 项目</div></div>
+      <div class="stat"><div class="n">7</div><div class="t">AI / Agent 相关项目</div></div>
+      <div class="stat"><div class="n">5</div><div class="t">主要语言类别</div></div>
+    </div>
+
+    <div class="section">
+      <h2>今日洞察</h2>
+      <div class="insights">
+        <div class="card">
+          <div class="insight-title">Claude Code 生态还在继续升温</div>
+          <div>今天的热门项目里，`claude-mem`、`superpowers`、`learn-claude-code`、`claudian` 仍然持续占据高热度，说明围绕 Claude Code 的插件、工作流、教程和知识管理生态仍处于高速扩张期。</div>
+        </div>
+        <div class="card">
+          <div class="insight-title">Agent 基础设施成为最集中主题</div>
+          <div>`deepagents`、`OpenViking`、`GitNexus`、`lightpanda/browser` 分别从 Agent 执行框架、上下文数据库、代码知识图谱、浏览器自动化底座几个维度提供基础设施，表明行业关注点正从“模型能力”转向“Agent 工程能力”。</div>
+        </div>
+        <div class="card">
+          <div class="insight-title">高性能底层工具也在被 AI 场景重新定义</div>
+          <div>`lightpanda/browser` 用 Zig 重写 headless browser，`vite-plus` 试图统一现代前端工具链，这类项目显示 AI 时代对执行效率、工具整合与自动化体验提出了更高要求。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>热门项目列表</h2>
+      <div class="list">
+        <div class="card repo"><div class="rank top1">01</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/obra/superpowers">obra / superpowers</a></div><div class="desc">An agentic skills framework & software development methodology that works.</div><div class="meta"><span>⭐ <strong>88,954</strong></span><span>🍴 7,024</span><span>🧩 Shell</span><span>🕒 Updated Mar 17</span></div><div class="tags"><span class="tag">agentic workflow</span><span class="tag">skills</span><span class="tag">Claude Code</span></div></div></div>
+        <div class="card repo"><div class="rank top2">02</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/thedotmack/claude-mem">thedotmack / claude-mem</a></div><div class="desc">自动记录 Claude Code 会话、压缩上下文并注入后续会话的记忆插件。</div><div class="meta"><span>⭐ <strong>36,959</strong></span><span>🍴 2,653</span><span>🧩 TypeScript</span><span>🕒 Updated Mar 16</span></div><div class="tags"><span class="tag">claude-code</span><span class="tag">memory</span><span class="tag">rag</span><span class="tag">chromadb</span></div></div></div>
+        <div class="card repo"><div class="rank top3">03</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/666ghj/MiroFish">666ghj / MiroFish</a></div><div class="desc">A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物。</div><div class="meta"><span>⭐ <strong>30,274</strong></span><span>🍴 3,702</span><span>🧩 Python</span><span>🕒 Updated Mar 7</span></div><div class="tags"><span class="tag">swarm-intelligence</span><span class="tag">multi-agent</span><span class="tag">knowledge-graph</span></div></div></div>
+        <div class="card repo"><div class="rank">04</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/shareAI-lab/learn-claude-code">shareAI-lab / learn-claude-code</a></div><div class="desc">Bash is all you need - A nano Claude Code–like agent, built from 0 to 1.</div><div class="meta"><span>⭐ <strong>29,441</strong></span><span>🍴 5,028</span><span>🧩 TypeScript</span><span>🕒 Updated Mar 14</span></div><div class="tags"><span class="tag">tutorial</span><span class="tag">agent</span><span class="tag">claude-code</span></div></div></div>
+        <div class="card repo"><div class="rank">05</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/lightpanda-io/browser">lightpanda-io / browser</a></div><div class="desc">Lightpanda: the headless browser designed for AI and automation.</div><div class="meta"><span>⭐ <strong>20,333</strong></span><span>🍴 773</span><span>🧩 Zig</span><span>🕒 Updated Mar 17</span></div><div class="tags"><span class="tag">browser</span><span class="tag">zig</span><span class="tag">playwright</span></div></div></div>
+        <div class="card repo"><div class="rank">06</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/abhigyanpatwari/GitNexus">abhigyanpatwari / GitNexus</a></div><div class="desc">Zero-server code intelligence engine，浏览器内运行的知识图谱与 Graph RAG Agent。</div><div class="meta"><span>⭐ <strong>15,712</strong></span><span>🍴 1,810</span><span>🧩 TypeScript</span><span>🕒 Updated Mar 16</span></div><div class="tags"><span class="tag">graph-rag</span><span class="tag">knowledge graph</span><span class="tag">mcp</span></div></div></div>
+        <div class="card repo"><div class="rank">07</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/p-e-w/heretic">p-e-w / heretic</a></div><div class="desc">Fully automatic censorship removal for language models.</div><div class="meta"><span>⭐ <strong>15,335</strong></span><span>🍴 1,549</span><span>🧩 Python</span><span>🕒 Updated Mar 15</span></div><div class="tags"><span class="tag">llm</span><span class="tag">transformer</span><span class="tag">abliteration</span></div></div></div>
+        <div class="card repo"><div class="rank">08</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/volcengine/OpenViking">volcengine / OpenViking</a></div><div class="desc">面向 AI Agents 的开源 context database，统一管理 memory、resources 与 skills。</div><div class="meta"><span>⭐ <strong>14,277</strong></span><span>🍴 979</span><span>🧩 Python</span><span>🕒 Updated Mar 16</span></div><div class="tags"><span class="tag">context db</span><span class="tag">agentic-rag</span><span class="tag">filesystem</span></div></div></div>
+        <div class="card repo"><div class="rank">09</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/langchain-ai/deepagents">langchain-ai / deepagents</a></div><div class="desc">Agent harness built with LangChain and LangGraph，带 planning、filesystem、subagents。</div><div class="meta"><span>⭐ <strong>13,064</strong></span><span>🍴 2,025</span><span>🧩 Python</span><span>🕒 Updated Mar 17</span></div><div class="tags"><span class="tag">langchain</span><span class="tag">langgraph</span><span class="tag">agent framework</span></div></div></div>
+        <div class="card repo"><div class="rank">10</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/YishenTu/claudian">YishenTu / claudian</a></div><div class="desc">An Obsidian plugin that embeds Claude Code as an AI collaborator in your vault.</div><div class="meta"><span>⭐ <strong>4,218</strong></span><span>🍴 239</span><span>🧩 TypeScript</span><span>🕒 Updated Mar 16</span></div><div class="tags"><span class="tag">obsidian</span><span class="tag">claude-code</span><span class="tag">plugin</span></div></div></div>
+        <div class="card repo"><div class="rank">11</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/voidzero-dev/vite-plus">voidzero-dev / vite-plus</a></div><div class="desc">Vite+ is the unified toolchain and entry point for web development.</div><div class="meta"><span>⭐ <strong>2,292</strong></span><span>🍴 80</span><span>🧩 Rust</span><span>🕒 Updated Mar 17</span></div><div class="tags"><span class="tag">vite</span><span class="tag">frontend</span><span class="tag">toolchain</span></div></div></div>
+        <div class="card repo"><div class="rank">12</div><div class="repo-main"><div class="repo-name"><a target="_blank" href="https://github.com/Crosstalk-Solutions/project-nomad">Crosstalk-Solutions / project-nomad</a></div><div class="desc">离线生存计算机，集成关键工具、知识与 AI，在任何地方都能工作。</div><div class="meta"><span>⭐ <strong>1,891</strong></span><span>🍴 172</span><span>🧩 TypeScript</span><span>🕒 Updated Mar 16</span></div><div class="tags"><span class="tag">offline</span><span class="tag">survival</span><span class="tag">ai</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>语言分布</h2>
+      <div class="card">
+        <div class="bar-row"><div>TypeScript</div><div class="bar-bg"><div class="bar" style="width:42%;background:#3178c6"></div></div><div>5</div></div>
+        <div class="bar-row"><div>Python</div><div class="bar-bg"><div class="bar" style="width:33%;background:#3572a5"></div></div><div>4</div></div>
+        <div class="bar-row"><div>Shell</div><div class="bar-bg"><div class="bar" style="width:8%;background:#89e051"></div></div><div>1</div></div>
+        <div class="bar-row"><div>Zig</div><div class="bar-bg"><div class="bar" style="width:8%;background:#ec915c"></div></div><div>1</div></div>
+        <div class="bar-row"><div>Rust</div><div class="bar-bg"><div class="bar" style="width:8%;background:#dea584"></div></div><div>1</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Explore 精选</h2>
+      <div class="explore">
+        <div class="card">今日 Explore 与 Trending 高度重合，重点推荐仍集中在 `MiroFish`、`claude-mem`、`superpowers`、`GitNexus`、`lightpanda/browser`、`OpenViking`、`deepagents` 等项目。</div>
+        <div class="card">今日热门话题：<a target="_blank" href="https://github.com/topics/nodejs">Node.js</a></div>
+        <div class="card">今日 GitHub Staff 推荐集合：<a target="_blank" href="https://github.com/collections/github-copilot-sdk-contest-winners">GitHub Copilot SDK Reddit Contest Winners</a></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>输出文件：`e:\workerspace\daily\github\github_trending_report_2026-03-17.html`</div>
+      <div>数据来源：<a target="_blank" href="https://github.com/trending">GitHub Trending</a> / <a target="_blank" href="https://github.com/explore">GitHub Explore</a></div>
+    </div>
+  </div>
+</body>
+</html>

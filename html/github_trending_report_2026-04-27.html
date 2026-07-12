@@ -1,0 +1,870 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-04-27</title>
+<style>
+  :root {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --surface2: #21262D;
+    --border: #30363D;
+    --text: #C9D1D9;
+    --text-muted: #8B949E;
+    --blue: #58A6FF;
+    --green: #3FB950;
+    --orange: #D29922;
+    --purple: #BC8CFF;
+    --red: #F85149;
+    --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title span { font-size: 20px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue)22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .meta-item .icon { font-size: 14px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .forks { color: var(--text-muted); }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-box .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-box .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-box .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-list { }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light {
+    --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE;
+    --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37;
+  }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .project-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-04-27 · 数据源：GitHub Trending + Explore</div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-num">12</div>
+      <div class="stat-label">Trending 项目</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🌟</div>
+      <div class="stat-num">1.22M+</div>
+      <div class="stat-label">累计 Stars</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💻</div>
+      <div class="stat-num">5</div>
+      <div class="stat-label">编程语言</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🤖</div>
+      <div class="stat-num">7</div>
+      <div class="stat-label">AI 相关项目</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">�� AI 编码工具周边生态全面爆发</div>
+        <p>今日 Trending 中至少有 5 个项目直接服务于 AI 编程工具生态：mattpocock/skills（Agent 技能库）、gastownhall/beads（Agent 记忆管理）、Alishahryar1/free-claude-code（Claude Code 免费代理）、ComposioHQ/awesome-codex-skills（Codex 技能精选）、trycua/cua（Computer-Use Agent 沙盒）。AI 编码工具的周边基础设施正迅速走向标准化、工具链化。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">💸 免费使用 Claude Code 成为开发者关注焦点</div>
+        <p>Alishahryar1/free-claude-code 通过透明代理将 Claude Code 的 Anthropic API 请求转发到 NVIDIA NIM（免费每分钟 40 次）、OpenRouter、DeepSeek、Ollama 等多个免费或本地提供商，无需 Anthropic API Key。这一方案的快速走红折射出开发者对降低 AI 工具使用成本的强烈需求。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🗺️ 代码知识图谱走向浏览器端零服务部署</div>
+        <p>abhigyanpatwari/GitNexus 将代码库知识图谱完全跑在浏览器内，无需后端服务器，直接拖入 GitHub 仓库即可获得交互式知识图谱与 Graph RAG Agent。核心价值：解决 Cursor / Claude Code 等工具不真正理解代码依赖关系、频繁引发级联破坏的问题。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🗄️ Agent 记忆管理出现 "Dolt 范式"</div>
+        <p>gastownhall/beads 用 Dolt（具备版本控制的 SQL 数据库）替代 Markdown 计划文件，为 AI Agent 提供依赖感知的图状任务追踪。Dolt 的 cell-level merge + 原生分支特性，使多 Agent 并行工作时的状态同步从"协调问题"变成"数据库问题"，是 Agent 记忆基础设施的一次架构创新。</p>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 codecrafters-io/build-your-own-x -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/codecrafters-io/build-your-own-x" target="_blank">codecrafters-io / build-your-own-x</a></div>
+          <div class="project-desc">Master programming by recreating your favorite technologies from scratch. 从零实现 XXX 教程合集，覆盖数据库、操作系统、浏览器、编译器等 30+ 技术方向。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">496,932</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">47,094</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083FA1"></span> Markdown</span>
+            <span class="meta-item">📄 CC0-1.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">tutorial</span>
+            <span class="topic-badge">from-scratch</span>
+            <span class="topic-badge">computer-science</span>
+            <span class="topic-badge">programming</span>
+            <span class="topic-badge">learning</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>build-your-own-x 是一份精心策划的开源教程合集，汇聚了数百篇"从零实现 XXX"的分步教程，覆盖 3D 渲染器、BitTorrent、区块链、浏览器、数据库、Docker、Git、神经网络、操作系统、编程语言、搜索引擎等几十个方向。每篇教程都会带你真正写出一个可运行的系统。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>覆盖 30+ 技术方向，每类包含多语言实现教程</li>
+            <li>学中做原则：没有空洞理论，每篇都产出可运行的真实系统</li>
+            <li>多语言友好：Python、Go、Rust、C、Java、JavaScript 均有覆盖</li>
+            <li>社区持续贡献：任何人可提交新教程，体系不断扩展</li>
+            <li>适合"看懂不如写一遍"的深度学习者</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Markdown</span><span class="tech-tag">C</span><span class="tech-tag">Go</span><span class="tech-tag">Python</span><span class="tech-tag">Rust</span><span class="tech-tag">JavaScript</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>想从底层理解某项技术、准备系统设计面试、学编程不满足于"调包"而想理解原理的开发者。</p>
+        </div>
+        <div class="recommend-quote">💬 "全球最大的'自己动手造轮子'教程库，光是翻目录就能治愈技术焦虑。"</div>
+      </div>
+    </div>
+
+    <!-- #2 openclaw/openclaw -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/openclaw/openclaw" target="_blank">openclaw / openclaw</a></div>
+          <div class="project-desc">Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞 跨全平台开源个人 AI 助手。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">364,782</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">74,708</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#89E051"></span> Shell / Various</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-assistant</span>
+            <span class="topic-badge">cross-platform</span>
+            <span class="topic-badge">personal-ai</span>
+            <span class="topic-badge">open-source</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>openclaw 是一个跨平台个人 AI 助手，支持 macOS、Windows、Linux。"The lobster way" 暗示其设计哲学是灵活、坚韧、能在任何环境下生存。提供类似 Claude Code 的 CLI 交互体验，后端可对接多种开放 AI 模型服务，活跃社区（74k Forks）验证了其广泛采用。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>Any OS, Any Platform：跨平台承诺，macOS/Windows/Linux 均支持</li>
+            <li>开放后端：可对接多种 AI 模型服务，不锁定单一提供商</li>
+            <li>CLI 优先：命令行原生体验</li>
+            <li>活跃社区：74k Forks，持续生态扩展</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Shell</span><span class="tech-tag">多语言混合</span><span class="tech-tag">跨平台兼容层</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>想要一个不绑定特定平台的本地 AI 助手的开发者；厌倦了各种 AI 产品账号墙、希望完全自主控制 AI 工具的用户。</p>
+        </div>
+        <div class="recommend-quote">💬 "它叫 openclaw，打得开任何平台的大门——跨平台 AI 助手的最大开源社区验证之一。"</div>
+      </div>
+    </div>
+
+    <!-- #3 home-assistant/core -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/home-assistant/core" target="_blank">home-assistant / core</a></div>
+          <div class="project-desc">🏡 Open source home automation that puts local control and privacy first. 隐私优先的开源智能家居平台，支持 3000+ 设备集成。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">86,610</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">37,365</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">�� Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">home-automation</span>
+            <span class="topic-badge">iot</span>
+            <span class="topic-badge">smart-home</span>
+            <span class="topic-badge">privacy</span>
+            <span class="topic-badge">local-control</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Home Assistant 是目前最受欢迎的开源智能家居平台，强调"本地控制、隐私优先"。不依赖云服务，所有设备数据在本地处理，支持 3000+ 集成（MQTT、Zigbee、Z-Wave、各品牌智能设备等）。可部署在树莓派、NAS、Docker 或专用 HAOS 硬件上。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>隐私优先：完全本地运行，无需云端，数据不出门</li>
+            <li>3000+ 集成：几乎市面上所有智能家居设备都有官方集成</li>
+            <li>自动化引擎：条件 + 触发器 + 动作，复杂自动化无需编程</li>
+            <li>Lovelace UI：完全自定义的仪表盘界面</li>
+            <li>多平台部署：树莓派 / NAS / Docker / HAOS 均支持</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">YAML</span><span class="tech-tag">SQLite/PostgreSQL</span><span class="tech-tag">MQTT</span><span class="tech-tag">Zigbee2MQTT</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>希望打造不依赖大厂云服务的本地智能家居、注重隐私的技术用户；家里有各品牌杂牌设备想统一管理的玩家。</p>
+        </div>
+        <div class="recommend-quote">💬 "智能家居界的 Linux：复杂、强大、自由，一旦搞定就再不想回头。"</div>
+      </div>
+    </div>
+
+    <!-- #4 Z4nzu/hackingtool -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Z4nzu/hackingtool" target="_blank">Z4nzu / hackingtool</a></div>
+          <div class="project-desc">ALL IN ONE Hacking Tool For Hackers. 终端菜单式渗透测试工具聚合器，覆盖 20+ 安全工具类别。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">65,784</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">7,386</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">hacking</span>
+            <span class="topic-badge">pentesting</span>
+            <span class="topic-badge">security</span>
+            <span class="topic-badge">kali-linux</span>
+            <span class="topic-badge">ethical-hacking</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>hackingtool 是一个 Python 编写的终端菜单式工具聚合器，将 Kali Linux 生态中常用的渗透测试、信息收集、漏洞扫描、Wi-Fi 攻击、社工工具统一组织到一个交互菜单中。通过菜单选择即可安装和运行各类安全工具，大幅降低了渗透测试环境搭建门槛。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>覆盖 20+ 安全工具类别：信息收集、漏洞扫描、Wi-Fi 攻击、Web 漏洞、社会工程等</li>
+            <li>自动安装依赖工具（Kali Linux 生态）</li>
+            <li>菜单驱动，无需逐一记忆工具调用命令</li>
+            <li>适合 CTF 和安全学习入门</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">Shell</span><span class="tech-tag">Linux (Kali/Parrot)</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>安全研究学习者、CTF 参赛者、希望在 Kali 环境中快速调用各类安全工具的渗透测试工程师。（仅限合法授权场景使用）</p>
+        </div>
+        <div class="recommend-quote">💬 "Kali 工具箱的 App Store——用菜单替代记命令，让渗透测试入门门槛再低一点。"</div>
+      </div>
+    </div>
+
+    <!-- #5 curl/curl -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/curl/curl" target="_blank">curl / curl</a></div>
+          <div class="project-desc">A command line tool and library for transferring data with URL syntax, supporting 26 protocols. 互联网基础设施的核心网络传输工具。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">41,587</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">7,154</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#555555"></span> C</span>
+            <span class="meta-item">📄 curl License</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">curl</span>
+            <span class="topic-badge">http</span>
+            <span class="topic-badge">libcurl</span>
+            <span class="topic-badge">networking</span>
+            <span class="topic-badge">command-line</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>curl 是互联网基础设施的核心组件之一，用 C 编写，支持 DICT/FILE/FTP/FTPS/GOPHER/HTTP/HTTPS/IMAP/LDAP/MQTT/POP3/RTMP/RTSP/SCP/SFTP/SMB/SMTP/TELNET/TFTP/WS/WSS 共 26 种协议，每天被数十亿设备调用。libcurl 可嵌入任何程序，Android/iOS/车机/路由器均有集成。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>26 种网络协议支持，覆盖绝大多数数据传输场景</li>
+            <li>libcurl 作为库可嵌入任何程序（Android/iOS/嵌入式均有）</li>
+            <li>极致轻量：无外部依赖可选配置</li>
+            <li>每周发布补丁版本，安全维护极为活跃</li>
+            <li>全球使用量最大的网络工具之一</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">C</span><span class="tech-tag">autoconf</span><span class="tech-tag">CMake</span><span class="tech-tag">OpenSSL/wolfSSL</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>所有需要数据传输的场景：API 调试、自动化脚本、嵌入式设备网络通信、CI/CD 流水线。你每天都在用它，只是不知道而已。</p>
+        </div>
+        <div class="recommend-quote">💬 "互联网世界最低调的功臣——你每天都在用 curl，只是不知道而已。"</div>
+      </div>
+    </div>
+
+    <!-- #6 PostHog/posthog -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/PostHog/posthog" target="_blank">PostHog / posthog</a></div>
+          <div class="project-desc">🦔 PostHog is an all-in-one developer platform for building successful products. 开源可自部署的产品分析全家桶。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">33,915</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">2,638</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript / Python</span>
+            <span class="meta-item">📄 MIT / EE</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">analytics</span>
+            <span class="topic-badge">product-analytics</span>
+            <span class="topic-badge">session-replay</span>
+            <span class="topic-badge">feature-flags</span>
+            <span class="topic-badge">self-hosted</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>PostHog 是一个开源的一体化产品分析平台，可自部署在自己的云或服务器上。涵盖产品分析、Web 分析、会话回放、错误追踪、Feature Flags、A/B 实验、用户调研、数据仓库、CDP（客户数据平台）和 AI 产品助手。数据完全在自己控制下，不依赖第三方 SaaS。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>一站式：产品分析 + 会话录屏 + Feature Flag + A/B 测试全打包</li>
+            <li>自部署：数据完全在自己控制下，不依赖第三方 SaaS</li>
+            <li>开发者友好：SDK 覆盖 Web/iOS/Android/Python/Go/Node 等</li>
+            <li>AI 助手：内置 AI 辅助调试和功能发布加速</li>
+            <li>ClickHouse 驱动：高性能大规模事件查询</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">TypeScript</span><span class="tech-tag">Python/Django</span><span class="tech-tag">ClickHouse</span><span class="tech-tag">Kafka</span><span class="tech-tag">PostgreSQL</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>关注用户行为但不愿将数据交给第三方的产品团队；需要在隐私合规要求严格的场景下做数据分析的企业。</p>
+        </div>
+        <div class="recommend-quote">💬 "Mixpanel + Hotjar + Optimizely 合体的开源平替——数据全在自己手里。"</div>
+      </div>
+    </div>
+
+    <!-- #7 abhigyanpatwari/GitNexus -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/abhigyanpatwari/GitNexus" target="_blank">abhigyanpatwari / GitNexus</a></div>
+          <div class="project-desc">The Zero-Server Code Intelligence Engine. Browser-based knowledge graph creator with built-in Graph RAG Agent. 浏览器内代码知识图谱，零服务器部署。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">30,344</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">3,507</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">knowledge-graph</span>
+            <span class="topic-badge">code-intelligence</span>
+            <span class="topic-badge">graph-rag</span>
+            <span class="topic-badge">browser-based</span>
+            <span class="topic-badge">zero-server</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>GitNexus 是一个完全在浏览器端运行的代码知识图谱引擎，无需后端服务器。拖入 GitHub 仓库地址或 ZIP 文件，自动解析代码结构，生成交互式依赖知识图谱，并内置 Graph RAG Agent 供自然语言提问。核心场景：解决 AI 编码助手不真正理解代码依赖关系而频繁引发级联破坏的问题。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>零服务器：完全客户端运行，数据不离开浏览器</li>
+            <li>知识图谱：函数/类/模块依赖关系可视化，支持 360° 符号视图</li>
+            <li>Graph RAG Agent：自然语言查询代码结构，支持影响分析、变更检测、批量重命名</li>
+            <li>MCP 支持：可集成到 Claude Code / Cursor 等工具作为代码理解增强</li>
+            <li>支持 10+ 编程语言，含 Python / TypeScript / Java / Go / Rust</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">TypeScript</span><span class="tech-tag">浏览器端静态分析</span><span class="tech-tag">Graph RAG</span><span class="tech-tag">Cypher 查询</span><span class="tech-tag">MCP</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>想让 AI 编码助手真正理解代码结构的开发者；大型代码库探索和影响面分析；架构重构前的依赖梳理。</p>
+        </div>
+        <div class="recommend-quote">💬 "把整个代码库变成可问答的知识图谱，让 AI 改代码之前先搞清楚'改这里会牵连哪里'。"</div>
+      </div>
+    </div>
+
+    <!-- #8 microsoft/typescript-go -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/microsoft/typescript-go" target="_blank">microsoft / typescript-go</a></div>
+          <div class="project-desc">Staging repo for development of native port of TypeScript compiler to Go. 微软官方将 TypeScript 编译器迁移到 Go 的工程仓库，编译速度提升约 10 倍。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">25,182</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">923</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#00ADD8"></span> Go</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">typescript</span>
+            <span class="topic-badge">go</span>
+            <span class="topic-badge">compiler</span>
+            <span class="topic-badge">performance</span>
+            <span class="topic-badge">microsoft</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>microsoft/typescript-go 是微软将 TypeScript 编译器从 JavaScript 迁移到 Go 的官方工程仓库。原始动机是 TypeScript 自身用 JS 编写，编译性能受限于 V8 单线程 GC 开销。Go 版本在基准测试中编译速度提升约 10 倍，内存占用大幅降低，是历史上规模最大的"用更快语言重写编译器"工程实践之一。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>10x 编译速度提升（基准测试数据）</li>
+            <li>完全 API 兼容：输出产物与原 TypeScript 编译器一致</li>
+            <li>Go 并发模型：充分利用多核，突破 JS 单线程限制</li>
+            <li>官方维护：微软 TypeScript 团队主导，不是第三方重写</li>
+            <li>渐进迁移策略：先 staging 验证，稳定后替换主仓库</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Go</span><span class="tech-tag">TypeScript（规范参考）</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>大型 TypeScript 项目（类型检查慢到影响开发体验）；CI/CD 流水线中 tsc 是瓶颈的团队；所有 TypeScript 用户（未来会透明升级）。</p>
+        </div>
+        <div class="recommend-quote">💬 "微软用 Go 给 TypeScript 换了个发动机——同样的语法，快了 10 倍。"</div>
+      </div>
+    </div>
+
+    <!-- #9 mattpocock/skills -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/mattpocock/skills" target="_blank">mattpocock / skills</a></div>
+          <div class="project-desc">Agent Skills for real engineers. Straight from my .claude directory. TypeScript 专家 Matt Pocock 日常真实使用的 AI 编程工作流技能合集。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">24,626</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">1,996</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083FA1"></span> Markdown / TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">agent-skills</span>
+            <span class="topic-badge">ai-engineering</span>
+            <span class="topic-badge">cursor</span>
+            <span class="topic-badge">codex</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>mattpocock/skills 是 TypeScript 专家 Matt Pocock（Total TypeScript 创始人）从自己真实 .claude 目录中提炼出的 Agent Skills 合集，代表他日常真正使用的 AI 编程工作流。包含规划设计、代码开发、工具配置、写作知识四大类别，每个技能可通过 <code>npx skills@latest add</code> 一键安装到 Claude Code / Cursor / Codex。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>规划设计：to-prd（PRD 生成并提交 GitHub Issue）、to-issues（拆分为垂直切片）、grill-me（决策树穷举式访谈）、design-an-interface（并行子代理多方案设计）</li>
+            <li>开发类：tdd（红绿重构循环）、triage-issue（根因分析 + TDD 计划）、improve-codebase-architecture</li>
+            <li>工具类：setup-pre-commit（Husky + lint-staged）、git-guardrails-claude-code（拦截危险 git 命令）</li>
+            <li>写作类：write-a-skill、edit-article、ubiquitous-language（DDD 术语表）、obsidian-vault</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Markdown</span><span class="tech-tag">YAML</span><span class="tech-tag">TypeScript</span><span class="tech-tag">Claude Code</span><span class="tech-tag">Cursor</span><span class="tech-tag">Codex</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>Claude Code / Cursor 重度用户；想把优秀工程师的 AI 工作流"拿来就用"的团队；希望标准化 AI 编程实践的工程组织。</p>
+        </div>
+        <div class="recommend-quote">💬 "Matt Pocock 把他每天真正用的 AI 编程技能全开源了——这不是教程，是直接可用的工作流。"</div>
+      </div>
+    </div>
+
+    <!-- #10 gastownhall/beads -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/gastownhall/beads" target="_blank">gastownhall / beads</a></div>
+          <div class="project-desc">Beads - A memory upgrade for your coding agent. 用 Dolt 驱动的 AI 编程代理分布式图状任务追踪 CLI，替代杂乱的 Markdown 计划文件。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">21,757</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">1,442</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#00ADD8"></span> Go</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-agent</span>
+            <span class="topic-badge">task-management</span>
+            <span class="topic-badge">dolt</span>
+            <span class="topic-badge">knowledge-graph</span>
+            <span class="topic-badge">memory</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Beads 是为 AI 编程代理设计的分布式图状任务追踪 CLI 工具，底层用 Dolt（具有版本控制的 SQL 数据库）驱动。核心主张：用依赖感知的图状结构替代杂乱的 Markdown 计划文件，让 AI Agent 在长期任务中不会"失忆"。支持多代理并行、跨 Git 分支的无冲突状态同步，可在 macOS/Linux/Windows/FreeBSD 上运行。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>Dolt 驱动：cell-level merge + 原生分支，多 Agent 并行无冲突</li>
+            <li>Agent 优化：JSON 输出、依赖追踪、自动就绪任务检测</li>
+            <li>Hash ID：bd-a1b2 格式防止合并冲突</li>
+            <li>记忆压缩：语义"记忆衰减"自动压缩旧任务，节省上下文窗口</li>
+            <li>Stealth 模式：bd init --stealth 在共享项目中本地使用不污染主仓库</li>
+            <li>图关系：relates_to / duplicates / supersedes / replies_to 知识图连接</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Go</span><span class="tech-tag">Dolt（MySQL 兼容 + 版本控制）</span><span class="tech-tag">JSON API</span><span class="tech-tag">跨平台</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>使用 Claude Code / Cursor 做长期复杂项目的开发者；多代理并行工作流需要共享任务状态；开源贡献者不想把个人计划文件提交到主仓库。</p>
+        </div>
+        <div class="recommend-quote">💬 "给 AI 代理装上版本控制的大脑——任务有依赖图、记忆会自动压缩、多代理不打架。"</div>
+      </div>
+    </div>
+
+    <!-- #11 trycua/cua -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/trycua/cua" target="_blank">trycua / cua</a></div>
+          <div class="project-desc">Open-source infrastructure for Computer-Use Agents. Sandboxes, SDKs, and benchmarks to train and evaluate AI agents that can control full desktops. 计算机使用代理开源基础设施。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">14,481</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">908</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">computer-use</span>
+            <span class="topic-badge">ai-agent</span>
+            <span class="topic-badge">sandbox</span>
+            <span class="topic-badge">macos</span>
+            <span class="topic-badge">benchmark</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>trycua/cua 是构建"计算机使用代理（Computer-Use Agents）"的开源基础设施，提供沙箱环境、SDK 和评测基准。专注于让 AI Agent 可以控制完整桌面（macOS、Linux、Windows），覆盖从沙箱隔离、屏幕录制到动作执行的完整工具链，并提供标准化评测集量化 Agent 桌面操作能力。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>多平台沙箱：macOS / Linux / Windows 桌面控制环境</li>
+            <li>完整 SDK：屏幕截图、键鼠操作、文件系统操作全覆盖</li>
+            <li>Benchmark：标准化评测集，量化 Agent 桌面操作能力</li>
+            <li>开源可自部署：不依赖任何云端 Computer-Use API</li>
+            <li>活跃生态：908 Forks，社区驱动</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">macOS Virtualization.framework</span><span class="tech-tag">Linux KVM</span><span class="tech-tag">OpenAI Computer Use API 兼容</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>构建桌面 RPA 替代方案的团队；研究 Computer-Use Agent 的学者；想在沙箱中安全测试 AI 桌面操作的开发者。</p>
+        </div>
+        <div class="recommend-quote">💬 "给 AI 代理一台真实的电脑——cua 提供沙箱、SDK 和评测，从基础设施层解决 Computer-Use Agent 的标准化问题。"</div>
+      </div>
+    </div>
+
+    <!-- #12 Alishahryar1/free-claude-code -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Alishahryar1/free-claude-code" target="_blank">Alishahryar1 / free-claude-code</a></div>
+          <div class="project-desc">Use claude-code for free in the terminal, VSCode extension or via discord. 通过透明代理将 Claude Code 接入 NVIDIA NIM / OpenRouter / 本地 LLM，无需 Anthropic API Key。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">14,095</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">1,989</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">free</span>
+            <span class="topic-badge">proxy</span>
+            <span class="topic-badge">nvidia-nim</span>
+            <span class="topic-badge">openrouter</span>
+            <span class="topic-badge">local-llm</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>free-claude-code 是一个轻量级 Python 代理服务（监听 :8082），将 Claude Code CLI 或 VSCode 插件发出的 Anthropic API 请求透明地转发给免费或低价的 LLM 提供商——无需 Anthropic API Key。支持 NVIDIA NIM（40 req/min 免费）、OpenRouter（含免费模型）、DeepSeek（Anthropic Messages 格式兼容）、LM Studio、llama.cpp、Ollama（完全本地）。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>零 API Key 使用 Claude Code：接入 NVIDIA NIM 或 OpenRouter 免费模型</li>
+            <li>6 类后端支持：NVIDIA NIM、OpenRouter、DeepSeek、LM Studio、llama.cpp、Ollama</li>
+            <li>请求优化：5 类轻量请求（配额探测、标题生成等）本地响应，不消耗配额</li>
+            <li>Thinking Tokens：将 &lt;think&gt; 标签转换为 Claude 原生 thinking blocks</li>
+            <li>Discord Bot / Telegram 支持：通过 IM 使用 Claude Code 能力</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">FastAPI/aiohttp</span><span class="tech-tag">Anthropic Messages API</span><span class="tech-tag">SSE 流式输出</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>希望零成本使用 Claude Code 的开发者；需要接入本地 LLM（Ollama/LM Studio）运行 Claude Code 的离线/隐私场景；OpenRouter 用户想直接用 Claude Code 工具链。</p>
+        </div>
+        <div class="recommend-quote">💬 "拦截 Claude Code 的 API 请求，转发给免费的 NVIDIA NIM 或本地 Ollama——不花一分钱也能跑 Claude Code。"</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 编程语言分布 -->
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:42%;background:#3572A5"></div></div>
+        <div class="lang-count">5 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:17%;background:#3178C6"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Go</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:17%;background:#00ADD8"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:17%;background:#083FA1"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">C</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8%;background:#555555"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub Explore 精选 -->
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="trending-list">
+      <div class="trending-item">
+        <div class="trending-num">01</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;"><a href="https://github.com/ComposioHQ/awesome-codex-skills" target="_blank">ComposioHQ / awesome-codex-skills</a></div>
+          <div style="color:var(--text-muted);font-size:13px;">⭐ 2,125 · Markdown</div>
+          <div style="color:var(--text-muted);font-size:13px;margin-top:4px;line-height:1.6;">A curated list of practical Codex skills for automating workflows across the Codex CLI and API. 包含开发工具、生产力、通讯写作、数据分析、元工具五大类技能，支持 1000+ 应用自动化动作（发邮件、建 Issue、发 Slack 等）。与今日 mattpocock/skills 呼应，Codex 技能生态正在快速沉淀。</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">02</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;"><a href="https://github.com/collections/learn-to-code" target="_blank">GitHub 精选集：Learn to Code</a></div>
+          <div style="color:var(--text-muted);font-size:13px;">GitHub 官方精选集</div>
+          <div style="color:var(--text-muted);font-size:13px;margin-top:4px;line-height:1.6;">GitHub 官方精选的编程学习资源合集，与今日 build-your-own-x（496k stars）登榜趋势呼应。"学编程"类内容持续高热，适合入门者系统探索优质学习资源。</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">03</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;"><a href="https://www.youtube.com/watch?v=9oAcwmrUE44" target="_blank">GitHub Checkout：Copilot CLI update</a></div>
+          <div style="color:var(--text-muted);font-size:13px;">GitHub 官方视频 · YouTube</div>
+          <div style="color:var(--text-muted);font-size:13px;margin-top:4px;line-height:1.6;">Copilot CLI update: chronicle, plugins, and fleet mode。GitHub 官方视频，介绍 Copilot CLI 最新功能更新，与今日 AI 编码工具热潮直接相关。</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">04</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;"><a href="https://github.com/topics/chrome" target="_blank">热门话题：Chrome</a></div>
+          <div style="color:var(--text-muted);font-size:13px;">GitHub Explore 热门话题</div>
+          <div style="color:var(--text-muted);font-size:13px;margin-top:4px;line-height:1.6;">GitHub Explore 今日推荐热门话题 Chrome，与浏览器技术、扩展开发相关项目持续受关注的趋势呼应。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>📅 报告生成时间：2026-04-27 &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">本报告由 <strong>skill-github-trending-report</strong> 自动生成 &nbsp;|&nbsp; 所有数据来自 GitHub 公开页面，无需 API Token</p>
+    <p style="margin-top:8px;color:var(--text-muted);font-size:12px;">⚠️ 注：各项目 Stars 数为总累计 Stars，非今日新增（GitHub Trending 页面未单独披露今日新增数）。openclaw/openclaw 仓库详情信息有限，摘要基于公开描述推断。</p>
+  </div>
+
+</div>
+
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-03</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px #58a6ff22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-card.new-card { border: 1.5px solid var(--green); }
+  .project-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .new-badge { background: #0f2d13; border: 1px solid var(--green); color: var(--green); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-05-03 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">888k+</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">5</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">8</div><div class="stat-label">今日新上榜</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">📚 CS 经典双巨头同日登榜，合计 565k Stars</div>
+        <p>jwasham/coding-interview-university（345k）是 GitHub 史上最受欢迎的 CS 自学路径，真实覆盖 DS/Algo/OS/网络/数据库全部面试核心。TheAlgorithms/Python（221k）是全球最全的算法 Python 实现库，50k+ forks 全社区驱动。两大教育经典同日登上 Trending，反映 AI 编程工具（Claude Code / Copilot）对经典仓库的二次引流效应——用户把这些经典纳入 AI 辅助学习与工作流，带动今日热度。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🌊 Ruflo 以 1,471 次发布登榜，Agent 编排加速分化</div>
+        <p>ruvnet/ruflo（37k）前身为 claude-flow，改名后升级为"Claude Code 的神经系统"。一次 init 给 agents 接入 Router → Swarm → Agents → Memory → LLM 的自学习/自优化架构，Rust WASM 内核驱动策略引擎，跨机器 federation 安全通信。1,471 次发布创下本周纪录。加上昨日的 simstudioai/sim（261 次），Agent 编排赛道正加速分化为"重编排系统（Ruflo）"和"可视化画布（Sim）"两条路线。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">💹 金融 AI 三路并进：qlib（研究层）+ TradingAgents（决策层）+ AI-Trader（执行层）</div>
+        <p>今日金融 AI 最密集：microsoft/qlib（42k）是量化研究基础设施——AI 量化因子建模 + RL + 市场动态 + RD-Agent 自动化 R&amp;D 全流程；TradingAgents（64k，持续）负责多路分析师辩论 + 风控审批决策；HKUDS/AI-Trader（14k）是执行层——Agent 一条 SKILL.md 指令接入平台，自动发布信号、跨经纪商同步交易。三个层次完整互补，是今日 GitHub 上最完整的 AI 金融技术栈截面。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🔬 code-review-graph：Claude Code 本地上下文工程新方向，实测 49× token 节省</div>
+        <p>tirth8205/code-review-graph（15k）用 Tree-sitter 构建代码库结构知识图谱，blast-radius 分析只给 Claude Code 传递受影响文件上下文。经 6 个真实开源项目基准测试：code review 节省 6.8× tokens，日常编码节省 49× tokens，2,900 文件项目增量重索引 &lt; 2 秒，23 种语言支持，MCP 接入。这代表 Claude Code 生态中"本地上下文工程"子赛道的兴起——不是提示词技巧，而是工程层面根治 token 浪费。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 jwasham/coding-interview-university -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/jwasham/coding-interview-university" target="_blank">jwasham / coding-interview-university</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">A complete computer science study plan to become a software engineer. 前亚马逊工程师真实使用的 CS 自学路径，帮助无数人通过 FAANG 技术面试，覆盖 DS/Algo/OS/网络/数据库全部核心领域。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">344,750</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>82,498</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083FA1"></span> Markdown</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">computer-science</span><span class="topic-badge">interview</span><span class="topic-badge">study-plan</span><span class="topic-badge">algorithms</span><span class="topic-badge">data-structures</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>GitHub 上最受欢迎的 CS 自学学习路径，由前亚马逊工程师 John Washam 创作。这是一份真实的"从不会到通过 FAANG 技术面试"的完整学习计划，覆盖数据结构、算法、操作系统、计算机网络、数据库、分布式系统等所有面试核心领域。作者本人用这份计划从网页开发工程师转型成为亚马逊软件工程师，并持续维护至今。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>全面覆盖：DS（数组/链表/栈/队列/堆/树/图）+ Algo（排序/搜索/DP/BFS/DFS）+ 系统设计</li>
+          <li>月度学习计划：每个知识点给出具体视频/书单，附带学习时间估算</li>
+          <li>多语言翻译：中文、日语、韩语、葡萄牙语等多语言版本</li>
+          <li>82k+ forks：全球最多 fork 数的学习资源仓库之一</li>
+          <li>持续更新：作者持续增补新内容，与现代面试同步</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">YouTube 视频资源</span><span class="tech-tag">多语言翻译</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>准备技术面试（FAANG / 大厂）；系统补齐 CS 基础知识；自学计算机科学的结构化路线图。</p></div>
+        <div class="recommend-quote">💬 "GitHub 上 345k Stars 不是营销数字，是无数自学工程师用它通过了面试的真实证明——John Washam 亲历者写给你的 CS 自学路线图。"</div>
+      </div>
+    </div>
+
+    <!-- #2 TheAlgorithms/Python -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/TheAlgorithms/Python" target="_blank">TheAlgorithms / Python</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">All Algorithms implemented in Python. 全球最全算法 Python 实现开源库，221k Stars + 50k forks，每个算法附带单元测试，覆盖排序/图论/ML/密码学等数百个实现。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">220,647</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>50,513</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">algorithms</span><span class="topic-badge">data-structures</span><span class="topic-badge">python</span><span class="topic-badge">education</span><span class="topic-badge">open-source</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>全球最全的算法 Python 实现开源库，由全球社区共同维护。覆盖排序、搜索、图论、机器学习、密码学、字符串处理、数学等数百个算法的 Python 实现，每个实现都附带单元测试。221k Stars + 50k forks，是 GitHub 上 Python 类仓库中 fork 数最高的项目之一。同系列还有 C / Java / C++ / JavaScript / Go / Rust 版本。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>数百个算法标准 Python 实现（排序/搜索/图/树/DP/字符串/数学等）</li>
+          <li>每个算法附带完整单元测试（pytest + GitHub Actions CI）</li>
+          <li>机器学习、密码学、区块链等现代算法全覆盖</li>
+          <li>PR 贡献友好，是练习开源贡献的理想入门项目</li>
+          <li>同系列支持 C / Java / C++ / JavaScript / Go / Rust 等语言</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">pytest</span><span class="tech-tag">GitHub Actions CI</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>查找标准算法 Python 实现参考；刷题/面试准备时验证算法思路；练习开源贡献的入门项目。</p></div>
+        <div class="recommend-quote">💬 "221k Stars + 50k forks——TheAlgorithms/Python 是算法学习的'维基百科'，每道题都有测试覆盖的 Python 实现，随查随用。"</div>
+      </div>
+    </div>
+
+    <!-- #3 TauricResearch/TradingAgents -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/TauricResearch/TradingAgents" target="_blank">TauricResearch / TradingAgents</a></div>
+          <div class="project-desc">TradingAgents: Multi-Agents LLM Financial Trading Framework. 四路分析师 + 多头空头辩论 + 交易 Agent + 风控，今日与 qlib（研究层）+ AI-Trader（执行层）构成 GitHub 最完整单日金融 AI 技术栈截面。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">63,743</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>12,342</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm</span><span class="topic-badge">multi-agent</span><span class="topic-badge">trading</span><span class="topic-badge">finance</span><span class="topic-badge">langgraph</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>模拟真实交易公司架构的多 Agent LLM 金融交易框架：四路分析师（基本面/情绪/新闻/技术）+ 多头空头研究员对抗辩论 + 交易 Agent + 风险管理与组合经理。v0.2.4 支持 DeepSeek/Qwen/GLM/Azure，LangGraph checkpoint 断点续跑。今日与 qlib + AI-Trader 三路并进，构成决策层核心。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Analyst Team：基本面（估值/财务）/ 情绪（社交）/ 新闻（宏观）/ 技术（MACD/RSI）</li>
+          <li>Researcher Team：多头/空头结构化辩论</li>
+          <li>Trader Agent：综合所有报告决策交易时机和规模</li>
+          <li>Risk Management：Portfolio Manager 审批/拒绝交易提案</li>
+          <li>多 LLM Provider：DeepSeek / Qwen / GLM / Azure / GPT / Claude / Gemini</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">DeepSeek</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>LLM 量化研究与策略回测；多 Agent 协作决策研究；金融 AI Agent 原型构建（非投资建议）。</p></div>
+        <div class="recommend-quote">💬 "金融 AI 三路并进之'决策层'——今日与 qlib（研究层）、AI-Trader（执行层）共同构成 GitHub 上最完整的单日金融 AI 技术栈截面。"</div>
+      </div>
+    </div>
+
+    <!-- #4 9001/copyparty -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/9001/copyparty" target="_blank">9001 / copyparty</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Portable file server with accelerated resumable uploads, dedup, WebDAV, SFTP, FTP, TFTP, zeroconf, media indexer, thumbnails++ all in one file. 单 Python 文件包含全部功能，340 次发布，跑遍所有平台。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">44,648</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,819</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">file-server</span><span class="topic-badge">webdav</span><span class="topic-badge">sftp</span><span class="topic-badge">self-hosted</span><span class="topic-badge">media-server</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>"单文件全协议可移植文件服务器"——整个 copyparty 只是一个 Python 文件（或 .exe），包含 WebDAV / SFTP / FTP / TFTP / SMB 五种文件传输协议、断点续传加速上传、文件去重（内容匹配）、媒体索引、缩略图生成等全部功能。340 次发布，支持 Windows / Linux / macOS / Android / iOS / FreeBSD / arm32 / RISC-V / SGI IRIX。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>单文件部署：整个服务器就是一个 Python 文件或 .exe，零依赖安装</li>
+          <li>五协议：WebDAV / SFTP / FTP / TFTP / SMB，按需启用</li>
+          <li>无文件大小限制（包括 Cloudflare 中转场景）</li>
+          <li>up2k：断点续传 + 多线程加速上传</li>
+          <li>内容匹配去重：自动去重或软链接，节省存储</li>
+          <li>媒体功能：音频/视频/图片播放器 + m3u8 播放列表 + CBZ 漫画阅读</li>
+          <li>zeroconf / mDNS / SSDP 局域网自动发现</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Pillow</span><span class="tech-tag">FFmpeg</span><span class="tech-tag">SQLite</span><span class="tech-tag">WebDAV</span><span class="tech-tag">SFTP</span><span class="tech-tag">SMB</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>家庭/团队自托管文件服务器；替代 Samba / NextCloud 的轻量方案；局域网设备间高速文件传输。</p></div>
+        <div class="recommend-quote">💬 "340 次发布的单文件服务器——copyparty 把 WebDAV + SFTP + FTP + SMB + 媒体索引全塞进一个 Python 文件，零依赖安装，跑遍所有平台。"</div>
+      </div>
+    </div>
+
+    <!-- #5 microsoft/qlib -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/microsoft/qlib" target="_blank">microsoft / qlib</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">AI-oriented Quant investment platform — from exploring ideas to implementing productions. 支持监督学习/RL/市场动态建模，已与 microsoft/RD-Agent 集成实现 LLM 自主 Agent 自动化量化 R&amp;D 全流程。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">41,871</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>6,581</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">quant</span><span class="topic-badge">quantitative-finance</span><span class="topic-badge">machine-learning</span><span class="topic-badge">reinforcement-learning</span><span class="topic-badge">microsoft</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>微软开源的 AI 量化投研平台，面向量化研究从想法探索到生产上线全链路。支持监督学习（因子预测）、市场动态建模、强化学习（订单执行优化）三种 ML 范式，已与 microsoft/RD-Agent 集成，实现 LLM 自主 Agent 自动化完成量化因子研究 R&amp;D 全流程——从假设生成到实验验证。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>三种 ML 范式：监督学习 / 市场动态建模 / RL（订单执行优化）</li>
+          <li>Quant Model Zoo：20+ 论文级模型实现（LightGBM / LSTM / Transformer 等）</li>
+          <li>与 RD-Agent 集成：LLM 自主 Agent 自动化量化因子 R&amp;D 全流程</li>
+          <li>在线服务模式：低成本模型在线部署</li>
+          <li>数据层：Yahoo Finance 自动日频数据更新</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LightGBM</span><span class="tech-tag">PyTorch</span><span class="tech-tag">pandas</span><span class="tech-tag">RL</span><span class="tech-tag">RD-Agent</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>量化因子研究与策略回测；AI 自动化量化研究（配合 RD-Agent）；研究级 RL 订单执行优化。</p></div>
+        <div class="recommend-quote">💬 "微软量化研究基础设施开源——qlib 不是单个模型，而是整个量化 R&amp;D 工作台，配合 RD-Agent 还能让 LLM Agent 自主跑实验。"</div>
+      </div>
+    </div>
+
+    <!-- #6 ruvnet/ruflo -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ruvnet/ruflo" target="_blank">ruvnet / ruflo</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">🌊 The leading agent orchestration platform for Claude. 1,471 次发布，前身 claude-flow，Rust WASM 内核驱动自学习 Agent 架构，跨机器 federation，一次 init 给 Claude Code 一个神经系统。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">37,290</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>4,265</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178c6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">agent-orchestration</span><span class="topic-badge">swarm</span><span class="topic-badge">federation</span><span class="topic-badge">mcp</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>前身为 claude-flow，改名 Ruflo（"Ru"=rUv，"flo"=flow state）。自称"给 Claude Code 一个神经系统"：一次 init 给 agents 接入 Router → Swarm → Agents → Memory → LLM 的自学习/自优化架构，每次任务后主动学习成功模式并跨 session 记忆。Rust WASM 内核驱动策略引擎、嵌入和证明系统。1,471 次发布，Agent federation 支持跨机器安全通信。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>一次 init：自动路由任务、学习模式、协调 agents，无需手动配置</li>
+          <li>自学习架构：Learning Loop 每次任务后优化路由和执行策略</li>
+          <li>Swarm：agents 自组织为 swarm，协同完成复杂任务</li>
+          <li>Federation：跨机器 agent 安全通信（不泄露数据）</li>
+          <li>Rust WASM 内核：策略引擎 + 嵌入 + 证明系统</li>
+          <li>Claude Code 原生插件：/plugin install ruflo-core@ruflo 一键安装</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Rust / WASM</span><span class="tech-tag">MCP</span><span class="tech-tag">Claude Code Plugin</span><span class="tech-tag">npm</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>把 Claude Code 升级为自学习 Agent 协作系统；多 agent swarm 工作流自动化；跨机器 Agent federation 协同。</p></div>
+        <div class="recommend-quote">💬 "1,471 次发布的 Ruflo 是本周更新最激进的 Agent 编排项目——Rust WASM 内核让它从配置层升级为真正的 Agent 神经系统。"</div>
+      </div>
+    </div>
+
+    <!-- #7 ShareX/ShareX -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ShareX/ShareX" target="_blank">ShareX / ShareX</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Free and open-source screen capture, recording, and file sharing tool for Windows. 单键截图/屏幕录制/100+ 上传目标，完全免费无广告，GPL-3.0 开源 14 年，87 次发布。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">36,980</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>3,691</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#178600"></span> C#</span>
+            <span class="meta-item">📄 GPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">screenshot</span><span class="topic-badge">screen-recorder</span><span class="topic-badge">windows</span><span class="topic-badge">file-sharing</span><span class="topic-badge">productivity</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Windows 上最强大的免费开源截图与文件共享工具，开源已 14 年。单键截图、区域选择、滚动截图、屏幕录制（GIF + MP4）、OCR 文字识别，支持 100+ 上传目标（图床/云存储/FTP 等），内置图片注释编辑器、颜色选取、哈希检测等工具。截图后可全自动完成注释→上传→复制链接工作流。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>截图模式：全屏/窗口/区域/滚动截图/延时截图</li>
+          <li>屏幕录制：GIF + 视频（MP4/WebM）</li>
+          <li>100+ 上传目标：imgur / Dropbox / Google Drive / OneDrive / FTP / S3 等</li>
+          <li>内置工具：图片注释/模糊/水印 + OCR + 哈希校验 + 颜色选取</li>
+          <li>工作流自动化：截图后自动注释 → 上传 → 复制链接</li>
+          <li>完全免费，无广告，无会员</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C#</span><span class="tech-tag">.NET</span><span class="tech-tag">Windows</span><span class="tech-tag">FFmpeg</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Windows 日常截图与标注工作流；批量上传图片到多云存储；替代收费截图工具（Snagit 等）。</p></div>
+        <div class="recommend-quote">💬 "14 年、87 次发布、GPL-3.0 纯开源——ShareX 是 Windows 上'全能'截图工具，100+ 上传目标让它成为生产力标配。"</div>
+      </div>
+    </div>
+
+    <!-- #8 Flowseal/zapret-discord-youtube -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Flowseal/zapret-discord-youtube" target="_blank">Flowseal / zapret-discord-youtube</a></div>
+          <div class="project-desc">俄语 Windows DPI 绕过工具，WinDivert 内核层数据包修改，解决 Discord / YouTube 访问受限问题。连续第三日登榜，27k Stars 持续在全语言全球 Trending。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">27,160</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,116</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#C1F12E"></span> Batchfile</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">dpi-bypass</span><span class="topic-badge">discord</span><span class="topic-badge">youtube</span><span class="topic-badge">windows</span><span class="topic-badge">network</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>俄语 Windows 工具，通过 DPI（深度包检测）绕过技术解决 Discord / YouTube 在特定地区访问受限问题。使用 WinDivert 驱动在 Windows 内核层拦截并修改数据包，绕过 ISP 封锁。需配合浏览器 Secure DNS（DoH）使用，Batch 脚本一键启动。39 次发布，42 位贡献者，全俄文 README。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>DPI 绕过：WinDivert 内核层修改数据包，绕过 ISP 封锁</li>
+          <li>支持 Discord（语音聊天）/ YouTube 视频访问</li>
+          <li>需配合浏览器 Secure DNS（DoH）</li>
+          <li>Windows 专用，Batch 脚本一键启动</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Batchfile</span><span class="tech-tag">WinDivert</span><span class="tech-tag">Windows 内核驱动</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>在互联网访问受限地区恢复 Discord / YouTube 正常使用（仅限合法用途）。</p></div>
+        <div class="recommend-quote">💬 "连续第三日上榜——区域性网络自由需求的力量，让全俄文 Batch 脚本持续占据 GitHub 全语言全球 Trending。"</div>
+      </div>
+    </div>
+
+    <!-- #9 soxoj/maigret -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/soxoj/maigret" target="_blank">soxoj / maigret</a></div>
+          <div class="project-desc">🕵️ Collect a dossier on a person by username from 3000+ sites. OSINT 用户名情报收集，关联信息提取 + 标识符分析 + HTML/PDF/JSON 多格式报告，连续第三日上榜。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">23,113</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,625</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">osint</span><span class="topic-badge">username</span><span class="topic-badge">social-media</span><span class="topic-badge">recon</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>OSINT 用户名情报收集工具，通过用户名在 3000+ 网站上搜集完整数字足迹，生成档案报告。不只找账号是否存在，还提取关联个人信息（邮箱、电话、真实姓名等）并分析标识符关联，生成 HTML / PDF / JSON / CSV 格式报告。连续第三日上榜。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>3000+ 网站支持（社交媒体、论坛、专业平台、游戏平台等）</li>
+          <li>提取关联个人信息（邮箱、电话、真实姓名等）</li>
+          <li>多格式报告：HTML / PDF / JSON / CSV</li>
+          <li>标识符关联分析，从一个用户名串联更多账号</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">异步 HTTP</span><span class="tech-tag">OSINT 数据源</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>安全研究与渗透测试；检查个人数字足迹暴露面；OSINT 工具链集成。</p></div>
+        <div class="recommend-quote">💬 "连续第三日上榜，3000+ 站点覆盖——maigret 是用户名 OSINT 的最全面开源工具。"</div>
+      </div>
+    </div>
+
+    <!-- #10 google-research/timesfm -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/google-research/timesfm" target="_blank">google-research / timesfm</a></div>
+          <div class="project-desc">TimesFM — 时序预测基础模型，200M 参数 + 16k 上下文 + LoRA 微调 + Agent SKILL.md，连续第三日上榜，时序基础模型社区关注度持续高涨。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">19,301</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,874</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">time-series</span><span class="topic-badge">forecasting</span><span class="topic-badge">foundation-model</span><span class="topic-badge">google</span><span class="topic-badge">lora</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Google Research 时序预测基础模型 TimesFM 2.5：200M 参数 + 16k 上下文 + 1k 预测步长，连续分位数预测，XReg 协变量支持，LoRA 微调（HuggingFace PEFT），Agent SKILL.md 接入（2026-03 新增）。连续第三日上榜，时序基础模型社区关注度持续。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>200M 参数，16k 上下文，1k 预测步长</li>
+          <li>连续分位数预测（可选 30M 分位数头）</li>
+          <li>XReg 协变量支持，LoRA 微调支持</li>
+          <li>Agent SKILL.md 接入（2026-03 新增）</li>
+          <li>双框架：PyTorch + Flax（Flax 版推理更快）</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">Flax</span><span class="tech-tag">HuggingFace PEFT</span><span class="tech-tag">XReg</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>工业时序预测（能源/金融/零售）；zero-shot 时序预测；LoRA 垂直领域微调定制。</p></div>
+        <div class="recommend-quote">💬 "连续第三日上榜——TimesFM 2.5 的 LoRA + SKILL.md 组合让时序预测基础模型进入了 Agent 可直接接入的时代。"</div>
+      </div>
+    </div>
+
+    <!-- #11 tirth8205/code-review-graph -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/tirth8205/code-review-graph" target="_blank">tirth8205 / code-review-graph</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Local knowledge graph for Claude Code. Builds a persistent map of your codebase so Claude reads only what matters — 6.8× fewer tokens on reviews and up to 49× on daily coding tasks. MCP 接入，23 种语言，Tree-sitter 驱动。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">14,935</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,644</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">mcp</span><span class="topic-badge">code-review</span><span class="topic-badge">knowledge-graph</span><span class="topic-badge">tree-sitter</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Claude Code 专属本地知识图谱工具，用 Tree-sitter 构建代码库结构图，通过 blast-radius 分析只给 Claude Code 传递"受影响文件"上下文，而非整个代码库。经 6 个真实开源项目基准测试：code review 节省 6.8× tokens，日常编码任务节省 49× tokens，2,900 文件项目增量重索引 &lt; 2 秒，23 种语言支持，MCP 接入 Claude Code 原生集成。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>blast-radius 分析：只传递变更影响文件，perfect recall（零漏报）</li>
+          <li>增量更新：git commit / 文件保存触发，&lt; 2 秒完成 2,900 文件重索引</li>
+          <li>23 种语言 + Jupyter notebooks（含多语言 cell 支持）</li>
+          <li>monorepo 支持：27,700+ 文件排除，只读 ~15 文件的精准上下文</li>
+          <li>MCP 接入：Claude Code 原生集成，23 次发布</li>
+          <li>基准验证：6 个真实开源项目，13 次 commits 实测</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Tree-sitter</span><span class="tech-tag">MCP</span><span class="tech-tag">Git hooks</span><span class="tech-tag">SQLite</span><span class="tech-tag">SHA-256</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Claude Code 日常编码 token 节省（大型项目效果尤为显著）；大型 monorepo code review 精准上下文；从工程层面根治 AI 编码 token 浪费。</p></div>
+        <div class="recommend-quote">💬 "code-review-graph 是今日榜单工程深度最扎实的工具——49× token 节省是 6 个真实项目基准测试的实测结果，不是营销数字。"</div>
+      </div>
+    </div>
+
+    <!-- #12 HKUDS/AI-Trader -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/HKUDS/AI-Trader" target="_blank">HKUDS / AI-Trader</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">"AI-Trader: 100% Fully-Automated Agent-Native Trading". 香港大学开源，agent 一条指令接入平台，Collective Intelligence 多 agent 辩论决策，跨经纪商信号同步，全市场支持。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">13,903</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,366</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">trading</span><span class="topic-badge">agent-native</span><span class="topic-badge">llm</span><span class="topic-badge">automated-trading</span><span class="topic-badge">multi-agent</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>100% 全自动 Agent 原生交易平台，来自香港大学数据科学院（HKUDS）。AI agent 通过一条指令接入平台（读取 ai4trade.ai/skill/ai4trade 自动注册），即可发布交易信号、参与 collective intelligence 辩论、一键 copy trade 跟随顶级交易者、跨多经纪商同步信号。支持股票/加密货币/外汇/期权/期货全市场。2026-04-10 生产稳定性更新：FastAPI 独立进程 + 后台 worker 分离。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Agent 一指令接入：发送一条消息，agent 自动读取 SKILL.md 并注册平台</li>
+          <li>Collective Intelligence Trading：agents 协作辩论推选最优交易想法</li>
+          <li>跨经纪商信号同步：自有经纪商 + 同步到其他平台</li>
+          <li>一键 Copy Trade：实时跟随顶级交易者</li>
+          <li>全市场：股票/加密/外汇/期权/期货</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Agent SKILL.md</span><span class="tech-tag">多经纪商 API</span><span class="tech-tag">WebSocket</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI Agent 自主交易信号发布与跟单；多 agent 协作金融决策研究；全自动量化策略执行（非个人投资建议）。</p></div>
+        <div class="recommend-quote">💬 "金融 AI 三路并进之'执行层'——AI-Trader 用 SKILL.md 一条指令让任意 AI agent 加入全自动交易平台，Copy Trade 实时跟单。"</div>
+      </div>
+    </div>
+
+  </div><!-- end section Top 12 -->
+
+  <div class="section">
+    <div class="section-title"><span>💻</span> 语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:66.7%;background:#3572A5"></div></div>
+        <div class="lang-count">8 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#3178c6"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">C#</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#178600"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Batchfile</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#C1F12E"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#083FA1"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="insight-box">
+      <div class="trending-item">
+        <div class="trending-num">01</div>
+        <div>
+          <a href="https://github.com/Q00/ouroboros" target="_blank"><strong>Q00 / ouroboros</strong></a> ⭐ 3,128
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Agent OS：规格优先工作流运行时，把"临时 prompting"替换为"面谈 → 结晶 → 执行 → 评估 → 演化"完整循环。支持 Claude Code / Codex CLI / OpenCode / Hermes，76 次发布，MCP 原生接入。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">02</div>
+        <div>
+          <a href="https://github.com/browserbase/skills" target="_blank"><strong>browserbase / skills</strong></a> ⭐ 1,612
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">从昨日 Explore 升入今日通用 Trending，为 Claude Code 提供完整浏览器自动化能力（browser / fetch / search / ui-test / cookie-sync），标志浏览器控制工具进入 Agent Skills 标准配置，npx skills add 一键安装。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">03</div>
+        <div>
+          <a href="https://github.com/1jehuang/jcode" target="_blank"><strong>1jehuang / jcode</strong></a> ⭐ 3,058
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">仍在通用 Trending，Swarm 并发子 agent + OAuth 多 Provider + 浏览器自动化，下一代 Coding Agent Harness，51 次发布，持续快速迭代中。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">04</div>
+        <div>
+          <a href="https://github.com/simstudioai/sim" target="_blank"><strong>simstudioai / sim</strong></a> ⭐ 28,243
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">从昨日 Top 6 退出，但 261 次发布的可视化 Agent 编排平台仍值得持续关注，ReactFlow 画布 + E2B 沙箱 + Trigger.dev，云托管 sim.ai 与本地 npx 并行。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">05</div>
+        <div>
+          <a href="https://github.com/nikopueringer/CorridorKey" target="_blank"><strong>nikopueringer / CorridorKey</strong></a> ⭐ 12,778
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">从昨日 Top 10 退出，Corridor Crew 出品的 AI 绿幕/蓝幕抠像工具，物理精确颜色分离 + 线性 alpha，VFX 标准 16/32-bit EXR 输出，支持 NVIDIA CUDA / AMD ROCm / Apple Silicon MPS。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📊 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/trending/python?since=daily" target="_blank">Python Trending</a></p>
+    <p style="margin-top:8px;">生成时间：2026-05-03 · 仅供参考，不构成投资或法律建议</p>
+  </div>
+
+</div>
+
+<script>
+function toggleDetail(btn) {
+  var details = btn.nextElementSibling;
+  if (details.classList.contains('open')) {
+    details.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    details.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+}
+</script>
+</body>
+</html>

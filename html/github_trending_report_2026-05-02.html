@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-02</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px #58a6ff22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-card.new-card { border: 1.5px solid var(--green); }
+  .project-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .new-badge { background: #0f2d13; border: 1px solid var(--green); color: var(--green); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-05-02 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">498k+</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">5</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">7</div><div class="stat-label">今日新上榜</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🛠️ 三大 AI 编程平台 Skills 生态同日在场</div>
+        <p>obra/superpowers（176k）代表"方法论层"：TDD + Subagent-Driven Dev，支持 Claude Code / Codex / Cursor / Gemini CLI。mattpocock/skills（53k）代表"TypeScript 工程师真实日常层"。github/awesome-copilot（32k）代表"平台官方维护层"：GitHub 官方直接维护 instructions / agents / skills / plugins / hooks / agentic workflows，并内置到 Copilot CLI 的 marketplace，一条命令安装 `copilot plugin install &lt;name&gt;@awesome-copilot`。三个项目同日在场，Claude Code / Codex / GitHub Copilot 的 Skills 生态正同步走向"基础设施化"。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🤖 Sim 以 261 次发布首次登榜，Agent 编排进入高速工程化</div>
+        <p>simstudioai/sim（28k）是可视化 AI Agent 编排平台：画布拖拽连接 agents/tools/blocks + Copilot 自然语言辅助 + 向量数据库集成。Tech Stack 极度现代化：Next.js + Bun + Drizzle ORM + ReactFlow + Socket.io + Trigger.dev + E2B（沙箱代码执行）。261 次发布说明已进入高速迭代，是目前开源 Agent 编排平台中最活跃项目之一。云托管（sim.ai）与本地（npx simstudio）并行。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🌐 Flowseal/zapret 以 27k Stars 进入全语言 Trending，区域性互联网自由工具全球化</div>
+        <p>Flowseal/zapret-discord-youtube（27k）是俄语 Windows 工具，通过 DPI 绕过技术解决 Discord / YouTube 在特定地区访问受限问题，使用 WinDivert 在内核层修改数据包。39 次发布，42 位贡献者，全俄文 README。27k 规模让它登上全语言全球 Trending，是区域性网络自由工具全球化的最新代表。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🔬 TRELLIS + TimesFM 标志大模型范式渗透至传统专用模型领域</div>
+        <p>microsoft/TRELLIS（CVPR'25 Spotlight，12k）将文/图 → 3D 统一到"结构化 3D 潜变量"空间，支持 Radiance Fields / 3D Gaussians / Mesh 三种输出格式。google-research/timesfm（19k）时序基础模型 2.5：200M 参数 + 16k 上下文 + LoRA 微调 + Agent SKILL.md 接入支持。两个项目共同标志"大模型统一预训练范式"正在颠覆传统上由专用手工模型主导的 3D 生成和时序预测两个领域。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 obra/superpowers -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/obra/superpowers" target="_blank">obra / superpowers</a></div>
+          <div class="project-desc">An agentic skills framework &amp; software development methodology that works. TDD + Subagent-Driven Development 全流程自动触发，让 coding agent 真正可以无干预连续自主工作数小时。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">175,987</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>15,565</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#89e051"></span> Shell</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent-skills</span><span class="topic-badge">claude-code</span><span class="topic-badge">codex</span><span class="topic-badge">tdd</span><span class="topic-badge">subagent</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Superpowers 不只是 skills 合集，而是一套完整的 Agentic 软件开发方法论。当你启动 coding agent，它先把"真正想做什么"从对话提炼成规格说明，逐段确认后生成足够清晰的实现计划，再启动 subagent-driven development 流程——多个子 agent 依次完成任务并互相 inspect 和 review，Claude 通常可以无干预连续自主工作数小时而不偏离计划。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>自动触发：skill 在你开始构建时自动介入，无需手动激活</li>
+          <li>test-driven-development：RED-GREEN-REFACTOR 完整循环 + 测试反模式参考</li>
+          <li>systematic-debugging：4 阶段根因分析（根因追踪 + 纵深防御 + 条件等待）</li>
+          <li>subagent-driven-development：两阶段 review（规格合规 + 代码质量）</li>
+          <li>跨平台：Claude Code 官方 Marketplace / Codex CLI / Cursor / OpenCode / Gemini CLI</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Shell</span><span class="tech-tag">Markdown</span><span class="tech-tag">Claude Code SKILL</span><span class="tech-tag">Subagent 协调</span><span class="tech-tag">TDD</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>需要 AI agent 长时间自主完成复杂工程任务；将 TDD、YAGNI、DRY 内置到 Agent 工作流；多平台统一 Agent Skills 管理。</p></div>
+        <div class="recommend-quote">💬 "不是 Skills 合集，而是方法论。176k Stars 背后是：让 agent 真正可以自主工作几小时而不偏离方向。"</div>
+      </div>
+    </div>
+
+    <!-- #2 TauricResearch/TradingAgents -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/TauricResearch/TradingAgents" target="_blank">TauricResearch / TradingAgents</a></div>
+          <div class="project-desc">TradingAgents: Multi-Agents LLM Financial Trading Framework. 四路分析师 + 多头空头辩论 + 交易 Agent + 风控组合经理，v0.2.4 支持 DeepSeek/Qwen/GLM/Azure + LangGraph checkpoint resume。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">60,475</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>11,656</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm</span><span class="topic-badge">multi-agent</span><span class="topic-badge">trading</span><span class="topic-badge">finance</span><span class="topic-badge">langgraph</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>模拟真实交易公司架构的多 Agent LLM 金融交易框架：四路分析师（基本面/情绪/新闻/技术）+ 多头空头研究员对抗辩论 + 交易 Agent + 风险管理与组合经理。v0.2.4 新增 structured-output agents、LangGraph checkpoint 断点续跑、持久化决策日志，支持 DeepSeek/Qwen/GLM/Azure。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Analyst Team：基本面（估值/财务）/ 情绪（社交媒体）/ 新闻（宏观事件）/ 技术（MACD/RSI）</li>
+          <li>Researcher Team：多头/空头结构化辩论，平衡收益与风险</li>
+          <li>Trader Agent：综合所有报告决策交易时机和规模</li>
+          <li>Risk Management：Portfolio Manager 审批/拒绝交易提案</li>
+          <li>多 LLM Provider：DeepSeek / Qwen / GLM / Azure / GPT / Claude / Gemini</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">DeepSeek</span><span class="tech-tag">Qwen</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>LLM 量化研究与策略回测；多 Agent 协作决策研究；金融 AI Agent 原型构建（非投资建议）。</p></div>
+        <div class="recommend-quote">💬 "分析师、研究员、交易员、风控全班人马到齐——LLM 量化仿真的最完整框架之一。"</div>
+      </div>
+    </div>
+
+    <!-- #3 mattpocock/skills -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/mattpocock/skills" target="_blank">mattpocock / skills</a></div>
+          <div class="project-desc">Skills for Real Engineers. Straight from my .claude directory. TypeScript 专家 Matt Pocock 日常真实使用的 AI 编程工作流技能合集，一键安装即可使用。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">53,426</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>4,496</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178c6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent-skills</span><span class="topic-badge">claude-code</span><span class="topic-badge">typescript</span><span class="topic-badge">real-engineers</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>TypeScript 专家 Matt Pocock 把自己日常工作中真实使用的 .claude 目录直接开源。这不是为了展示而写的 demo，而是经过真实生产环境检验的 AI 编程工作流指令集，涵盖 TypeScript 开发核心场景：类型设计、重构、测试等。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>真实性：直接来自 Matt 个人 .claude 目录，非演示项目</li>
+          <li>覆盖 TypeScript 工程师日常核心场景（类型/重构/测试）</li>
+          <li>npx 一键安装，即装即用</li>
+          <li>简洁高效，只保留真正有效的工作流</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Claude Code SKILL</span><span class="tech-tag">npx</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>TypeScript 工程师日常 AI 辅助开发；参考真实工程师如何设计 Agent 工作流；快速提升 Claude Code 使用效率。</p></div>
+        <div class="recommend-quote">💬 "Matt Pocock 是 TypeScript 社区标杆，他真实用的 skills 值得每个 TS 开发者看一遍。"</div>
+      </div>
+    </div>
+
+    <!-- #4 warpdotdev/warp -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/warpdotdev/warp" target="_blank">warpdotdev / warp</a></div>
+          <div class="project-desc">Warp is an agentic development environment, born out of the terminal. 开源，OpenAI 为创始赞助商，支持 Claude Code / Codex / Gemini CLI，build.warp.dev 提供数千 Agent 实时施工看板。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">51,977</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>3,526</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#dea584"></span> Rust</span>
+            <span class="meta-item">📄 AGPL-3.0 / MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">terminal</span><span class="topic-badge">agent</span><span class="topic-badge">rust</span><span class="topic-badge">openai</span><span class="topic-badge">open-source</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Warp 已正式开源，从"专有 AI 终端"升级为"开源 Agentic 开发环境"。OpenAI 是创始赞助商，新的 agentic 管理工作流由 GPT 模型驱动。UI 框架（warpui_core + warpui crate）采用 MIT 许可，核心业务逻辑采用 AGPL-3.0。支持接入 Claude Code、Codex、Gemini CLI 等任意外部 agent。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>build.warp.dev：实时查看数千 Oz Agent 处理 issues / 写规格 / 实现 / review PRs 的过程</li>
+          <li>UI 框架开源：warpui_core + warpui（MIT），可二次开发</li>
+          <li>多外部 Agent 接入：Claude Code / Codex CLI / Gemini CLI</li>
+          <li>AGPL-3.0 + MIT 双许可</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Rust</span><span class="tech-tag">TypeScript</span><span class="tech-tag">Diesel ORM</span><span class="tech-tag">AGPL-3.0</span><span class="tech-tag">MIT</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>把 AI agent 工作流集成进终端；在开源基础上定制 Agent 开发环境；团队共享 Agent 操作可视化看板。</p></div>
+        <div class="recommend-quote">💬 "Warp 开源不只是代码可见，而是把'AI Agent 在做什么'变成了公开可见的仪表盘。"</div>
+      </div>
+    </div>
+
+    <!-- #5 github/awesome-copilot -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/github/awesome-copilot" target="_blank">github / awesome-copilot</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Community-contributed instructions, agents, skills, and configurations for GitHub Copilot. GitHub 官方维护社区扩展合集，内置 Copilot CLI marketplace，六大类目一键安装。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">31,943</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>3,866</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083FA1"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">copilot</span><span class="topic-badge">agent-skills</span><span class="topic-badge">instructions</span><span class="topic-badge">plugins</span><span class="topic-badge">hooks</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>GitHub 官方维护的社区贡献 Copilot 扩展合集，涵盖 instructions / agents / skills / plugins / hooks / agentic workflows 六大类目。内置到 Copilot CLI 的 marketplace，一条命令安装：<code>copilot plugin install &lt;name&gt;@awesome-copilot</code>。配套 Learning Hub（awesome-copilot.github.com/learning-hub）提供从核心概念到上手指南的完整文档。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>GitHub 官方维护，可信度高于社区散装合集</li>
+          <li>六大类目：Agents / Instructions / Skills / Plugins / Hooks / Agentic Workflows</li>
+          <li>内置 Copilot CLI marketplace：copilot plugin install 直接安装</li>
+          <li>Learning Hub：agents / skills / MCP servers / agentic workflows 全链路文档</li>
+          <li>配套网站：awesome-copilot.github.com</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">Copilot CLI</span><span class="tech-tag">MCP</span><span class="tech-tag">GitHub Actions</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>GitHub Copilot 用户快速接入社区扩展；了解 Copilot agent 生态全貌；参考官方维护的 Skill 组织方式。</p></div>
+        <div class="recommend-quote">💬 "GitHub 官方直接下场维护，awesome-copilot 是 Copilot 生态的'官方应用市场'——质量和可信度远超社区散装合集。"</div>
+      </div>
+    </div>
+
+    <!-- #6 simstudioai/sim -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/simstudioai/sim" target="_blank">simstudioai / sim</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Build, deploy, and orchestrate AI agents. 可视化画布 + Copilot 自然语言辅助 + 向量数据库集成，261 次发布，Next.js + Bun + ReactFlow + E2B 沙箱完整 Agent 编排平台。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">28,243</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>3,562</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178c6"></span> TypeScript</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent</span><span class="topic-badge">orchestration</span><span class="topic-badge">visual-canvas</span><span class="topic-badge">next.js</span><span class="topic-badge">bun</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>可视化 AI Agent 编排平台，定位为"AI 劳动力的中央智能层"。在可视化画布上设计 agent 工作流（拖拽连接 agents / tools / blocks），Copilot 支持用自然语言生成节点和修复错误，向量数据库集成让 agent 能基于你上传的内容回答问题。261 次发布节奏极快，云托管与本地 npx 双轨并行。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>可视化画布：拖拽设计工作流，连接 agents / tools / blocks，即时运行</li>
+          <li>Copilot 辅助：自然语言生成节点、修复错误、迭代流程</li>
+          <li>向量数据库集成：上传文档，agent 基于内容问答</li>
+          <li>支持 Ollama / vLLM 本地模型自托管</li>
+          <li>云托管（sim.ai）+ 本地（npx simstudio / Docker Compose）</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Next.js</span><span class="tech-tag">Bun</span><span class="tech-tag">Drizzle ORM</span><span class="tech-tag">ReactFlow</span><span class="tech-tag">Socket.io</span><span class="tech-tag">Trigger.dev</span><span class="tech-tag">E2B</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>构建并部署 AI Agent 工作流；低代码/无代码 Agent 编排；团队级 AI Agent 操作化与监控。</p></div>
+        <div class="recommend-quote">💬 "261 次发布的 Sim 把'可视化编排 AI agents'做成了生产级工具——ReactFlow 画布 + E2B 沙箱是开源 Agent 平台里最完整的工程架构之一。"</div>
+      </div>
+    </div>
+
+    <!-- #7 Flowseal/zapret-discord-youtube -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Flowseal/zapret-discord-youtube" target="_blank">Flowseal / zapret-discord-youtube</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">俄语 Windows DPI 绕过工具，解决 Discord / YouTube 访问受限问题。WinDivert 内核层数据包修改，39 次发布，42 位贡献者，27k Stars 登上全语言全球 Trending。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">27,005</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,109</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#C1F12E"></span> Batchfile</span>
+            <span class="meta-item">📄 未明确</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">dpi-bypass</span><span class="topic-badge">discord</span><span class="topic-badge">youtube</span><span class="topic-badge">windows</span><span class="topic-badge">network</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>俄语 Windows 工具，通过 DPI（深度包检测）绕过技术解决 Discord / YouTube 在特定地区（主要是俄罗斯）访问受限问题。使用 WinDivert 驱动在 Windows 内核层拦截并修改数据包，绕过 ISP 的流量检测与封锁。使用前需在浏览器中启用 Secure DNS（DoH）配合使用，操作步骤详见 README（俄文）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>DPI 绕过：WinDivert 在内核层修改数据包，绕过 ISP 封锁</li>
+          <li>支持 Discord（包括语音聊天）/ YouTube 正常访问</li>
+          <li>需配合浏览器 Secure DNS（DoH）使用</li>
+          <li>Windows 专用，Batch 脚本一键启动/卸载</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Batchfile</span><span class="tech-tag">WinDivert</span><span class="tech-tag">Windows 内核驱动</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>在互联网访问受限地区恢复 Discord / YouTube 正常使用；了解 DPI 绕过技术原理（仅限合法用途）。</p></div>
+        <div class="recommend-quote">💬 "27k Stars 的 Batch 脚本——网络自由需求的力量，让一个全俄文 README 的项目登上了 GitHub 全语言全球 Trending。"</div>
+      </div>
+    </div>
+
+    <!-- #8 soxoj/maigret -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/soxoj/maigret" target="_blank">soxoj / maigret</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">🕵️ Collect a dossier on a person by username from 3000+ sites. OSINT 用户名情报收集工具，提取关联个人信息，生成 HTML/PDF/JSON 报告，3000+ 站点覆盖。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">21,968</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,548</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">osint</span><span class="topic-badge">username</span><span class="topic-badge">social-media</span><span class="topic-badge">recon</span><span class="topic-badge">dossier</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>OSINT 用户名情报收集工具，通过用户名在 3000+ 网站上搜集完整数字足迹，生成关于某人的档案报告。相比只查找账号是否存在，maigret 还会提取关联个人信息（邮箱、电话、真实姓名等）并分析标识符关联，是目前最全面的开源用户名 OSINT 工具之一。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>3000+ 网站支持：社交媒体、论坛、专业平台、游戏平台等全覆盖</li>
+          <li>提取关联个人信息（邮箱、电话、真实姓名等）</li>
+          <li>生成 HTML / PDF / JSON / CSV 格式报告</li>
+          <li>标识符关联分析，从一个用户名串联更多账号</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">异步 HTTP</span><span class="tech-tag">OSINT 数据源</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>安全研究与渗透测试；数字足迹审查（检查自己的暴露面）；OSINT 学习与工具链集成。</p></div>
+        <div class="recommend-quote">💬 "Sherlock 的进化版——maigret 不只找账号，还分析关联，3000+ 站点覆盖让它成为用户名 OSINT 的首选工具。"</div>
+      </div>
+    </div>
+
+    <!-- #9 google-research/timesfm -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/google-research/timesfm" target="_blank">google-research / timesfm</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">TimesFM — Google Research 时序预测基础模型。200M 参数 + 16k 上下文 + LoRA 微调 + Agent SKILL.md 支持，2.5 版本已完全覆盖 zero-shot 到专有领域微调全链路。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">19,241</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,861</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">time-series</span><span class="topic-badge">forecasting</span><span class="topic-badge">foundation-model</span><span class="topic-badge">google</span><span class="topic-badge">lora</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Google Research 开发的时序预测基础模型。TimesFM 2.5 使用 200M 参数，支持最长 16k 上下文和 1k 预测步长。2026 年 4 月新增 LoRA 微调示例（HuggingFace Transformers + PEFT），2026 年 3 月新增 Agent SKILL.md 支持，XReg 协变量支持让外部变量可以参与预测。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>200M 参数基础模型，16k 上下文、1k 预测步长</li>
+          <li>连续分位数预测（可选 30M 分位数头）</li>
+          <li>XReg 协变量支持（外部变量参与预测）</li>
+          <li>LoRA 微调：HuggingFace Transformers + PEFT</li>
+          <li>Agent 接入：SKILL.md 已发布（2026-03）</li>
+          <li>双框架：PyTorch + Flax（Flax 版推理更快）</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">Flax</span><span class="tech-tag">HuggingFace Transformers</span><span class="tech-tag">PEFT / LoRA</span><span class="tech-tag">XReg</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>工业时序预测（能源 / 金融 / 零售需求）；无需从头训练的 zero-shot 时序预测；垂直领域 LoRA 微调定制；通过 SKILL.md 直接接入 Agent 工作流。</p></div>
+        <div class="recommend-quote">💬 "TimesFM 给时序预测装上了'基础模型引擎'——zero-shot 就能用，LoRA 随时微调，还能通过 SKILL.md 直接接入 Agent 工作流。"</div>
+      </div>
+    </div>
+
+    <!-- #10 nikopueringer/CorridorKey -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/nikopueringer/CorridorKey" target="_blank">nikopueringer / CorridorKey</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Perfect Green Screen Keys. Corridor Crew 出品的 AI 精准绿幕/蓝幕抠像工具，物理精确颜色分离 + 线性 alpha，4K + 16/32-bit EXR 输出，Nuke / Fusion / Resolve 标准格式。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">12,778</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>757</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT（分段）</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">green-screen</span><span class="topic-badge">vfx</span><span class="topic-badge">chroma-key</span><span class="topic-badge">compositing</span><span class="topic-badge">ai-video</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>AI 精准绿幕/蓝幕抠像工具，由 Corridor Crew（知名 VFX YouTube 频道）开发。物理精确的颜色分离 + 线性 alpha 通道提取，保留头发、运动模糊和半透明细节。支持 4K 分辨率推理，输出 VFX 标准的 16/32-bit 线性浮点 EXR，可直接导入 Nuke / Fusion / DaVinci Resolve。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>物理精确分离：保留头发、运动模糊、半透明度的直色前景 + 线性 alpha</li>
+          <li>绿/蓝幕：自动检测屏幕颜色（--screen-color auto）或手动指定</li>
+          <li>分辨率无关：动态缩放处理 4K 素材（2048x2048 高保真骨干）</li>
+          <li>VFX 标准输出：16/32-bit 线性浮点 EXR（Nuke / Fusion / Resolve 兼容）</li>
+          <li>跨平台：NVIDIA CUDA 12.8+ / AMD ROCm / Apple Silicon MPS / MLX</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">CUDA 12.8</span><span class="tech-tag">ROCm</span><span class="tech-tag">Apple MPS</span><span class="tech-tag">EXR</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>专业 VFX 合成工作流（Nuke / Fusion / Resolve）；AI 辅助绿幕内容制作；独立影片制作者替代商业抠像软件。</p></div>
+        <div class="recommend-quote">💬 "Corridor Crew 出品，CorridorKey 把专业 VFX 绿幕抠像变成开源工具——保留头发和运动模糊的物理精确分离，让每个人都能做 Hollywood 级别的合成。"</div>
+      </div>
+    </div>
+
+    <!-- #11 microsoft/TRELLIS -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/microsoft/TRELLIS" target="_blank">microsoft / TRELLIS</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Structured 3D Latents for Scalable and Versatile 3D Generation（CVPR'25 Spotlight）. 统一结构化潜变量空间，一次生成同时输出 Radiance Fields / 3D Gaussians / Mesh 三种格式。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">12,407</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,176</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">3d-generation</span><span class="topic-badge">structured-latents</span><span class="topic-badge">gaussian-splatting</span><span class="topic-badge">mesh</span><span class="topic-badge">cvpr25</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>微软研究院开源的 3D 生成基础模型，CVPR'25 Spotlight 论文代码。将文本/图像 → 3D 生成统一到"结构化 3D 潜变量"空间（SLAT），支持从同一潜变量生成 Radiance Fields / 3D Gaussians / Mesh 三种输出格式，无需为不同下游任务重新生成。支持同一物体的多种外观变体生成和局部编辑。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>统一结构化潜变量（SLAT）：一次生成，多种格式输出</li>
+          <li>三种输出：Radiance Fields / 3D Gaussians / Mesh，可自由选择</li>
+          <li>文本/图像条件：text-to-3D 和 image-to-3D</li>
+          <li>对象变体生成：同一物体多种外观变体（example_variant.py）</li>
+          <li>局部编辑：对已生成 3D 资产进行局部修改</li>
+          <li>Gradio web demo 可本地运行（app_text.py）</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">Radiance Fields</span><span class="tech-tag">3D Gaussians</span><span class="tech-tag">Gradio</span><span class="tech-tag">TRELLIS-500K</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>游戏/影视资产快速 3D 生成；从参考图像生成 3D 模型；3D 内容生成研究与学术实验。</p></div>
+        <div class="recommend-quote">💬 "TRELLIS 把'3D 生成'和'大模型统一潜变量'合到了一起——CVPR'25 Spotlight 不只是荣誉，而是一套真正可用的生成工程框架。"</div>
+      </div>
+    </div>
+
+    <!-- #12 1jehuang/jcode -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/1jehuang/jcode" target="_blank">1jehuang / jcode</a></div>
+          <div class="project-desc">The next generation coding agent harness to raise the skill ceiling. 多会话工作流 + Swarm 并发子 agent + OAuth 多 Provider + 浏览器自动化，51 次发布高迭代速度 agent 框架。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">2,502</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>224</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178c6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">coding-agent</span><span class="topic-badge">multi-session</span><span class="topic-badge">swarm</span><span class="topic-badge">oauth</span><span class="topic-badge">browser-automation</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>下一代 Coding Agent Harness，专注多会话工作流、极致可定制化和高性能。支持 Swarm 模式（并发子 agent 协同）、OAuth 多 Provider 内置登录流、自托管端点与 MCP 配置、浏览器自动化集成。51 次发布，迭代速度极快，面向高级工程师的 Agent 框架工具。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Multi-Session：并发多会话管理，提升 agent 工作密度</li>
+          <li>Swarm 模式：并发子 agent 协同，分布式任务执行</li>
+          <li>OAuth 多 Provider：内置登录流，支持自托管端点和 MCP</li>
+          <li>浏览器自动化集成，扩展 agent 操作面</li>
+          <li>高性能：Time to first frame / first input 极低延迟</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">OAuth</span><span class="tech-tag">MCP</span><span class="tech-tag">Swarm</span><span class="tech-tag">Browser Automation</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>多 session / 多 agent 并发工作场景；高定制化 coding agent 工具链构建；Agent 框架研究与集成。</p></div>
+        <div class="recommend-quote">💬 "51 次发布的高迭代速度 + Swarm 并发模式，jcode 正在快速成长为面向高级工程师的 agent 框架工具。"</div>
+      </div>
+    </div>
+
+  </div><!-- end section Top 12 -->
+
+  <div class="section">
+    <div class="section-title"><span>💻</span> 语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:41.7%;background:#3572A5"></div></div>
+        <div class="lang-count">5 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:25%;background:#3178c6"></div></div>
+        <div class="lang-count">3 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown/Shell</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:16.7%;background:#083FA1"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Rust</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#dea584"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Batchfile</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#C1F12E"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="insight-box">
+      <div class="trending-list">
+        <div class="trending-item">
+          <div class="trending-num">01</div>
+          <div>
+            <a href="https://github.com/Lightricks/LTX-2" target="_blank"><strong>Lightricks / LTX-2</strong></a> ⭐ 6,257
+            <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">首个 DiT 音视频基础模型，同时生成同步音视频，8 种生成 Pipeline（A2V / HDR / LoRA / 关键帧插值 / Retake），19B 参数，ComfyUI 集成就绪。</p>
+          </div>
+        </div>
+        <div class="trending-item">
+          <div class="trending-num">02</div>
+          <div>
+            <a href="https://github.com/NVlabs/GR00T-WholeBodyControl" target="_blank"><strong>NVlabs / GR00T-WholeBodyControl</strong></a> ⭐ 1,798
+            <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">NVIDIA 人形机器人全身控制平台，本周新增 MotionBricks 预览（交互式 G1 demo + 142K+ 人体动作数据集 BONES-SEED），支持 VR 全身遥操作，SONIC 训练代码已开源。</p>
+          </div>
+        </div>
+        <div class="trending-item">
+          <div class="trending-num">03</div>
+          <div>
+            <a href="https://github.com/hugohe3/ppt-master" target="_blank"><strong>hugohe3 / ppt-master</strong></a> ⭐ 10,559
+            <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">AI 从任意文档生成原生可编辑 PPTX，使用真实 PowerPoint 形状 + 原生动画而非图片嵌入，是办公场景 AI 自动化的代表方向。</p>
+          </div>
+        </div>
+        <div class="trending-item">
+          <div class="trending-num">04</div>
+          <div>
+            <a href="https://github.com/AIDC-AI/Pixelle-Video" target="_blank"><strong>AIDC-AI / Pixelle-Video</strong></a> ⭐ 8,826
+            <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">AI 全自动短视频引擎，基于 ComfyUI 流水线，脚本 → 图像 → 语音全自动生成，适合内容批量生产，无需手动介入。</p>
+          </div>
+        </div>
+        <div class="trending-item">
+          <div class="trending-num">05</div>
+          <div>
+            <a href="https://github.com/browserbase/skills" target="_blank"><strong>browserbase / skills</strong></a> ⭐ 1,273
+            <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">为 Claude Code 提供完整浏览器自动化能力（browser / fetch / search / ui-test / browser-trace / cookie-sync），让 Claude Code 具备真正的"眼睛"，npx skills add 一键安装。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📊 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/trending/python?since=daily" target="_blank">Python Trending</a></p>
+    <p style="margin-top:8px;">生成时间：2026-05-02 · 仅供参考，不构成投资或法律建议</p>
+  </div>
+
+</div>
+
+<script>
+function toggleDetail(btn) {
+  var details = btn.nextElementSibling;
+  if (details.classList.contains('open')) {
+    details.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    details.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+}
+</script>
+</body>
+</html>

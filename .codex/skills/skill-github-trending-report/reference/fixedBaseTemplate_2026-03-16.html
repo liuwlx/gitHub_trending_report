@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-03-16</title>
+<style>
+  :root {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --surface2: #21262D;
+    --border: #30363D;
+    --text: #C9D1D9;
+    --text-muted: #8B949E;
+    --blue: #58A6FF;
+    --green: #3FB950;
+    --orange: #D29922;
+    --purple: #BC8CFF;
+    --red: #F85149;
+    --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Layout */
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Header */
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+
+  /* Theme Toggle */
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+
+  /* Stats Cards */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+
+  /* Section */
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title span { font-size: 20px; }
+
+  /* Project Cards */
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue)22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .meta-item .icon { font-size: 14px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .forks { color: var(--text-muted); }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+  /* Topics */
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+
+  /* Expandable Details */
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .info-item { background: var(--surface2); border-radius: 6px; padding: 8px 12px; }
+  .info-item .info-key { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-item .info-val { font-size: 13px; color: var(--text); font-weight: 500; margin-top: 2px; }
+
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+
+  /* Language Chart */
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+
+  /* Insight */
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-box .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-box .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-box .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+
+  /* Trending List (compact) */
+  .trending-list { }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+
+  /* Light theme */
+  body.light {
+    --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE;
+    --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37;
+  }
+
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .project-header { flex-direction: column; }
+    .info-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-03-16 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-num">12</div>
+      <div class="stat-label">Trending 项目</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🌟</div>
+      <div class="stat-num">270k+</div>
+      <div class="stat-label">今日累计 Stars</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💻</div>
+      <div class="stat-num">5</div>
+      <div class="stat-label">编程语言</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🤖</div>
+      <div class="stat-num">10</div>
+      <div class="stat-label">AI 相关项目</div>
+    </div>
+  </div>
+
+  <!-- 今日洞察 -->
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🤖 Claude Code 生态全面爆发</div>
+        <p>今日 Trending 中至少有 5 个项目直接围绕 Claude Code 构建生态：claude-mem（持久记忆）、superpowers（技能框架）、learn-claude-code（教程）、claudian（Obsidian 插件）、shareAI-lab 的 nano agent 实现。Anthropic 的 Claude Code 正在成为继 VS Code 之后最受开发者关注的 AI 编程工具平台。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📦 Agent 上下文管理成为核心战场</div>
+        <p>OpenViking（字节跳动）和 claude-mem 均聚焦于 AI Agent 的上下文/记忆管理问题。前者采用文件系统范式统一管理 memory/resources/skills，后者专注 Claude Code 跨会话记忆压缩。"如何让 Agent 记住更多、更准"成为 2026 年 AI 工程化的核心命题。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">⚡ Zig 语言突围：lightpanda/browser 技术突破</div>
+        <p>Lightpanda 用 Zig 重写了无头浏览器，内存占用仅为 Chrome 的 1/9，速度提升 11 倍，正在成为 AI Agent 爬取/自动化场景的最优解。Zig 在高性能系统软件领域持续扩张影响力。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🧬 LLM 解除限制工具引发关注</div>
+        <p>p-e-w/heretic 凭借"全自动 LLM 去对齐"方案获得 15k stars，采用方向消融（directional ablation）+TPE 参数优化器，无需重新训练即可去除模型安全限制。该领域的自动化工具化趋势值得关注。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔥 今日最热 Top 12 (按 stars 排序) -->
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 obra/superpowers -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/obra/superpowers" target="_blank">obra / superpowers</a></div>
+          <div class="project-desc">An agentic skills framework &amp; software development methodology that works. 为 AI 编程助手构建的完整开发工作流框架。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">87.3k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">6.9k</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#89E051"></span> Markdown/Shell</span>
+            <span class="meta-item">📄 MIT License</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agentic-workflow</span>
+            <span class="topic-badge">skills-framework</span>
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">cursor</span>
+            <span class="topic-badge">gemini-cli</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Superpowers 是一套为 AI 编程代理构建的完整软件开发工作流，基于一组可组合的"技能（skills）"和初始指令构建。支持 Claude Code、Cursor、Codex、OpenCode、Gemini CLI 等主流 AI 编程工具。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>可组合技能库：覆盖 TDD、调试、代码审查、并行 Agent、Git 管理等全开发生命周期</li>
+            <li>支持多 AI 平台：Claude Code 官方市场、Cursor、Codex、OpenCode、Gemini CLI</li>
+            <li>测试驱动开发技能（RED-GREEN-REFACTOR 循环）+ 反模式参考手册</li>
+            <li>系统调试 4 阶段根因分析流程（systematic-debugging）</li>
+            <li>并行子代理调度技能，支持并发工作流（dispatching-parallel-agents）</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Markdown</span><span class="tech-tag">Shell</span><span class="tech-tag">Claude Code</span><span class="tech-tag">LLM Agents</span><span class="tech-tag">Skills System</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>AI 辅助编程重度用户、团队想要标准化 AI 编程工作流、想让 Claude Code / Cursor 等工具更系统化地完成复杂工程任务。</p>
+        </div>
+        <div class="recommend-quote">💬 "把 AI 编程代理的开发经验结晶为可复用的'技能包'，让每个开发者都能站在巨人肩上写代码。"</div>
+      </div>
+    </div>
+
+    <!-- #2 thedotmack/claude-mem -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/thedotmack/claude-mem" target="_blank">thedotmack / claude-mem</a></div>
+          <div class="project-desc">A Claude Code plugin that automatically captures everything Claude does during your coding sessions, compresses it with AI, and injects relevant context back into future sessions.</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">36k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">2.6k</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 View License</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">ai-memory</span>
+            <span class="topic-badge">rag</span>
+            <span class="topic-badge">embeddings</span>
+            <span class="topic-badge">sqlite</span>
+            <span class="topic-badge">chromadb</span>
+            <span class="topic-badge">long-term-memory</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Claude-Mem 是专为 Claude Code 打造的持久记忆压缩系统。通过自动捕捉工具调用观察结果、生成语义摘要，并在未来会话中注入相关上下文，让 Claude 在会话结束或重连后仍能保持项目知识的连续性。安装方式：<code>/plugin marketplace add thedotmack/claude-mem</code></p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>自动捕捉每次编程会话中 Claude 的全部操作与观察</li>
+            <li>AI 压缩：使用 Claude agent-sdk 对历史上下文进行语义压缩</li>
+            <li>MCP 搜索工具：在新会话中智能检索相关历史记忆</li>
+            <li>跨会话知识连续性：项目知识不再随会话结束而丢失</li>
+            <li>支持 SQLite + ChromaDB + Embeddings 向量存储</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">TypeScript</span><span class="tech-tag">SQLite</span><span class="tech-tag">ChromaDB</span><span class="tech-tag">Embeddings</span><span class="tech-tag">RAG</span><span class="tech-tag">Claude agent-sdk</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>频繁使用 Claude Code 的开发者、大型项目需要 AI 保持长期记忆的团队、想要跨会话保持 AI 上下文连续性的工程师。</p>
+        </div>
+        <div class="recommend-quote">💬 "让 Claude Code 拥有真正的长期记忆，告别每次新会话都要重新介绍项目背景的痛苦。"</div>
+      </div>
+    </div>
+
+    <!-- #3 shareAI-lab/learn-claude-code -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/shareAI-lab/learn-claude-code" target="_blank">shareAI-lab / learn-claude-code</a></div>
+          <div class="project-desc">Bash is all you need — A nano Claude Code–like agent, built from 0 to 1. 从零到一构建一个微型 Claude Code 类 AI 编程代理。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">28.9k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">5k</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT License</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">python</span>
+            <span class="topic-badge">tutorial</span>
+            <span class="topic-badge">agent</span>
+            <span class="topic-badge">educational</span>
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">llm</span>
+            <span class="topic-badge">ai-agent</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>通过 12 个渐进式 Session，从最简单的 LLM 工具调用循环出发，逐步构建出支持隔离自主执行的完整 AI 编程代理。每个 Session 添加一个机制，每个机制有一句座右铭。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>12 个渐进 Session：从单一工具循环到多 Agent 并行执行</li>
+            <li>s01: "One loop &amp; Bash is all you need" — 最小 Agent 循环</li>
+            <li>s06: 三层上下文压缩策略，支持无限长会话</li>
+            <li>s09-s12: 持久化队友 + 异步邮箱 + Worktree 隔离执行</li>
+            <li>配套 Web 平台，可在线运行和学习</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">Anthropic SDK</span><span class="tech-tag">LLM</span><span class="tech-tag">Agent Loop</span><span class="tech-tag">Multi-Agent</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>想理解 Claude Code / Cursor 等 AI 编程工具底层原理的开发者、AI Agent 入门学习、构建自定义编程代理的工程师。</p>
+        </div>
+        <div class="recommend-quote">💬 "把 Claude Code 的核心机制拆开来教你——最好的学习方式是自己实现一遍。"</div>
+      </div>
+    </div>
+
+    <!-- #4 666ghj/MiroFish -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/666ghj/MiroFish" target="_blank">666ghj / MiroFish</a></div>
+          <div class="project-desc">A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">28.6k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">3.5k</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">swarm-intelligence</span>
+            <span class="topic-badge">multi-agent-simulation</span>
+            <span class="topic-badge">social-prediction</span>
+            <span class="topic-badge">future-prediction</span>
+            <span class="topic-badge">financial-forecasting</span>
+            <span class="topic-badge">llms</span>
+            <span class="topic-badge">knowledge-graph</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>MiroFish 是一款基于多智能体技术的新一代 AI 预测引擎。通过提取现实世界的种子信息（如突发新闻、政策草案、金融信号），自动构建出高保真的平行数字世界。在此空间内，成千上万个具备独立人格、长期记忆与行为逻辑的智能体进行自由交互与社会演化，实现精准预测。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>上传种子材料（数据报告、小说故事等），自然语言描述预测需求即可运行</li>
+            <li>高保真平行数字世界：成千上万个具备独立人格的智能体自由交互</li>
+            <li>支持舆情推演预测、金融信号分析、历史事件模拟</li>
+            <li>知识图谱 + 群体智能引擎，支持 Docker 一键部署</li>
+            <li>在线体验 + 3 个演示视频（含武汉大学舆情推演、红楼梦结局推演）</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">LLMs</span><span class="tech-tag">Knowledge Graph</span><span class="tech-tag">Multi-Agent</span><span class="tech-tag">Docker</span><span class="tech-tag">Vue.js</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>舆情分析、金融预测、政策模拟、社会科学研究、复杂系统仿真、文学/历史推演。</p>
+        </div>
+        <div class="recommend-quote">💬 "用 AI 多智能体模拟整个社会——让未来在数字沙盘中预演，助决策在百战模拟后胜出。"</div>
+      </div>
+    </div>
+
+    <!-- #5 lightpanda-io/browser -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/lightpanda-io/browser" target="_blank">lightpanda-io / browser</a></div>
+          <div class="project-desc">Lightpanda: the headless browser designed for AI and automation. 专为 AI Agent 和自动化设计的无头浏览器，用 Zig 从零构建。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">19.6k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">743</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#ec915c"></span> Zig</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">zig</span>
+            <span class="topic-badge">headless</span>
+            <span class="topic-badge">cdp</span>
+            <span class="topic-badge">playwright</span>
+            <span class="topic-badge">puppeteer</span>
+            <span class="topic-badge">browser-automation</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Lightpanda 不是 Chromium 的 Fork，也不是 WebKit 的补丁，而是用 Zig 语言重新构建的全新浏览器，专为无头使用场景优化。内存占用仅为 Chrome 的 1/9，速度快 11 倍，兼容 Playwright/Puppeteer/chromedp（通过 CDP 协议）。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>超低内存占用：仅为 Chrome 的 1/9（AWS EC2 m5.large 实测）</li>
+            <li>极速执行：比 Chrome 快 11 倍，瞬时启动</li>
+            <li>兼容 Playwright、Puppeteer、chromedp（CDP 协议）</li>
+            <li>支持 JavaScript 执行 + Web APIs（持续完善中）</li>
+            <li>完整的 CDP 服务器，可直接替换 Chrome 用于自动化</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Zig</span><span class="tech-tag">CDP Protocol</span><span class="tech-tag">WebAPIs</span><span class="tech-tag">JavaScript Engine</span><span class="tech-tag">Playwright</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>AI Agent 网页爬取/操作、LLM 训练数据抓取、Web 自动化测试（替代 Chrome headless）、资源受限服务器上的大规模爬虫。</p>
+        </div>
+        <div class="recommend-quote">💬 "AI 时代的浏览器基础设施革命——用 Zig 重写无头浏览器，内存减 9 倍、速度快 11 倍。"</div>
+      </div>
+    </div>
+
+    <!-- #6 abhigyanpatwari/GitNexus -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/abhigyanpatwari/GitNexus" target="_blank">abhigyanpatwari / GitNexus</a></div>
+          <div class="project-desc">The Zero-Server Code Intelligence Engine. 纯客户端知识图谱创建工具，完全在浏览器中运行，内置 Graph RAG Agent。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">15k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">1.7k</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#F1E05A"></span> JavaScript</span>
+            <span class="meta-item">📄 View License</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">knowledge-graph</span>
+            <span class="topic-badge">graph-rag</span>
+            <span class="topic-badge">code-intelligence</span>
+            <span class="topic-badge">mcp</span>
+            <span class="topic-badge">zero-server</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>GitNexus 是一款零服务端的代码智能引擎，完全在浏览器中运行。拖入 GitHub 仓库或 ZIP 文件，即可获得可交互的知识图谱和内置的 Graph RAG Agent，完美适用于代码探索。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>零服务端：完全客户端运行，无需后端服务</li>
+            <li>两种模式：CLI + MCP（推荐）和 Web UI（浏览器）</li>
+            <li>多 Repo MCP 架构，支持跨仓库代码分析</li>
+            <li>内置 Graph RAG Agent，支持影响分析、重命名、变更检测</li>
+            <li>支持 Wiki 自动生成，多语言代码解析</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">JavaScript</span><span class="tech-tag">Graph RAG</span><span class="tech-tag">Knowledge Graph</span><span class="tech-tag">MCP</span><span class="tech-tag">Cypher</span>
+          </div>
+        </div>
+        <div class="recommend-quote">💬 "把 GitHub 仓库变成可对话的知识图谱，代码探索从未如此直观。"</div>
+      </div>
+    </div>
+
+    <!-- #7 p-e-w/heretic -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/p-e-w/heretic" target="_blank">p-e-w / heretic</a></div>
+          <div class="project-desc">Fully automatic censorship removal for language models. 全自动 LLM 去审查/去对齐工具，基于方向消融技术。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">15k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">1.5k</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm</span>
+            <span class="topic-badge">transformer</span>
+            <span class="topic-badge">abliteration</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Heretic 通过方向消融（directional ablation）结合 TPE 参数优化器（Optuna），全自动地去除 transformer 语言模型的安全对齐限制，无需昂贵的后训练。自动最小化拒绝率同时保持模型智能，已生成超过 1000 个社区 Heretic 模型。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>全自动化：TPE 参数优化器自动寻找最优消融参数</li>
+            <li>无需重训练：直接修改模型权重方向向量</li>
+            <li>双目标优化：最小化拒绝率 + KL 散度（保持原模型智能）</li>
+            <li>支持大多数 dense 模型和多模态模型，多种 MoE 架构</li>
+            <li>内置评估功能：可量化比较消融效果</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">Optuna</span><span class="tech-tag">Transformer</span><span class="tech-tag">HuggingFace</span>
+          </div>
+        </div>
+        <div class="recommend-quote">💬 "让任何人都能一键去除 LLM 的审查限制——不再需要了解 transformer 内部机制。"</div>
+      </div>
+    </div>
+
+    <!-- #8 volcengine/OpenViking -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/volcengine/OpenViking" target="_blank">volcengine / OpenViking</a></div>
+          <div class="project-desc">OpenViking is an open-source context database designed specifically for AI Agents. 字节跳动开源的 AI Agent 上下文数据库，文件系统范式统一管理 memory/resources/skills。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">13.3k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">914</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-agents</span>
+            <span class="topic-badge">context-database</span>
+            <span class="topic-badge">agentic-rag</span>
+            <span class="topic-badge">context-engineering</span>
+            <span class="topic-badge">rag</span>
+            <span class="topic-badge">memory</span>
+            <span class="topic-badge">filesystem</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>OpenViking 通过文件系统范式统一管理 AI Agent 所需的上下文（memory、resources、skills），实现分层上下文投递和自我演化。解决 Agent 开发中上下文碎片化、Token 消耗高、检索效果差等核心痛点。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>文件系统管理范式：解决上下文碎片化问题</li>
+            <li>分层上下文加载：按需加载，减少 Token 消耗</li>
+            <li>目录递归检索：提升检索效果</li>
+            <li>可视化检索轨迹：上下文透明可观测</li>
+            <li>自动会话管理：上下文自迭代进化</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">RAG</span><span class="tech-tag">Agentic RAG</span><span class="tech-tag">Filesystem</span><span class="tech-tag">OpenClaw</span>
+          </div>
+        </div>
+        <div class="recommend-quote">💬 "字节跳动把内部 Agent 上下文管理系统开源了——文件系统就是最好的 Context DB。"</div>
+      </div>
+    </div>
+
+    <!-- #9 langchain-ai/deepagents -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/langchain-ai/deepagents" target="_blank">langchain-ai / deepagents</a></div>
+          <div class="project-desc">Agent harness built with LangChain and LangGraph. Batteries-included agent harness with planning, filesystem backend, and subagent spawning.</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">12.1k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">1.9k</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT License</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">langchain</span>
+            <span class="topic-badge">langgraph</span>
+            <span class="topic-badge">deepagents</span>
+            <span class="topic-badge">ai</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Deep Agents 是一套"开箱即用"的 Agent 执行框架。无需自行配置 prompts、tools 和上下文管理，直接获得一个可工作的 Agent 并按需定制。由 LangChain 团队维护，已有 70 个发布版本、91 个贡献者。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>Planning：write_todos 任务分解与进度追踪</li>
+            <li>Filesystem：read_file/write_file/edit_file/ls/glob/grep</li>
+            <li>Shell 访问：execute 命令执行（带沙盒）</li>
+            <li>子代理：task 工具委派工作，独立上下文窗口</li>
+            <li>自动摘要：对话超长时自动压缩，大输出存文件</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">LangChain</span><span class="tech-tag">LangGraph</span><span class="tech-tag">Sub-agents</span>
+          </div>
+        </div>
+        <div class="recommend-quote">💬 "LangChain 官方出品的全功能 Agent 框架——规划、文件系统、Shell、子代理，一应俱全。"</div>
+      </div>
+    </div>
+
+    <!-- #10 YishenTu/claudian -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/YishenTu/claudian" target="_blank">YishenTu / claudian</a></div>
+          <div class="project-desc">An Obsidian plugin that embeds Claude Code as an AI collaborator in your vault. 将 Claude Code 嵌入 Obsidian 笔记库，让 AI 直接操作你的笔记文件。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">3.9k</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">233</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT License</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">obsidian</span>
+            <span class="topic-badge">obsidian-plugin</span>
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">productivity</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Claudian 是 Obsidian 插件，将 Claude Code 嵌入笔记库作为 AI 协作者。笔记库成为 Claude 的工作目录，Claude 获得完整的 Agent 能力：文件读写、搜索、Bash 命令、多步骤工作流。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>Claude Code 完整 Agent 能力嵌入 Obsidian</li>
+            <li>笔记库作为 Claude 工作目录，可直接读写笔记文件</li>
+            <li>支持 Bash 命令执行、搜索、多步骤工作流</li>
+            <li>知识库上下文自动注入 Claude 会话</li>
+            <li>支持 BRAT 安装和 GitHub Release 安装</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">TypeScript</span><span class="tech-tag">Obsidian API</span><span class="tech-tag">Claude Code</span><span class="tech-tag">Node.js</span>
+          </div>
+        </div>
+        <div class="recommend-quote">💬 "Obsidian 用户的福音——让 Claude Code 直接在你的知识库里工作，笔记和 AI 真正融为一体。"</div>
+      </div>
+    </div>
+
+    <!-- #11 voidzero-dev/vite-plus -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/voidzero-dev/vite-plus" target="_blank">voidzero-dev / vite-plus</a></div>
+          <div class="project-desc">Vite+ is the unified toolchain and entry point for web development. It manages your runtime, package manager, and frontend toolchain in one place.</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">1,990</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">68</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript / Rust</span>
+            <span class="meta-item">📄 MIT License</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">vite</span>
+            <span class="topic-badge">toolchain</span>
+            <span class="topic-badge">frontend</span>
+            <span class="topic-badge">rolldown</span>
+            <span class="topic-badge">vitest</span>
+            <span class="topic-badge">oxlint</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Vite+ 是 Web 开发的统一入口工具链，将 Vite、Vitest、Oxlint、Oxfmt、Rolldown、tsdown、Vite Task 整合为一个零配置工具链，同时管理运行时和包管理器工作流。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>vp env：全局和项目级 Node.js 版本管理</li>
+            <li>vp install：自动检测包管理器安装依赖</li>
+            <li>vp check：格式化、Lint、类型检查一键运行</li>
+            <li>vp build：Vite + Rolldown 生产构建，vp pack：发布 npm 库</li>
+            <li>vp run：Monorepo 任务并发调度，支持缓存和依赖感知</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">TypeScript</span><span class="tech-tag">Rust</span><span class="tech-tag">Vite</span><span class="tech-tag">Rolldown</span><span class="tech-tag">Oxlint</span><span class="tech-tag">Vitest</span>
+          </div>
+        </div>
+        <div class="recommend-quote">💬 "前端工具链大一统——Vite 生态的终极整合方案，一个 vp 命令搞定所有开发流程。"</div>
+      </div>
+    </div>
+
+    <!-- #12 Crosstalk-Solutions/project-nomad -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Crosstalk-Solutions/project-nomad" target="_blank">Crosstalk-Solutions / project-nomad</a></div>
+          <div class="project-desc">Project N.O.M.A.D — a self-contained, offline survival computer packed with critical tools, knowledge, and AI to keep you informed and empowered—anytime, anywhere.</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">1,421</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">141</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#555"></span> Unknown</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">offline</span>
+            <span class="topic-badge">survival</span>
+            <span class="topic-badge">ai</span>
+            <span class="topic-badge">embedded</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Project N.O.M.A.D 是一款完全自包含的离线生存计算机，内置关键工具、知识库和 AI 能力，无需网络连接即可在任何地方运行。设计目标是在极端情况下（断网、断电、灾难场景）提供全面的智能辅助。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>完全离线运行：无需互联网连接</li>
+            <li>内置 AI 能力：本地运行的 AI 辅助</li>
+            <li>生存工具集：关键知识和工具包</li>
+            <li>自包含设计：便携式生存计算机</li>
+          </ul>
+        </div>
+        <div class="recommend-quote">💬 "离线 AI 生存计算机——当网络和电力都不可用时，你还有 N.O.M.A.D。"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language Distribution -->
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <span class="lang-name">Python</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:41.7%;background:#3572A5"></div></div>
+        <span class="lang-count">5 项目 (41.7%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">TypeScript</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:33.3%;background:#3178C6"></div></div>
+        <span class="lang-count">4 项目 (33.3%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Zig</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#ec915c"></div></div>
+        <span class="lang-count">1 项目 (8.3%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">JavaScript</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#F1E05A"></div></div>
+        <span class="lang-count">1 项目 (8.3%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">其他</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#555"></div></div>
+        <span class="lang-count">1 项目 (8.3%)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub Explore Highlights -->
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Explore 页面推荐与今日 Trending 高度重合，以下为今日 Explore 精选推荐精要：</p>
+      <div class="trending-list">
+        <div class="trending-item">
+          <span class="trending-num">01</span>
+          <div>
+            <a href="https://github.com/666ghj/MiroFish" target="_blank" style="font-weight:600">666ghj/MiroFish</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">群体智能预测引擎 · ⭐28.6k</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">02</span>
+          <div>
+            <a href="https://github.com/thedotmack/claude-mem" target="_blank" style="font-weight:600">thedotmack/claude-mem</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">Claude Code 持久记忆 · ⭐36k</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">03</span>
+          <div>
+            <a href="https://github.com/obra/superpowers" target="_blank" style="font-weight:600">obra/superpowers</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">Agent 技能框架 · ⭐87.3k</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">04</span>
+          <div>
+            <a href="https://github.com/Crosstalk-Solutions/project-nomad" target="_blank" style="font-weight:600">Crosstalk-Solutions/project-nomad</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">离线生存 AI 计算机 · ⭐1,421</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">05</span>
+          <div>
+            <a href="https://github.com/abhigyanpatwari/GitNexus" target="_blank" style="font-weight:600">abhigyanpatwari/GitNexus</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">零服务端代码知识图谱 · ⭐15k</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">06</span>
+          <div>
+            <a href="https://github.com/lightpanda-io/browser" target="_blank" style="font-weight:600">lightpanda-io/browser</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">AI 专用无头浏览器 · ⭐19.6k</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">07</span>
+          <div>
+            <span style="font-size:12px; color:var(--text-muted);">📌 Today's Topic: </span>
+            <a href="https://github.com/topics/nodejs" target="_blank" style="font-weight:600">Node.js</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">今日热门话题</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">08</span>
+          <div>
+            <span style="font-size:12px; color:var(--text-muted);">🎮 Collection: </span>
+            <a href="https://github.com/collections/game-engines" target="_blank" style="font-weight:600">Game Engines</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">GitHub 精选集合</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>📅 报告生成时间：2026-03-16 &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">本报告由 <strong>skill-github-trending-report</strong> 自动生成 &nbsp;|&nbsp; 所有数据来自 GitHub 公开页面，无需 API Token</p>
+  </div>
+
+</div>
+
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-11</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px #58a6ff22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-card.new-card { border: 1.5px solid var(--green); }
+  .project-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .new-badge { background: #0f2d13; border: 1px solid var(--green); color: var(--green); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .cont-badge { background: #2d1d0a; border: 1px solid var(--orange); color: var(--orange); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-05-11 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">~846k</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">3</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">7</div><div class="stat-label">今日新上榜</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🏆 史上最强"王者齐聚"日：4 个 100k+ Stars 项目同日 Trending，前 4 名合计 ~590k Stars</div>
+        <p>今日 Top 12 前 4 名全部突破 100k Stars：everything-claude-code（178.8k）→ hermes-agent（143.3k）→ open-webui（136.5k）→ anthropics/skills（131.9k），是本系列日报记录以来单日出现最多 100k+ 项目的一天。这种"王者齐聚"格局的背后是今日 Claude Code 生态的集体大爆发触发了社区联动效应——4 个项目彼此引流，同时被大量开发者访问并 Star，共同出现在今日 Trending 榜单。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🔗 Agent Skills 四层生态今日完整同框：everything-claude-code + hermes-agent + anthropics/skills + agent-skills（Day 5）</div>
+        <p>今日出现史上最完整的"Agent Skills 纵向全景"：<strong>官方规范层</strong>（anthropics/skills，131.9k，Anthropic 官方 SKILL.md 标准 + 生产级 skills）→ <strong>工程实践层</strong>（agent-skills，38.9k，Day 5，20 Skill × 6 阶段）→ <strong>综合优化层</strong>（everything-claude-code，178.8k，Skills + instincts + memory + security，Anthropic Hackathon Winner）→ <strong>自进化 operator 层</strong>（hermes-agent，143.3k，ECC v2.0 集成的 operator，内置学习循环）。四层今日同框，是 Claude Code + Agent Skills 生态历史上最全面的一次集中呈现。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🤖 NousResearch/hermes-agent（143.3k）——"唯一内置学习循环的 Agent"，$5 VPS 自进化，ECC v2.0 的 operator 层</div>
+        <p>Nous Research 出品，"it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions." 运行成本极低（$5 VPS / serverless），不绑定本地机器，支持 Telegram 交互，200+ 模型支持（OpenRouter）。<strong>everything-claude-code v2.0-rc.1 专门集成了 Hermes operator story</strong>——两个项目今日同时上 Trending 并非巧合，而是同一生态双向引流的结果。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📊 ZhuLinsen/daily_stock_analysis（35.1k Stars，34.7k Forks）——Fork/Star 比率 0.989，今日最罕见数据异常</div>
+        <p>35,102 Stars vs 34,716 Forks，Fork/Star 比率接近 1（正常项目约 0.2~0.3）。"零成本定时运行 + 纯白嫖"是高 Fork 率的直接原因：用户必须 fork 后配置自己的 API keys 并部署自己的实例，而非只是 Star 收藏。这种"实用工具性 > 阅读性"的自部署工具天然产生高 Fork 率。今日与 HKUDS/AI-Trader（#11）和 anthropics/financial-services（#10）同框，金融 AI 今日三项目同在 Top 12，是本系列日报最密集的一次金融 AI 同日呈现。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 affaan-m/everything-claude-code -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/affaan-m/everything-claude-code" target="_blank">affaan-m / everything-claude-code</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond. 178,782 ⭐ + 27,572 forks，Anthropic Hackathon Winner，170+ 贡献者，12+ 语言生态，ECC v2.0 集成 hermes-agent operator 层，今日 Top 12 Stars 最高。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">178,782</span></span>
+            <span class="meta-item">🍴 27,572</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#aaaaaa"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">anthropic-hackathon</span><span class="topic-badge">agent-harness</span><span class="topic-badge">skills</span><span class="topic-badge">cross-platform</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Anthropic Hackathon Winner，"140K+ stars | 21K+ forks | 170+ contributors | 12+ language ecosystems"（README 写成时数据，今日已 178.8k）。Performance optimization system for AI agent harnesses，not just configs：完整 Skills + instincts + memory optimization + continuous learning + security scanning + research-first development 全栈，生产级 configs + 10 个月密集真实产品积累。ECC v2.0-rc.1 新增 public Hermes operator story（与今日 #2 hermes-agent 深度集成），cross-harness architecture 跨平台统一，DRY Adapter Pattern。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Skills + instincts + memory optimization + continuous learning + security scanning 全栈</li>
+          <li>跨平台：Claude Code / Codex / Cursor / OpenCode / Gemini 全覆盖</li>
+          <li>ECC v2.0-rc.1：Hermes operator story，cross-harness architecture</li>
+          <li>12+ 语言生态：英/中/日/韩/土耳其/葡 本地化</li>
+          <li>170+ 贡献者，10+ 月真实产品密集积累</li>
+          <li>Anthropic Hackathon Winner 官方背书</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">Shell</span><span class="tech-tag">Claude Code Hooks</span><span class="tech-tag">AGENTS.md</span><span class="tech-tag">SKILL.md</span><span class="tech-tag">MCP</span></div></div>
+        <div class="recommend-quote">💬 "178.8k 今日第一，不只是最高 Stars，而是最重要的生态信号——ECC + hermes-agent + anthropics/skills + agent-skills 今日四层 Skills 生态同框，Claude Code 生态的 Skills 体系在今日已形成完整工业级闭环。"</div>
+      </div>
+    </div>
+
+    <!-- #2 NousResearch/hermes-agent -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/NousResearch/hermes-agent" target="_blank">NousResearch / hermes-agent</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">The agent that grows with you. Nous Research 出品，143,269 ⭐ + 22,353 forks，唯一内置学习循环的自进化 AI Agent，$5 VPS 低成本运行，200+ 模型支持，ECC v2.0 的 operator 层，今日与 everything-claude-code 构成深度绑定生态。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">143,269</span></span>
+            <span class="meta-item">🍴 22,353</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">self-improving</span><span class="topic-badge">learning-loop</span><span class="topic-badge">nous-research</span><span class="topic-badge">200-models</span><span class="topic-badge">ecc-operator</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>"The self-improving AI agent built by Nous Research. It's the only agent with a built-in learning loop — it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions." $5 VPS 或 serverless（空闲时近零成本），不绑定本地笔记本，Telegram 对话，200+ 模型（OpenRouter / NVIDIA NIM / Nous Portal / OpenAI / HuggingFace / Kimi / MiniMax）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>唯一内置学习循环：从经验创建 Skills，使用中持续改进</li>
+          <li>跨 session 持久记忆：搜索历史对话，建立用户深度模型</li>
+          <li>$5 VPS / serverless 低成本，不绑定本地机器</li>
+          <li>Telegram 交互：云端运行远程操控</li>
+          <li>200+ 模型：OpenRouter / NVIDIA NIM / Nous Portal / OpenAI</li>
+          <li>hermes model 一键切换，无 vendor lock-in</li>
+          <li>ECC v2.0 operator：everything-claude-code v2.0 的 Hermes operator story</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">OpenRouter</span><span class="tech-tag">Telegram API</span><span class="tech-tag">MCP</span><span class="tech-tag">Honcho</span></div></div>
+        <div class="recommend-quote">💬 "今日与 everything-claude-code 同框并非巧合——ECC v2.0 专门集成了 hermes-agent 的 Hermes operator story，两项目之间的相互引流是今日 143k + 178k 同日 Trending 的核心原因。"</div>
+      </div>
+    </div>
+
+    <!-- #3 open-webui/open-webui -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/open-webui/open-webui" target="_blank">open-webui / open-webui</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">User-friendly AI Interface (Supports Ollama, OpenAI API, ...). 136,548 ⭐ + 19,444 forks，LLM 本地化部署 UI 领域龙头项目，今日与 4 个 100k+ 项目同框重回 Top 12，Python/Svelte 全栈，Docker 一键部署。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">136,548</span></span>
+            <span class="meta-item">🍴 19,444</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ollama</span><span class="topic-badge">local-llm</span><span class="topic-badge">web-ui</span><span class="topic-badge">openai-api</span><span class="topic-badge">docker</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>LLM 本地化部署 UI 领域龙头，支持 Ollama（本地 LLM）+ OpenAI API + 任意 OpenAI 兼容 endpoint。完整对话 UI（历史 / 文件上传 / 语音 / 图像）、Pipelines 插件系统（RAG / 工具调用）、用户管理（多用户权限 + API key）、Docker 一键部署、模型管理（从 Ollama 直接拉取）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>支持 Ollama + OpenAI API + 任意 OpenAI 兼容 endpoint</li>
+          <li>Pipelines 插件系统：RAG / 工具调用 / 自定义工作流</li>
+          <li>完整对话功能：历史 / 文件上传 / 语音 / 图像理解</li>
+          <li>多用户权限管理 + API key 管理</li>
+          <li>Docker 一键部署，模型管理 GUI</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Svelte</span><span class="tech-tag">Docker</span><span class="tech-tag">Ollama API</span></div></div>
+        <div class="recommend-quote">💬 "open-webui 今日以 136.5k 重回 Top 12，可能受今日 Claude Code 生态大爆发的带动——大量新进入 AI 生态的开发者开始寻找本地化部署解决方案，LLM UI 基础设施与 Agent Skills 层今日同步升温。"</div>
+      </div>
+    </div>
+
+    <!-- #4 anthropics/skills -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/anthropics/skills" target="_blank">anthropics / skills</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Public repository for Agent Skills. Anthropic 官方 Agent Skills 规范仓库，131,906 ⭐ + 15,531 forks，SKILL.md 标准 + Claude.ai 内部生产级 skills 开源（document/pdf/pptx/xlsx），今日 Agent Skills 四层生态的官方规范层。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">131,906</span></span>
+            <span class="meta-item">🍴 15,531</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0 / source-available</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">anthropic-official</span><span class="topic-badge">skills</span><span class="topic-badge">skill-md</span><span class="topic-badge">claude</span><span class="topic-badge">agent-skills</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Anthropic 官方 Agent Skills 规范仓库。"Skills are folders of instructions, scripts, and resources that Claude loads dynamically to improve performance on specialized tasks." 包含 Anthropic 官方多场景 Skills（Apache 2.0 开源），以及 Claude.ai 内部使用的文档 skills（skills/docx / skills/pdf / skills/pptx / skills/xlsx，source-available 非开源，但开放给开发者参考）。可在 Claude Code / Claude.ai / Claude API 三端试用，含完整 Skills 创建教程。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>官方 SKILL.md 标准：Claude 动态加载 Skills 的完整规范</li>
+          <li>生产级 document skills：docx / pdf / pptx / xlsx（Claude.ai 内部实际使用）</li>
+          <li>多场景 Skills：创意 / 技术 / 企业工作流</li>
+          <li>Partner Skills：合作伙伴贡献的 Skills 生态</li>
+          <li>支持 Claude Code / Claude.ai / Claude API 三端试用</li>
+          <li>完整 Skills 创建教程 + 设计模式参考</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">Python</span><span class="tech-tag">SKILL.md</span></div></div>
+        <div class="recommend-quote">💬 "anthropics/skills 是今日四层 Skills 生态中最重要的'官方规范层'——如果你在用 agent-skills 或 everything-claude-code，今日应该同时查阅这个仓库，了解 Anthropic 官方对 SKILL.md 和 Skills 的完整定义与最佳实践。"</div>
+      </div>
+    </div>
+
+    <!-- #5 ultralytics/ultralytics -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ultralytics/ultralytics" target="_blank">ultralytics / ultralytics</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Ultralytics YOLO 🚀. 56,990 ⭐ + 10,945 forks，YOLO 系列目标检测框架官方维护仓库，今日重回 Python Trending，YOLO11 最新模型 + 20+ 导出格式，3 行代码推理。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">56,990</span></span>
+            <span class="meta-item">🍴 10,945</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">yolo</span><span class="topic-badge">object-detection</span><span class="topic-badge">computer-vision</span><span class="topic-badge">pytorch</span><span class="topic-badge">onnx</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>YOLO 系列的官方维护仓库，YOLO11 / YOLOv8 最新模型，覆盖检测/分割/分类/姿态估计/OBB，20+ 格式导出（ONNX / CoreML / TensorRT / TFLite / OpenVINO），极简 API（3 行代码），内置 W&B / MLflow 训练可视化，支持分布式多 GPU，HUB 无代码平台。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>YOLO11 最新模型：检测 / 分割 / 分类 / 姿态 / OBB</li>
+          <li>20+ 导出格式：ONNX / CoreML / TensorRT / TFLite / OpenVINO</li>
+          <li>极简 API：3 行代码推理或训练</li>
+          <li>分布式训练，多 GPU 支持</li>
+          <li>HUB：无代码训练部署平台</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">ONNX</span><span class="tech-tag">TensorRT</span></div></div>
+        <div class="recommend-quote">💬 "ultralytics 今日以 57k 重回 Python Trending——在 AI coding 工具集体爆发的同一天，Computer Vision 基础工具也同步升温，说明今日 Trending 是 AI 生态多维度的全面活跃，而非单赛道上涨。"</div>
+      </div>
+    </div>
+
+    <!-- #6 datawhalechina/hello-agents -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/datawhalechina/hello-agents" target="_blank">datawhalechina / hello-agents</a> <span class="cont-badge">持续 Day 2</span></div>
+          <div class="project-desc">📚《从零开始构建智能体》——从零开始的智能体原理与实践教程。连续第 2 日上榜，Stars 从 05-10 的 45,976 增至今日 47,098（+1,122），5,667 forks。今日在 Agent 生态大爆发背景下，是理解今日 Trending 各项目的最佳入门路径。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">47,098</span></span>
+            <span class="meta-item">🍴 5,667</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 CC-BY-4.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent</span><span class="topic-badge">datawhale</span><span class="topic-badge">chinese</span><span class="topic-badge">langchain</span><span class="topic-badge">tutorial</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 今日亮点</h4><p>连续 Day 2，+1,122 Stars。今日与 anthropics/skills（官方 Skills）+ hermes-agent（自进化 Agent）同框——hello-agents 的"从零开始构建智能体"在今日 Agent 集体爆发日最有价值：想理解 hermes-agent 的学习循环、ECC 的 Skills 体系、或 anthropics/skills 的 SKILL.md 标准，从 hello-agents 入手理解 Agent 基础原理是最佳路径。</p></div>
+        <div class="recommend-quote">💬 "连续 Day 2，今日 Agent 技术四层生态同框。hello-agents 是'明白人看懂今日 Trending'的最佳入口——理解 Agent 原理，再看 ECC/hermes-agent 会更清晰。"</div>
+      </div>
+    </div>
+
+    <!-- #7 addyosmani/agent-skills -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/addyosmani/agent-skills" target="_blank">addyosmani / agent-skills</a> <span class="cont-badge">持续 Day 5 🏆</span></div>
+          <div class="project-desc">Production-grade engineering skills for AI coding agents. 连续第 5 日上榜（本系列最长纪录），Stars 从 05-10 的 37,757 增至今日 38,956（+1,199），4,307 forks。今日在 Agent Skills 四层生态中担任"工程实践层"，与 anthropics/skills + everything-claude-code + hermes-agent 同框。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">38,956</span></span>
+            <span class="meta-item">🍴 4,307</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#aaaaaa"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">cursor</span><span class="topic-badge">skills</span><span class="topic-badge">day-5</span><span class="topic-badge">engineering</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 持续上榜亮点</h4><p>连续 Day 5（05-07 → 05-08 → 05-10 → 05-11），本系列日报记录的最长连续上榜天数。2 日增 +1,199 Stars（vs 05-10），5 日总增长：31,246→38,956 = +7,710 Stars。今日四层 Skills 生态同框，agent-skills 作为"工程实践层"的地位被再次确认。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>20 Skill × 6 阶段：Define / Plan / Build / Verify / Review / Ship</li>
+          <li>7 slash commands：/spec / /plan / /build / /test / /review / /code-simplify / /ship</li>
+          <li>全 IDE：Claude Code / Cursor / Windsurf / Gemini CLI / Copilot / Kiro</li>
+          <li>上下文自动激活，按任务类型自动匹配 Skill</li>
+        </ul></div>
+        <div class="recommend-quote">💬 "连续 Day 5，本系列最长纪录——5 日累计增长 +7,710 Stars。今日四层 Skills 生态同框，agent-skills 作为工程实践层持续被验证，是今日最有'持久价值'的项目。"</div>
+      </div>
+    </div>
+
+    <!-- #8 ZhuLinsen/daily_stock_analysis -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ZhuLinsen/daily_stock_analysis" target="_blank">ZhuLinsen / daily_stock_analysis</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">LLM驱动的 A/H/美股智能分析：多数据源行情 + 实时新闻 + LLM决策仪表盘 + 多渠道推送，零成本定时运行，纯白嫖. 35,102 ⭐ + 34,716 forks，Fork/Star 比率 0.989，今日最异常数据，金融 AI 赛道今日三项目同框之一。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">35,102</span></span>
+            <span class="meta-item">🍴 34,716</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">finance-ai</span><span class="topic-badge">stock-analysis</span><span class="topic-badge">llm</span><span class="topic-badge">zero-cost</span><span class="topic-badge">github-actions</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>LLM 驱动的 A/H/美股三市场全覆盖智能分析系统，零成本定时运行（GitHub Actions 自动执行）。多数据源行情（akshare / tushare / yfinance）+ 实时新闻情感分析 + LLM 决策仪表盘（GPT/Claude/DeepSeek 驱动）+ 多渠道推送（微信/邮件/Telegram/钉钉）。"纯白嫖"：利用免费 API 额度 + GitHub Actions CI，零成本运行。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>A/H/美股三市场全覆盖</li>
+          <li>多数据源：akshare / tushare / yfinance 聚合</li>
+          <li>LLM 决策仪表盘：GPT / Claude / DeepSeek 驱动</li>
+          <li>多渠道推送：微信 / 邮件 / Telegram / 钉钉</li>
+          <li>零成本：GitHub Actions 定时 + 免费 API 额度</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">akshare</span><span class="tech-tag">tushare</span><span class="tech-tag">LLM API</span><span class="tech-tag">GitHub Actions</span></div></div>
+        <div class="recommend-quote">💬 "34,716 Forks vs 35,102 Stars，Fork/Star 比率 0.989——近期日报中最极端的异常。'零成本+纯白嫖'要求用户必须 fork 才能配置 API keys 并部署，这种'自部署工具'天然产生接近 1 的 Fork/Star 比率，是今日最值得记录的数据特征。"</div>
+      </div>
+    </div>
+
+    <!-- #9 bytedance/UI-TARS-desktop -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/bytedance/UI-TARS-desktop" target="_blank">bytedance / UI-TARS-desktop</a> <span class="cont-badge">持续 Day 2</span></div>
+          <div class="project-desc">The Open-Source Multimodal AI Agent Stack: Connecting Cutting-Edge AI Models and Agent Infra. 连续第 2 日上榜，Stars 从 05-10 的 31,652 增至今日 32,529（+877），3,218 forks。Agent TARS + UI-TARS Desktop 双产品，ByteDance 出品。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">32,529</span></span>
+            <span class="meta-item">🍴 3,218</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">multimodal</span><span class="topic-badge">agent</span><span class="topic-badge">bytedance</span><span class="topic-badge">gui-agent</span><span class="topic-badge">mcp</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 今日亮点</h4><p>连续 Day 2，+877 Stars。今日与 hermes-agent（学习循环 Agent，#2）+ MemoriLabs/Memori（结构化记忆，#12）同框，三者构成 Agent 基础设施三维度：GUI 操控（UI-TARS）+ 持续自进化（hermes-agent）+ 结构化记忆（Memori）。2026 年 AI agent 三个核心基础设施能力今日完整呈现。</p></div>
+        <div class="recommend-quote">💬 "Day 2 持续，今日与 hermes-agent + Memori 的三维 Agent 基础设施同框——GUI 操控 + 持续学习 + 结构化记忆，这是 2026 年 production AI agent 的完整能力基线。"</div>
+      </div>
+    </div>
+
+    <!-- #10 anthropics/financial-services -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/anthropics/financial-services" target="_blank">anthropics / financial-services</a> <span class="cont-badge">持续 Day 4 🏆</span></div>
+          <div class="project-desc">Anthropic 官方金融服务示例库。连续第 4 日上榜，Stars 从 05-10 的 17,870 增至今日 19,502（+1,632），2,529 forks。4 日轨迹：Explore 9.4k → 12.9k → 17.9k → 19.5k，累计增长 +10.1k。今日与 AI-Trader + daily_stock_analysis 金融 AI 三项目同框。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">19,502</span></span>
+            <span class="meta-item">🍴 2,529</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">anthropic</span><span class="topic-badge">claude</span><span class="topic-badge">finance</span><span class="topic-badge">day-4</span><span class="topic-badge">official</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 持续上榜亮点</h4><p>连续 Day 4（05-07 Explore → 05-08 → 05-10 → 05-11），4 日累计 +10.1k Stars，2,529 forks。今日与 ZhuLinsen/daily_stock_analysis（#8，34.7k forks 异常）+ HKUDS/AI-Trader（#11）构成金融 AI 三项目同框：Anthropic 官方 API 教程（how-to 层）+ 国内 LLM 分析工具（自部署层）+ 港大 Agent 交易（系统层）。</p></div>
+        <div class="recommend-quote">💬 "4 日连续，今日金融 AI 三件套同框（#8+#10+#11）——Anthropic 金融 API 教程 + 国内 LLM 分析工具 + 港大 Agent 交易，从'如何做'到'工具层'到'系统层'三层完整覆盖，是本系列记录中金融 AI 最密集的一次集中呈现。"</div>
+      </div>
+    </div>
+
+    <!-- #11 HKUDS/AI-Trader -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/HKUDS/AI-Trader" target="_blank">HKUDS / AI-Trader</a> <span class="cont-badge">持续 Day 2</span></div>
+          <div class="project-desc">"AI-Trader: 100% Fully-Automated Agent-Native Trading". 连续第 2 日上榜，Stars 从 05-10 的 15,127 增至今日 15,887（+760），2,552 forks。港大 HKUDS 实验室出品，今日与 daily_stock_analysis + financial-services 构成金融 AI 三项目同框。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">15,887</span></span>
+            <span class="meta-item">🍴 2,552</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">trading</span><span class="topic-badge">agent-native</span><span class="topic-badge">hkuds</span><span class="topic-badge">fully-automated</span><span class="topic-badge">finance-ai</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 持续上榜亮点</h4><p>连续 Day 2，+760 Stars。今日与 ZhuLinsen/daily_stock_analysis（#8）和 anthropics/financial-services（#10）同框，金融 AI 三层体系再次完整出现：Anthropic 官方 Claude 金融 API 教程（how-to）+ 国内 LLM 分析工具（零成本自部署）+ 港大 Agent 原生交易系统（生产级系统），是本系列日报最密集的一次金融 AI 集中呈现。</p></div>
+        <div class="recommend-quote">💬 "今日金融 AI 三件套再次同框，三层体系完整：financial-services（教程层）+ daily_stock_analysis（工具层）+ AI-Trader（系统层）。金融 AI 是本周 Trending 最持续活跃的应用赛道。"</div>
+      </div>
+    </div>
+
+    <!-- #12 MemoriLabs/Memori -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/MemoriLabs/Memori" target="_blank">MemoriLabs / Memori</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Memori is agent-native memory infrastructure. A LLM-agnostic layer that turns agent execution and conversation into structured, persistent state for production systems. 14,278 ⭐ + 1,974 forks，Agent 三维基础设施（GUI操控+自进化+结构化记忆）的记忆层。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">14,278</span></span>
+            <span class="meta-item">🍴 1,974</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent-memory</span><span class="topic-badge">memory-infrastructure</span><span class="topic-badge">llm-agnostic</span><span class="topic-badge">persistent-state</span><span class="topic-badge">production</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Agent-native 记忆基础设施，LLM-agnostic 层，将 Agent 执行和对话转化为结构化持久状态（structured, persistent state）用于 production systems。非向量数据库，而是结构化状态持久化；跨 session 持久记忆；设计为生产级 Agent 系统的 memory layer。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>agent-native 记忆层：Agent 执行 + 对话 → 结构化持久状态</li>
+          <li>LLM-agnostic：兼容所有主流 LLM API，无 vendor lock-in</li>
+          <li>生产级设计：non-toy，production system memory layer</li>
+          <li>结构化存储：非向量数据库，结构化状态持久化</li>
+          <li>跨 session 持久记忆：Agent 跨对话、跨任务访问历史状态</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LLM API</span><span class="tech-tag">结构化存储</span></div></div>
+        <div class="recommend-quote">💬 "今日与 hermes-agent（自进化+学习循环）+ UI-TARS-desktop（GUI 操控）同框——三者构成 Agent 三维基础设施：GUI 操控 + 持续学习 + 结构化记忆。2026 年 AI agent 的三个核心能力今日首次同时在 Trending 完整呈现。"</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:75%;background:#3572A5"></div></div>
+        <div class="lang-count">9 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:17%;background:#aaaaaa"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8%;background:#3178C6"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="insight-box">
+      <div class="trending-item">
+        <div class="trending-num">01</div>
+        <div>
+          <a href="https://github.com/jundot/omlx" target="_blank"><strong>jundot / omlx</strong></a> ⭐ 13,466 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">TypeScript. "LLM inference server with continuous batching &amp; SSD caching for Apple Silicon — managed from the macOS menu bar." 1,144 forks，Apple Silicon 专属优化的 LLM 推理服务器，macOS 菜单栏管理，持续批处理 + SSD 缓存。在今日大量云端 Agent 工具集中的背景下，omlx 代表了另一个方向：Mac 本地 LLM 推理的极致优化。与 open-webui（#3，136.5k）同日上榜，两者分别代表"本地 LLM Web UI"和"本地 LLM 推理服务器"——本地化 LLM 部署今日双路径并行。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">02</div>
+        <div>
+          <a href="https://github.com/lsdefine/GenericAgent" target="_blank"><strong>lsdefine / GenericAgent</strong></a> ⭐ 10,710 <span class="cont-badge">持续 Day 2</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "Self-evolving agent: grows skill tree from 3.3K-line seed, achieving full system control with 6x less token consumption." 1,205 forks，自进化 Agent Day 2。今日与 hermes-agent（#2，自进化，内置学习循环）同框，两者是"自进化 Agent"赛道的今日双代表：hermes-agent（自然语言 + 多模型路线）vs GenericAgent（代码进化 + token 效率路线），路径不同但方向一致——Agent 自我改进是 2026 年最活跃的研究前沿之一。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">03</div>
+        <div>
+          <a href="https://github.com/OpenTalker/SadTalker" target="_blank"><strong>OpenTalker / SadTalker</strong></a> ⭐ 13,797 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "[CVPR 2023] SadTalker: Learning Realistic 3D Motion Coefficients for Stylized Audio-Driven Single Image Talking Face Animation." 2,627 forks，CVPR 2023 音频驱动单图说话人脸动画生成。今日与 ultralytics（#5，YOLO）同框，Computer Vision 经典项目今日双上 Python Trending——在 LLM/Agent 大潮下，CV 领域依然保持强劲的社区活力和持续的实际应用需求。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">04</div>
+        <div>
+          <a href="https://github.com/CloakHQ/CloakBrowser" target="_blank"><strong>CloakHQ / CloakBrowser</strong></a> ⭐ 5,207 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "Stealth Chromium that passes every bot detection test. Drop-in Playwright replacement with source-level fingerprint patches. 30/30 tests passed." 393 forks，通过所有反爬虫检测的 Stealth Chromium，Playwright 直接替代品，源码级指纹补丁。本周"AI agent 浏览器控制"三路并行再现：chrome-devtools-mcp（05-10，DevTools Protocol 调试路线）+ UI-TARS-desktop（05-10~05-11，视觉+DOM 路线）+ CloakBrowser（今日，反检测隐身路线）。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">05</div>
+        <div>
+          <a href="https://github.com/decolua/9router" target="_blank"><strong>decolua / 9router</strong></a> ⭐ 7,634 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">TypeScript. "Unlimited FREE AI coding. Connect Claude Code, Codex, Cursor, Cline, Copilot, Antigravity to FREE Claude/GPT/Gemini via 40+ providers. Auto-fallback, RTK -40% tokens, never hit limits." 1,261 forks。今日与 everything-claude-code（#1，178.8k）同框——ECC 解决"如何更好地用 AI coding agent"，9router 解决"如何免费无限用 AI coding agent"，两者今日同时上榜是开发者社区对"AI coding 性能 + 成本双重优化"需求的完整呈现。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📊 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/trending/python?since=daily" target="_blank">Python Trending</a></p>
+    <p style="margin-top:8px;">生成时间：2026-05-11 · 仅供参考，不构成投资或法律建议</p>
+  </div>
+
+</div>
+<script>
+function toggleDetail(btn) {
+  var details = btn.nextElementSibling;
+  if (details.classList.contains('open')) {
+    details.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    details.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+}
+</script>
+</body>
+</html>

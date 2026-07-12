@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-05</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px #58a6ff22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-card.new-card { border: 1.5px solid var(--green); }
+  .project-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .new-badge { background: #0f2d13; border: 1px solid var(--green); color: var(--green); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-05-05 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">475k+</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">7</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">7</div><div class="stat-label">今日新上榜</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🎭 msitarzewski/agency-agents（93k！）——"AI Agency 提示词全家桶"单日横空出世</div>
+        <p>93,034 Stars + 15,306 forks，起源于 Reddit 讨论帖，经数月迭代演化为精心设计的 AI 专家角色集合。"The Agency"设置 13 个部门、100+ 个专业 Agent（工程/设计/销售/产品/PM/测试/财务/游戏开发/学术等），每个 Agent 都有独特个性、专业流程和可交付成果定义。支持 Claude Code / Windsurf / Cursor / Copilot / Aider / Kimi Code 全主流 AI IDE。与普通 Prompt 库最大区别：battle-tested workflows with success metrics，不是通用模板，而是有个性、有流程、有结果的 AI 专业团队。93k + 15.3k forks 是近期 GitHub Trending 罕见的 90k+ 新上榜。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📡 sansan0/TrendRadar（56.6k）——国产 AI 舆情监控器，24k forks 是真实需求的证明</div>
+        <p>从 2025-06-02 的 v1.0 持续迭代到 2026-03 的 v6.6.0，近 1 年高频更新。聚合知乎/微博/抖音/Bilibili/今日头条/百度热搜/华尔街见闻等 11 个主流平台 + RSS，AI 智能筛选（v6.5.0）+ AI 多语言翻译（v5.2.0）+ AI 分析简报，全渠道推送（微信/飞书/钉钉/Telegram/邮件/Slack），MCP 架构接入自然语言对话分析，Docker 一键部署。24,068 forks 是今日所有项目中最高，说明它已成为中文开源社区信息自动化工具的事实标准之一。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">💹 virattt 连续两日登榜——昨日 ai-hedge-fund（58k），今日 dexter（23.4k）</div>
+        <p>virattt 是专注 AI 金融研究的独立开发者，昨日 ai-hedge-fund（19 位名人投资者 Agent，58k）强势登榜，今日 dexter（自主金融深度研究 Agent，23.4k）再次入榜。dexter 把复杂金融问题自动拆解为结构化研究计划，调用实时市场数据（收入表/资产负债表/现金流），自我验证迭代直到给出数据支撑的可信答案，支持 WhatsApp 集成，20 次发布。连续两日同作者两个金融 AI 项目登榜，是金融 AI 赛道正在形成系统性生态的有力证明。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🛠️ 传统开源工具今日三强——Jellyfin + qBittorrent + DocuSeal 与 AI 项目并列</div>
+        <p>今日 12 个项目中有 5 个传统开源工具：jellyfin（51k，C#，开源 Plex 替代）、qbittorrent（37k，C++，BitTorrent 客户端）、docuseal（13.5k，Ruby，151 次发布，开源 DocuSign 替代）+ maigret（OSINT）+ n8n-mcp（自动化），占比超 40%。即使在 AI 工具爆炸的 2026 年，解决具体实际问题的传统开源工具仍然能在 Trending 获得一席之地，彰显 GitHub Trending 生态的多样性。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 msitarzewski/agency-agents -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/msitarzewski/agency-agents" target="_blank">msitarzewski / agency-agents</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">A complete AI agency at your fingertips. 13 个部门 100+ 个专业 AI Agent 角色，每个 Agent 有独特个性/流程/可交付成果，支持全主流 AI IDE（Claude Code 推荐），93k Stars 是今日 Trending 罕见的 90k+ 新上榜。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">93,034</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>15,306</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#aaaaaa"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-agents</span><span class="topic-badge">prompts</span><span class="topic-badge">claude-code</span><span class="topic-badge">windsurf</span><span class="topic-badge">cursor</span><span class="topic-badge">llm</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>诞生于 Reddit 讨论、经数月迭代的 AI 专家角色集合。"The Agency"设置 13 个部门：工程（27+ 角色：Frontend Developer / Backend Architect / AI Engineer / Security Engineer / Solidity Engineer / DevOps Automator 等）/ 设计 / 销售 / 市场 / 产品 / PM / 测试 / 支持 / 空间计算 / 专业 / 财务 / 游戏开发 / 学术。每个 Agent 都有独特个性（personality）、专业流程（processes）和可交付成果（deliverables）定义，不是通用 Prompt 模板，而是 battle-tested 的专业工作流。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>13 部门 100+ Agent：工程（27+）/ 设计 / 销售 / 市场 / 产品 / PM / 测试 / 支持 / 财务 / 游戏开发 / 学术等</li>
+          <li>每个 Agent：personality + processes + deliverables 三要素完整定义</li>
+          <li>全主流 AI IDE：Claude Code（推荐）/ Windsurf / Cursor / Copilot / Aider / Kimi Code / OpenCode</li>
+          <li>一条命令安装，开箱即用，社区持续贡献新角色</li>
+          <li>与普通 Prompt 库的区别：不是通用模板，是有人格、有流程、有交付标准的专业 Agent</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">YAML</span><span class="tech-tag">Claude Code</span><span class="tech-tag">多 AI IDE 插件系统</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Claude Code / Windsurf / Cursor 中调用专业角色 Agent；复杂业务多角色 Agent 协作；AI 辅助编程"虚拟团队"场景。</p></div>
+        <div class="recommend-quote">💬 "93k Stars 的 Reddit 爆款——The Agency 把 Frontend Developer、Security Engineer、Solidity 工程师、Reddit 社区忍者全部做成 AI Agent，支持全主流 AI IDE，近期 Trending 罕见的 90k+ 新上榜。"</div>
+      </div>
+    </div>
+
+    <!-- #2 TauricResearch/TradingAgents -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/TauricResearch/TradingAgents" target="_blank">TauricResearch / TradingAgents</a></div>
+          <div class="project-desc">TradingAgents: Multi-Agents LLM Financial Trading Framework. 连续第 5 日上榜，Stars 68,346（日均增约 574），四路分析师 + 多头空头辩论 + 风控 + Portfolio Manager，今日与 virattt/dexter 共同构成金融 AI 赛道双雄。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">68,346</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>13,149</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm</span><span class="topic-badge">multi-agent</span><span class="topic-badge">trading</span><span class="topic-badge">finance</span><span class="topic-badge">langgraph</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>模拟真实交易公司架构的多 Agent LLM 金融交易框架，连续第 5 日上榜，Stars 从 65,473 增至 68,346，日均增约 574。今日与 virattt/dexter（金融深度研究 Agent）共同在场，构成今日 GitHub 金融 AI 双雄：TradingAgents = 实时多 Agent 决策辩论，dexter = 深度研究自动规划。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Analyst Team：基本面（估值/财务）/ 情绪（社交）/ 新闻（宏观）/ 技术（MACD/RSI）</li>
+          <li>Researcher Team：多头/空头结构化辩论</li>
+          <li>Trader Agent：综合所有报告决策交易时机和规模</li>
+          <li>Risk Management：Portfolio Manager 审批/拒绝交易提案</li>
+          <li>多 LLM Provider：DeepSeek / Qwen / GLM / Azure / GPT / Claude / Gemini</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">DeepSeek</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>LLM 量化研究与策略回测；多 Agent 协作决策研究（非投资建议）。</p></div>
+        <div class="recommend-quote">💬 "连续第 5 日上榜，日均增约 574 Stars——TradingAgents 是今日 GitHub 金融 AI 持续热度的最稳定指标，今日与 virattt/dexter 共同构成金融 AI 赛道双雄。"</div>
+      </div>
+    </div>
+
+    <!-- #3 sansan0/TrendRadar -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/sansan0/TrendRadar" target="_blank">sansan0 / TrendRadar</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">AI 驱动全网热点聚合 + 舆情监控工具，v6.6.0，11 平台聚合 + RSS + AI 智能筛选/翻译/分析简报，微信/飞书/钉钉/Telegram 全渠道推送，MCP 接入，Docker 部署，24k forks 是今日最高。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">56,599</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>24,068</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">trending</span><span class="topic-badge">ai</span><span class="topic-badge">rss</span><span class="topic-badge">wechat</span><span class="topic-badge">telegram</span><span class="topic-badge">mcp</span><span class="topic-badge">docker</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>国产 AI 舆情监控 + 全网热点聚合工具，从 2025-06-02 的 v1.0 持续迭代到 2026-03 的 v6.6.0，近 1 年高频更新。聚合知乎/微博/抖音/Bilibili/今日头条/百度热搜/华尔街见闻/财联社/澎湃/凤凰/贴吧等 11 个主流平台 + RSS 订阅。AI 智能筛选（v6.5.0，自然语言描述兴趣，两阶段分类打分）+ AI 翻译（v5.2.0）+ AI 分析简报，MCP 接入支持自然语言对话分析，Docker 一键部署，24,068 forks 是今日所有项目中最高。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>11 平台聚合：知乎 / 微博 / 抖音 / Bilibili / 今日头条 / 百度热搜 / 华尔街见闻 / 财联社 / 澎湃 / 凤凰网 / 贴吧</li>
+          <li>AI 智能筛选（v6.5.0）：自然语言描述兴趣，AI 两阶段分类打分，替代关键词配置</li>
+          <li>三种推送模式：增量监控（去重）/ 当前榜单（趋势）/ 当日汇总（报告）</li>
+          <li>多渠道推送：企业微信 / 飞书 / 钉钉 / Telegram / 邮件 / ntfy / Bark / Slack 等</li>
+          <li>MCP 接入：自然语言对话分析、情感洞察、趋势预测</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Docker</span><span class="tech-tag">GitHub Actions</span><span class="tech-tag">MCP</span><span class="tech-tag">YAML</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>个人信息流精准过滤；企业舆情监控自动化；AI 驱动新闻聚合分发系统。</p></div>
+        <div class="recommend-quote">💬 "24k forks 是今日所有项目中最高——TrendRadar 从 2025-06 持续迭代到 v6.6.0，已成为中文开源社区 AI 信息自动化工具的事实标准之一。"</div>
+      </div>
+    </div>
+
+    <!-- #4 jellyfin/jellyfin -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/jellyfin/jellyfin" target="_blank">jellyfin / jellyfin</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">The Free Software Media System. 完全免费开源的媒体服务器，Plex / Emby 的开源替代方案，无订阅费、无追踪、数据完全自托管，支持 Web / Android / iOS / TV / Kodi 等多端，GPL-2.0。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">51,241</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>4,743</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#178600"></span> C#</span>
+            <span class="meta-item">📄 GPL-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">media-server</span><span class="topic-badge">self-hosted</span><span class="topic-badge">plex-alternative</span><span class="topic-badge">csharp</span><span class="topic-badge">dotnet</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>完全免费开源的媒体服务器系统（The Free Software Media System），Plex / Emby 的开源替代方案。无订阅费、无高级版本、无追踪，数据完全保留在本地服务器，社区驱动开发，GPL-2.0 完全开放。支持实时转码，多端客户端（Web / Android / iOS / TV / Kodi / Roku），是 NAS 用户首选的本地私有媒体库解决方案。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>完全免费：无高级版本，无订阅费，无任何追踪</li>
+          <li>自托管：所有数据完全保留在本地服务器</li>
+          <li>多端支持：Web / Android / iOS / TV / Kodi / Roku 等</li>
+          <li>实时转码：支持多种视频/音频格式</li>
+          <li>社区驱动：GPL-2.0 完全开放，活跃社区贡献</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C#</span><span class="tech-tag">.NET</span><span class="tech-tag">Docker</span><span class="tech-tag">FFmpeg</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>家庭 NAS 媒体服务器；替代 Plex 订阅；私有影视库/音乐库自托管管理。</p></div>
+        <div class="recommend-quote">💬 "Plex 的完全免费开源替代——Jellyfin 51k Stars，无订阅费、无追踪、数据自托管，是今日榜单中 NAS 用户和隐私用户的必选项。"</div>
+      </div>
+    </div>
+
+    <!-- #5 ruvnet/ruflo -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ruvnet/ruflo" target="_blank">ruvnet / ruflo</a></div>
+          <div class="project-desc">🌊 The leading agent orchestration platform for Claude. 连续第 3 日上榜，Stars 42,206（日增约 3k），Rust WASM 内核自学习 Agent 编排平台，1,471+ 次发布，今日与 n8n-mcp 共同代表 AI IDE 生态 Agent 编排层。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">42,206</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>4,711</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">agent</span><span class="topic-badge">orchestration</span><span class="topic-badge">swarm</span><span class="topic-badge">rust</span><span class="topic-badge">wasm</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Claude Code 的"神经系统"，连续第 3 日上榜，Stars 从 39,194 增至 42,206，日增约 3k，1,471+ 次发布节奏极快。前身为 claude-flow，Rust WASM 内核驱动策略引擎、嵌入和证明系统，自学习 + 自优化架构，支持跨机器 Federation 安全通信，多 Agent Swarm 并发协作。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Rust WASM 内核：策略引擎 + 嵌入 + 证明系统</li>
+          <li>自学习 Swarm：agents 自优化架构</li>
+          <li>跨机器 Federation：安全通信协议</li>
+          <li>一次 init 接入：全面替代手动 Agent 管理</li>
+          <li>1,471+ 次发布：超高迭代节奏</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Rust</span><span class="tech-tag">WASM</span><span class="tech-tag">MCP</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Claude Code 多 Agent 工作流编排；复杂 Agent Swarm 协作；跨机器 Agent Federation 部署。</p></div>
+        <div class="recommend-quote">💬 "连续第 3 日上榜，日增约 3k Stars——Ruflo 正在成为 Claude Code 生态中 Agent 编排的事实标准入口。"</div>
+      </div>
+    </div>
+
+    <!-- #6 qbittorrent/qBittorrent -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/qbittorrent/qBittorrent" target="_blank">qbittorrent / qBittorrent</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">qBittorrent BitTorrent client. 跨平台免费开源 BitTorrent 客户端，无广告无捆绑，支持 Web UI 远程管理，Docker 部署友好，37k Stars + 4.6k forks，是 BitTorrent 客户端中开源生态最完善的项目之一。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">37,133</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>4,656</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#F34B7D"></span> C++</span>
+            <span class="meta-item">📄 GPL-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">bittorrent</span><span class="topic-badge">torrent</span><span class="topic-badge">cross-platform</span><span class="topic-badge">webui</span><span class="topic-badge">cpp</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>跨平台免费开源 BitTorrent 客户端，无广告、无捆绑软件，功能完整。支持 Web UI 远程管理，可通过 Docker 在 NAS 上部署。支持 Sequential downloading、IP 过滤、RSS 下载订阅（配合 Sonarr/Radarr）等高级功能，是 NAS 用户和隐私用户的首选 BT 客户端。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>跨平台：Windows / Linux / macOS</li>
+          <li>Web UI：支持远程管理，Docker 部署友好</li>
+          <li>无广告：完全无广告无捆绑软件</li>
+          <li>Sequential downloading / IP 过滤 / RSS 下载订阅</li>
+          <li>与 Sonarr / Radarr 完美集成，自动化媒体下载</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C++</span><span class="tech-tag">Qt</span><span class="tech-tag">libtorrent</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>个人 BT 下载；NAS 自动下载配合 Sonarr/Radarr；无广告 BT 客户端替代 μTorrent。</p></div>
+        <div class="recommend-quote">💬 "37k Stars 的无广告免费 BitTorrent 客户端——qBittorrent 今日登榜，是今日传统开源三强之一，NAS 用户和隐私用户的 BT 首选。"</div>
+      </div>
+    </div>
+
+    <!-- #7 Flowseal/zapret-discord-youtube -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Flowseal/zapret-discord-youtube" target="_blank">Flowseal / zapret-discord-youtube</a> <span class="new-badge">今日重新上榜</span></div>
+          <div class="project-desc">绕过网络限制访问 Discord 和 YouTube 的工具，基于 Secure DNS 配置和 DPI 绕过技术，Windows Batch 一键安装，主要面向俄语地区用户，27k Stars，今日重新进入 Top 12。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">27,340</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,137</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#C1F12E"></span> Batchfile</span>
+            <span class="meta-item">📄 —</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">discord</span><span class="topic-badge">youtube</span><span class="topic-badge">dpi-bypass</span><span class="topic-badge">dns</span><span class="topic-badge">russia</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>绕过网络访问限制的工具，主要面向 Discord 和 YouTube 受限的俄语地区用户。通过 Secure DNS 配置和 DPI（深度包检测）绕过技术实现，Windows Batch 脚本一键安装，README 使用俄语，提供详细使用说明和常见问题解答。今日重新进入 Top 12（上次出现在 05-03）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Secure DNS 配置，绕过 DNS 污染</li>
+          <li>DPI bypass：绕过深度包检测</li>
+          <li>Windows Batch 一键安装脚本</li>
+          <li>俄语详细文档，常见问题解答</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Batchfile</span><span class="tech-tag">Windows</span><span class="tech-tag">Secure DNS</span><span class="tech-tag">DPI bypass</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Discord / YouTube 访问受限地区的网络访问工具；俄语社区网络自由工具。</p></div>
+        <div class="recommend-quote">💬 "今日重新登榜——zapret-discord-youtube 持续在俄语社区保持热度，是 Discord/YouTube 访问受限地区最易用的开源工具之一。"</div>
+      </div>
+    </div>
+
+    <!-- #8 soxoj/maigret -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/soxoj/maigret" target="_blank">soxoj / maigret</a></div>
+          <div class="project-desc">🕵️ Collect a dossier on a person by username from 3000+ sites. 连续第 5 日上榜，Stars 25,216（5 日累计增长 2.1k），3000+ 网站支持，档案报告生成，OSINT 赛道持续热度最稳定的开源工具。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">25,216</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,745</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">osint</span><span class="topic-badge">username</span><span class="topic-badge">reconnaissance</span><span class="topic-badge">sherlock</span><span class="topic-badge">dossier</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>OSINT 用户名情报收集工具，通过用户名在 3000+ 网站查找个人在线痕迹并生成档案报告。连续第 5 日上榜，Stars 从 05-01 的 23,113 增至今日 25,216，5 日累计增长约 2.1k。是 sherlock 的增强版，支持更多站点和更丰富的报告格式。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>3000+ 网站：覆盖社交媒体、论坛、代码平台等</li>
+          <li>多格式报告：PDF / HTML / 文本档案</li>
+          <li>关联标识符：通过个人信息关联其他账户</li>
+          <li>通过 pypi 安装，支持 Docker</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">asyncio</span><span class="tech-tag">aiohttp</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>个人信息安全评估（检查自己的数字足迹）；渗透测试目标用户名侦查；OSINT 情报收集研究。</p></div>
+        <div class="recommend-quote">💬 "连续第 5 日上榜，5 日累计增长 2.1k Stars——maigret 是 OSINT 赛道持续热度最稳定的开源工具，3000+ 站点支持。"</div>
+      </div>
+    </div>
+
+    <!-- #9 virattt/dexter -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/virattt/dexter" target="_blank">virattt / dexter</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">An autonomous agent for deep financial research. 同作者 ai-hedge-fund 连续两日登榜第二弹，把复杂金融问题自动拆解为研究计划，调用实时市场数据，自我验证迭代，支持 WhatsApp 集成，20 次发布。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">23,394</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,865</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent</span><span class="topic-badge">finance</span><span class="topic-badge">research</span><span class="topic-badge">bun</span><span class="topic-badge">openai</span><span class="topic-badge">whatsapp</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>自主金融深度研究 Agent，同作者昨日 ai-hedge-fund（58k）连续两日登榜第二弹。把复杂金融问题自动分解为结构化研究计划，自主选择并调用工具收集金融数据，自我验证迭代直到给出数据支撑的可信答案。内置 loop 检测和步骤限制防止失控执行，支持 WhatsApp 提交查询，20 次发布。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>智能任务规划：复杂查询自动拆解为结构化研究步骤</li>
+          <li>自主执行：选择并调用合适工具收集金融数据</li>
+          <li>Self-Validation：检查自身工作并迭代直至完成</li>
+          <li>实时金融数据：收入表 / 资产负债表 / 现金流报表</li>
+          <li>安全机制：内置 loop 检测 + 步骤限制</li>
+          <li>WhatsApp 集成：通过 WhatsApp 提交金融研究查询</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Bun</span><span class="tech-tag">OpenAI API</span><span class="tech-tag">Financial Datasets API</span><span class="tech-tag">Exa Search</span><span class="tech-tag">LangSmith</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 驱动金融研究自动化；替代人工分析师做初步尽调；量化数据提取与分析。</p></div>
+        <div class="recommend-quote">💬 "virattt 连续两日登榜——昨日 ai-hedge-fund（58k 名人投资者 Agent），今日 dexter（自主金融研究 Agent），一个开发者构建的金融 AI 产品矩阵正在成形。"</div>
+      </div>
+    </div>
+
+    <!-- #10 czlonkowski/n8n-mcp -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/czlonkowski/n8n-mcp" target="_blank">czlonkowski / n8n-mcp</a></div>
+          <div class="project-desc">A MCP for Claude Desktop / Claude Code / Windsurf / Cursor to build n8n workflows. 连续第 2 日上榜，Stars 突破 20k，覆盖 n8n 1,650 个节点，201 次发布，AI IDE 融合低代码自动化的今日最佳示例。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">20,034</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>3,276</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">mcp</span><span class="topic-badge">n8n</span><span class="topic-badge">claude-code</span><span class="topic-badge">windsurf</span><span class="topic-badge">cursor</span><span class="topic-badge">automation</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>MCP 协议服务器，让 Claude Desktop / Claude Code / Windsurf / Cursor 直接调用 n8n 的 1,650 个 workflow 节点（820 核心 + 830 社区），涵盖节点搜索、工作流验证、模板检索等全链路。连续第 2 日上榜，Stars 从 19,564 增至 20,034，201 次发布节奏极高，是 AI IDE 融合低代码自动化平台的代表作。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>覆盖 n8n 1,650 个节点（820 核心 + 830 社区）</li>
+          <li>节点搜索 / 工作流验证 / 模板检索全链路</li>
+          <li>支持：Claude Desktop / Claude Code / Windsurf / Cursor</li>
+          <li>201 次发布，超高迭代节奏</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">MCP Protocol</span><span class="tech-tag">n8n API</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI IDE 中自然语言构建 n8n 工作流；低代码自动化与 AI 编程的融合；MCP 生态向自动化平台延伸的典型案例。</p></div>
+        <div class="recommend-quote">💬 "连续第 2 日上榜，突破 20k——n8n-mcp 是 AI IDE 融合低代码自动化的今日最佳示例，MCP 生态正在快速向 n8n 的 1,650 个节点延伸。"</div>
+      </div>
+    </div>
+
+    <!-- #11 OpenBMB/VoxCPM -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/OpenBMB/VoxCPM" target="_blank">OpenBMB / VoxCPM</a></div>
+          <div class="project-desc">VoxCPM2: Tokenizer-Free TTS for Multilingual Speech Generation. 清华 OpenBMB 出品，连续第 2 日上榜，无分词器 30 语言 TTS，2B 参数，48kHz 输出，RTF ~0.3，Apache-2.0 商用授权。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">17,361</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,068</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">tts</span><span class="topic-badge">speech-synthesis</span><span class="topic-badge">multilingual</span><span class="topic-badge">voice-cloning</span><span class="topic-badge">openBMB</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>清华 OpenBMB 开源的无分词器多语言 TTS 基础模型 VoxCPM2，支持 30 种语言，内置声音设计（用自然语言描述创建声音）、可控声音克隆和终极克隆模式，直接输出 48kHz 高质量音频，RTF ~0.3，Apache-2.0 商用授权。连续第 2 日上榜，Stars 从 17,240 增至 17,361。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>无分词器架构：支持 30 种语言，无需分词预处理</li>
+          <li>声音设计：用自然语言描述创建全新声音</li>
+          <li>可控声音克隆：极少参考音频即可克隆</li>
+          <li>48kHz 高质量输出，RTF ~0.3（实时速率极快）</li>
+          <li>Apache-2.0：商用授权，开放部署</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">HuggingFace</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>多语言 TTS 内容生产；声音克隆与配音自动化；音频 AI 产品底层 TTS 引擎。</p></div>
+        <div class="recommend-quote">💬 "连续第 2 日上榜——VoxCPM2 无分词器 30 语言 TTS，只需自然语言描述创建声音，48kHz 高质量输出 + Apache-2.0 商用授权。"</div>
+      </div>
+    </div>
+
+    <!-- #12 docusealco/docuseal -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/docusealco/docuseal" target="_blank">docusealco / docuseal</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Open source DocuSign alternative. 开源文档签署平台，12 种字段类型（签名/日期/文件/复选框等），多提交人，SMTP + S3/GCS/Azure 存储，API + Webhook，7 种 UI 语言，Docker 一键部署，151 次发布。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">13,522</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,231</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#CC342D"></span> Ruby</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">esignature</span><span class="topic-badge">docusign-alternative</span><span class="topic-badge">pdf</span><span class="topic-badge">self-hosted</span><span class="topic-badge">ruby</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>开源 DocuSign 替代方案，151 次发布，功能完整。支持 PDF 表单构建（WYSIWYG）、12 种字段类型（Signature / Date / File / Checkbox 等）、多提交人、SMTP 邮件、AWS S3/GCS/Azure 存储、API 和 Webhook，7 种 UI 语言，14 种签署语言，移动端优化，Docker/Docker Compose 一键部署。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>PDF 表单构建器（WYSIWYG）：可视化字段拖拽配置</li>
+          <li>12 种字段类型：Signature / Date / File / Checkbox / Text 等</li>
+          <li>多提交人支持，自动 SMTP 邮件通知</li>
+          <li>存储：本地磁盘 / AWS S3 / Google Storage / Azure Cloud</li>
+          <li>API + Webhook：与现有系统无缝集成</li>
+          <li>7 种 UI 语言，14 种签署语言，移动端优化</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Ruby</span><span class="tech-tag">Rails</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">SQLite</span><span class="tech-tag">Docker</span><span class="tech-tag">S3</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>替代 DocuSign 订阅的自托管文档签署；企业电子合同管理；嵌入 Web/移动应用的文档签署流程。</p></div>
+        <div class="recommend-quote">💬 "151 次发布的开源 DocuSign 替代——DocuSeal 支持 12 种字段类型、多提交人、API+Webhook，AGPL-3.0 自托管，是今日传统开源工具三强之一。"</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:33.3%;background:#3572A5"></div></div>
+        <div class="lang-count">4 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:25%;background:#3178C6"></div></div>
+        <div class="lang-count">3 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">C#</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#178600"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">C++</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#F34B7D"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Ruby</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#CC342D"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Batchfile</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#C1F12E"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#aaaaaa"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="insight-box">
+      <div class="trending-item">
+        <div class="trending-num">01</div>
+        <div>
+          <a href="https://github.com/AIDC-AI/Pixelle-Video" target="_blank"><strong>AIDC-AI / Pixelle-Video</strong></a> ⭐ 11,141
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">AI 全自动短视频引擎，输入主题全自动生成完整视频（文案 → 配图 → 语音 → 合成），支持数字人口播/动作迁移/图生视频，基于 ComfyUI 架构，多 AI 模型（GPT/通义/DeepSeek/Ollama），连续多日出现在 Python Trending。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">02</div>
+        <div>
+          <a href="https://github.com/cocoindex-io/cocoindex" target="_blank"><strong>cocoindex-io / cocoindex</strong></a> ⭐ 8,150
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">长期 Agent 的增量处理引擎，今日同时出现在全语言 Trending 和 Python Trending，为 RAG / 知识库 / Agent 记忆层提供增量更新能力，避免重复全量重建索引。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">03</div>
+        <div>
+          <a href="https://github.com/MervinPraison/PraisonAI" target="_blank"><strong>MervinPraison / PraisonAI</strong></a> ⭐ 7,052
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">5 行代码部署自主自我改进 Agent，支持 100+ LLM，内置 Memory + RAG，自动研究/规划/编码/执行任务，今日出现在 Python Trending。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">04</div>
+        <div>
+          <a href="https://github.com/Lightricks/LTX-2" target="_blank"><strong>Lightricks / LTX-2</strong></a> ⭐ 6,415
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">首个基于 DiT 的音视频基础模型，集成音视频同步、高保真、多性能模式，官方 Python 推理 + LoRA 训练包，今日出现在 Python Trending。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">05</div>
+        <div>
+          <a href="https://github.com/OWASP/Nettacker" target="_blank"><strong>OWASP / Nettacker</strong></a> ⭐ 5,140
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">OWASP 自动化渗透测试框架 + 开源漏洞扫描器，支持漏洞管理全流程，今日新登 Python Trending，是安全社区今日的亮点项目。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📊 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/trending/python?since=daily" target="_blank">Python Trending</a></p>
+    <p style="margin-top:8px;">生成时间：2026-05-05 · 仅供参考，不构成投资或法律建议</p>
+  </div>
+
+</div>
+
+<script>
+function toggleDetail(btn) {
+  var details = btn.nextElementSibling;
+  if (details.classList.contains('open')) {
+    details.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    details.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+}
+</script>
+</body>
+</html>

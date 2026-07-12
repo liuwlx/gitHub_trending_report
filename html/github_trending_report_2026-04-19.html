@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-04-19</title>
+<style>
+  :root {
+    --bg:#0D1117;--surface:#161B22;--surface2:#21262D;--border:#30363D;
+    --text:#C9D1D9;--text-muted:#8B949E;--blue:#58A6FF;--green:#3FB950;
+    --orange:#D29922;--purple:#BC8CFF;--red:#F85149;--yellow:#E3B341;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;}
+  a{color:var(--blue);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .container{max-width:1100px;margin:0 auto;padding:24px 16px;}
+  .header{text-align:center;padding:48px 0 32px;border-bottom:1px solid var(--border);margin-bottom:32px;}
+  .header h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:8px;}
+  .header h1 span{color:var(--blue);}
+  .header .subtitle{color:var(--text-muted);font-size:15px;}
+  .header .date-badge{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 16px;margin-top:12px;font-size:13px;color:var(--text-muted);}
+  .theme-toggle{position:fixed;top:16px;right:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;color:var(--text);z-index:100;}
+  .theme-toggle:hover{background:var(--border);}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center;}
+  .stat-card .stat-num{font-size:32px;font-weight:700;color:var(--blue);}
+  .stat-card .stat-label{color:var(--text-muted);font-size:13px;margin-top:4px;}
+  .stat-card .stat-icon{font-size:24px;margin-bottom:8px;}
+  .section{margin-bottom:40px;}
+  .section-title{font-size:20px;font-weight:600;color:#fff;margin-bottom:20px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .project-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;transition:border-color 0.2s,box-shadow 0.2s;}
+  .project-card:hover{border-color:var(--blue);box-shadow:0 0 0 1px rgba(88,166,255,0.13);}
+  .project-card.top-card{border-left:3px solid var(--orange);}
+  .project-header{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+  .project-rank{font-size:22px;font-weight:700;color:var(--orange);min-width:36px;}
+  .rank-1{color:#FFD700!important;}
+  .rank-2{color:#C0C0C0!important;}
+  .rank-3{color:#CD7F32!important;}
+  .project-info{flex:1;}
+  .project-name{font-size:18px;font-weight:600;}
+  .project-name a{color:#fff;}
+  .project-name a:hover{color:var(--blue);text-decoration:none;}
+  .project-desc{color:var(--text-muted);margin-top:6px;font-size:13px;line-height:1.6;}
+  .project-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:13px;color:var(--text-muted);}
+  .meta-item{display:flex;align-items:center;gap:5px;}
+  .stars{color:var(--green);font-weight:600;}
+  .lang-dot{width:12px;height:12px;border-radius:50%;display:inline-block;}
+  .topics{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .topic-badge{background:var(--surface2);border:1px solid #1f6feb;color:var(--blue);border-radius:20px;padding:2px 10px;font-size:12px;}
+  .detail-toggle{background:none;border:1px solid var(--border);border-radius:6px;color:var(--blue);padding:6px 14px;font-size:12px;cursor:pointer;margin-top:12px;transition:background 0.15s;}
+  .detail-toggle:hover{background:var(--surface2);}
+  .project-details{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
+  .project-details.open{display:block;}
+  .detail-section{margin-bottom:16px;}
+  .detail-section h4{font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+  .detail-section p{color:var(--text);font-size:13px;line-height:1.7;}
+  .feature-list{list-style:none;}
+  .feature-list li{padding:4px 0;color:var(--text);font-size:13px;}
+  .feature-list li::before{content:"✨ ";}
+  .tech-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .tech-tag{background:#1c2c3e;border:1px solid rgba(31,111,235,0.27);color:var(--blue);border-radius:4px;padding:2px 8px;font-size:12px;}
+  .recommend-quote{background:var(--surface2);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;padding:10px 14px;font-style:italic;color:var(--text);font-size:13px;margin-top:8px;}
+  .lang-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .lang-name{width:130px;font-size:13px;color:var(--text);flex-shrink:0;}
+  .lang-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:18px;overflow:hidden;}
+  .lang-bar{height:100%;border-radius:4px;}
+  .lang-count{width:90px;text-align:right;font-size:12px;color:var(--text-muted);flex-shrink:0;}
+  .insight-box{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border:1px solid var(--border);border-radius:10px;padding:24px;}
+  .insight-item{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+  .insight-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .insight-title{font-weight:600;color:var(--blue);margin-bottom:6px;font-size:14px;}
+  .insight-box p{color:var(--text-muted);font-size:13px;line-height:1.7;}
+  .trending-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+  .trending-item:last-child{border-bottom:none;}
+  .trending-num{font-size:16px;font-weight:700;color:var(--text-muted);width:28px;flex-shrink:0;}
+  .footer{text-align:center;padding:32px 0;border-top:1px solid var(--border);margin-top:40px;color:var(--text-muted);font-size:13px;}
+  .footer a{color:var(--text-muted);}
+  body.light{--bg:#FFFFFF;--surface:#F6F8FA;--surface2:#EAECEF;--border:#D0D7DE;--text:#24292F;--text-muted:#57606A;--blue:#0969DA;--green:#1A7F37;}
+  @media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr);}  .project-header{flex-direction:column;}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的 10 个项目精选</div>
+    <div class="date-badge">📅 2026-04-19 &nbsp;·&nbsp; 数据源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> + <a href="https://github.com/explore" target="_blank">Explore</a></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">10</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">197k+</div><div class="stat-label">累计总 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">7</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">8</div><div class="stat-label">AI 相关项目</div></div>
+  </div>
+
+  <!-- 今日洞察 -->
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🧩 Claude 生态悄悄渗透每个开发者工具角落</div>
+        <p>今日 Trending 有两个项目专门围绕 Claude 生态构建：claude-desktop-debian 让 Linux 用户原生运行 Claude Desktop（已 84 个发布版本），android-reverse-engineering-skill 把 Claude Code 变成 Android APK 逆向工程专用技能。Claude 不再只是聊天工具，正在被开发者当作工具链平台来扩展，类似当年 VS Code 插件生态的轨迹。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">⚡ AI Agent 框架分叉：轻量 SDK vs 自进化引擎</div>
+        <p>openai-agents-python（22k stars）代表主流路径——OpenAI 官方出品、100+ LLM 兼容、专注 multi-agent 工作流编排；EvoMap/evolver（5k stars）代表另一条路径——基于 GEP（Genome Evolution Protocol）让 Agent 把临时 prompt 调整变成可审计的进化资产持续自我改进。两种思路同时获得认可，Agent 框架领域远未终局。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🔬 DeepSeek 开源 CUDA 内核库：不只是 FP8 矩阵乘法</div>
+        <p>DeepGEMM 已升级为统一高性能张量核心内核库，从"仅 FP8 GEMM"扩展到 FP8/FP4/BF16 GEMM、带重叠通信的融合 MoE（Mega MoE）、MQA scoring、HyperConnection 等。JIT 编译无需安装阶段 CUDA 编译，直接可用。对想在 H100/H800 上做 LLM 推理优化的工程师来说，这是今日最值得 clone 的技术仓库。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📚 中文 LLM 编程教程正在成为 GitHub 长期爆款</div>
+        <p>Lordog/dive-into-llms 以 32k stars 位列今日热门第二，课程由上海交通大学 NLP 课程拓展而来，已覆盖 11 章（LLM 微调、提示工程、知识编辑、数学推理、GUI Agent、模型对齐、隐写术等），新增国产化《大模型开发全流程》公益教程（华为昇腾支持）。中文 LLM 学习资源已从"翻译英文内容"演进为"原创系统性课程"。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 今日热门 Top 10 -->
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 10</div>
+    <p style="color:var(--text-muted);font-size:12px;margin-bottom:20px;">📌 今日 GitHub Trending 页面共返回 10 个项目，如实呈现 Top 10；按总 Stars 降序排列，今日新增 stars 数据未能从页面获取。</p>
+
+    <!-- #1 rustdesk/rustdesk -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/rustdesk/rustdesk" target="_blank">rustdesk / rustdesk</a></div>
+          <div class="project-desc">An open-source remote desktop application designed for self-hosting, as an alternative to TeamViewer — 用 Rust 编写，开箱即用，完全自托管，数据自主。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">112,132</span></span>
+            <span class="meta-item"><span>🍴</span><span>16,764</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#DEA584"></span>Rust / Flutter</span>
+            <span class="meta-item">AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">rust</span><span class="topic-badge">remote-desktop</span><span class="topic-badge">self-hosting</span><span class="topic-badge">flutter</span><span class="topic-badge">teamviewer-alternative</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>RustDesk 用 Rust 编写，提供开箱即用的远程桌面能力，完全掌控数据，可使用官方中继服务器也可自建。支持 Windows、macOS、Linux、iOS、Android，内置 Web 客户端，GUI 基于 Flutter 构建。适合个人替代 TeamViewer，也适合企业内网自托管部署。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>开箱即用，无需配置，跨平台（Win/Mac/Linux/iOS/Android）</li><li>完全自托管：自建 rendezvous/relay 服务器，数据不经第三方</li><li>Flutter GUI，支持 20+ 语言，活跃社区（Discord / Reddit / YouTube）</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Rust</span><span class="tech-tag">Flutter</span><span class="tech-tag">libvpx</span><span class="tech-tag">libyuv</span><span class="tech-tag">opus</span><span class="tech-tag">vcpkg</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>替代 TeamViewer/AnyDesk 的个人远程控制；企业内网安全远程桌面；需要完全数据自主权的远程运维团队。</p></div>
+        <div class="recommend-quote">💬 "全球最大的开源自托管远程桌面——用 Rust 写的 TeamViewer，数据留在自己手里。"</div>
+      </div>
+    </div>
+
+    <!-- #2 Lordog/dive-into-llms -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Lordog/dive-into-llms" target="_blank">Lordog / dive-into-llms</a></div>
+          <div class="project-desc">《动手学大模型 Dive into LLMs》系列编程实践教程 — 上海交大出品，11 章渐进式 LLM 编程实战，完全免费公益。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">32,078</span></span>
+            <span class="meta-item"><span>🍴</span><span>3,902</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#DA5B0B"></span>Jupyter Notebook</span>
+            <span class="meta-item">公益免费</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm</span><span class="topic-badge">deep-learning</span><span class="topic-badge">tutorial</span><span class="topic-badge">nlp</span><span class="topic-badge">chinese</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>由上海交通大学《自然语言处理前沿技术》（NIS8021）和《人工智能安全技术》（NIS3353）课程讲义拓展而来。内容覆盖 LLM 微调、提示工程、知识编辑、数学推理、GUI Agent、模型对齐、隐写术等 11 章，每章附 PDF 课件 + 教程文档 + Jupyter 脚本。新增国产化《大模型开发全流程》公益教程（华为昇腾支持）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>11 章渐进式内容，从基础微调到前沿 GUI Agent、模型对齐、隐写术</li><li>每章三件套：PDF 课件 + Markdown 教程 + 可运行 Jupyter 脚本</li><li>国产化《大模型开发全流程》，含 PPT、实验手册和视频，支持昇腾平台</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Jupyter Notebook</span><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">HuggingFace</span><span class="tech-tag">Anthropic SDK</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>大学 AI 相关课程的课程设计或实验；LLM 入门工程师系统自学；需要中文高质量 LLM 教材的研究团队。</p></div>
+        <div class="recommend-quote">💬 "国内最系统的免费 LLM 编程教程——从交大课堂走向 GitHub，32k stars 背后是真实的学习需求。"</div>
+      </div>
+    </div>
+
+    <!-- #3 openai/openai-agents-python -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/openai/openai-agents-python" target="_blank">openai / openai-agents-python</a></div>
+          <div class="project-desc">A lightweight, powerful framework for multi-agent workflows — OpenAI 官方出品，provider 无关，支持 100+ LLM。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">22,424</span></span>
+            <span class="meta-item"><span>🍴</span><span>3,553</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span>
+            <span class="meta-item">Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">openai</span><span class="topic-badge">agents</span><span class="topic-badge">multi-agent</span><span class="topic-badge">llm</span><span class="topic-badge">python</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>OpenAI Agents SDK 是专为 multi-agent 工作流构建的轻量级 Python 框架。不绑定 OpenAI 模型，兼容 OpenAI Responses API、Chat Completions API 以及 100+ LLM provider。核心设计理念是"轻量"——只提供够用的抽象，不强制复杂配置，让开发者专注 Agent 逻辑。JS/TS 版本同步维护。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>Provider 无关：兼容 OpenAI 和 100+ 第三方 LLM，无缝切换</li><li>Multi-agent 工作流：支持 Agent 间任务委派、并行执行、上下文共享</li><li>JS/TS 版本同步（openai-agents-js），Python 和前端生态均已覆盖</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">OpenAI Responses API</span><span class="tech-tag">Chat Completions</span><span class="tech-tag">Multi-Agent</span><span class="tech-tag">100+ LLM</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>快速构建 multi-agent 工作流的工程师；用 OpenAI 官方最佳实践搭建 Agent 系统的团队；跨 LLM provider 做 Agent 实验的研究者。</p></div>
+        <div class="recommend-quote">💬 "OpenAI 给 Agent 开发者的标准答案——轻量、provider 无关、官方维护，84 个版本的工程成熟度。"</div>
+      </div>
+    </div>
+
+    <!-- #4 BasedHardware/omi -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/BasedHardware/omi" target="_blank">BasedHardware / omi</a></div>
+          <div class="project-desc">AI that sees your screen, listens to your conversations and tells you what to do — 30 万+ 用户，全感知 AI 第二大脑。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">10,530</span></span>
+            <span class="meta-item"><span>🍴</span><span>1,723</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#00B4AB"></span>Dart / Flutter</span>
+            <span class="meta-item">MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai</span><span class="topic-badge">personal-assistant</span><span class="topic-badge">memory</span><span class="topic-badge">wearable</span><span class="topic-badge">transcription</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Omi 是完全开源的 AI 第二大脑，实时捕获屏幕和对话内容，自动转录并生成摘要和行动项，提供一个记住你所见所闻的 AI 聊天界面。支持桌面端（Mac/Windows/Linux）、手机（iOS/Android）和可穿戴设备，目前已有 30 万+ 专业用户，556 个 Release 版本。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>全感知捕获：同时抓屏幕、听对话、实时转录，AI 知道你今天做了什么</li><li>跨平台：Web/iOS/Android/Mac/Linux/Windows，加上专用可穿戴硬件 Omi Device</li><li>完全开源，支持自托管，30 万+ 用户，556 个 Release 版本</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Dart</span><span class="tech-tag">Flutter</span><span class="tech-tag">Python</span><span class="tech-tag">实时转录</span><span class="tech-tag">屏幕捕获</span><span class="tech-tag">可穿戴设备</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>需要 AI 帮助回忆会议要点的知识工作者；用 AI 自动整理每日工作流的团队；对个人 AI 记忆工具感兴趣的早期用户。</p></div>
+        <div class="recommend-quote">💬 "不用再记笔记——Omi 帮你看着屏幕、听着会议，AI 记住所有事情。"</div>
+      </div>
+    </div>
+
+    <!-- #5 deepseek-ai/DeepGEMM -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/deepseek-ai/DeepGEMM" target="_blank">deepseek-ai / DeepGEMM</a></div>
+          <div class="project-desc">DeepGEMM: clean and efficient FP8 GEMM kernels — 已升级为统一 CUDA 内核库，FP8/FP4/BF16 GEMM + 融合 MoE，JIT 编译即用。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">6,562</span></span>
+            <span class="meta-item"><span>🍴</span><span>879</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>CUDA / Python</span>
+            <span class="meta-item">MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">cuda</span><span class="topic-badge">gemm</span><span class="topic-badge">fp8</span><span class="topic-badge">llm</span><span class="topic-badge">deepseek</span><span class="topic-badge">moe</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>DeepGEMM 是统一高性能张量核心内核库，整合了 LLM 关键计算原语：FP8/FP4/BF16 GEMM、带重叠通信的融合 MoE（Mega MoE）、闪电索引器的 MQA scoring、HyperConnection 等。所有内核通过轻量 JIT 模块运行时编译，安装阶段无需 CUDA 编译，代码简洁，是学习 GPU 内核优化的清晰参考。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>统一内核库：FP8/FP4/BF16 GEMM + 融合 MoE + MQA scoring + HyperConnection 全覆盖</li><li>JIT 运行时编译：安装即用，无需安装阶段 CUDA 编译，大幅降低门槛</li><li>代码简洁，核心函数数量有限，适合学习 NVIDIA GPU 内核优化技术</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">CUDA</span><span class="tech-tag">Python</span><span class="tech-tag">JIT</span><span class="tech-tag">CUTLASS/CuTe</span><span class="tech-tag">H100/H800</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>在 H100/H800 上做 LLM 推理优化的 AI 基础设施工程师；学习 CUDA 内核优化但不想啃 CUTLASS 重型模板的开发者；需要高性能 FP8 矩阵运算的 LLM 训练团队。</p></div>
+        <div class="recommend-quote">💬 "DeepSeek 把 LLM 推理的 CUDA 核心能力装进一个库——FP8 到 MoE，JIT 编译，开箱即用。"</div>
+      </div>
+    </div>
+
+    <!-- #6 EvoMap/evolver -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/EvoMap/evolver" target="_blank">EvoMap / evolver</a></div>
+          <div class="project-desc">The GEP-Powered Self-Evolution Engine for AI Agents — 把临时 prompt 调整变成可审计的进化资产，让 Agent 持续自我改进。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">5,072</span></span>
+            <span class="meta-item"><span>🍴</span><span>492</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span>TypeScript</span>
+            <span class="meta-item">GPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-agents</span><span class="topic-badge">self-evolution</span><span class="topic-badge">gep</span><span class="topic-badge">genome-evolution-protocol</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Evolver 是 GEP（Genome Evolution Protocol）驱动的 AI Agent 自进化引擎，核心解决"临时 prompt 调整无法沉淀、难以审计、不可复用"的问题。它把每次 Agent 进化行为变成可审计的进化资产（evolution assets），支持连接 EvoMap Hub 参与分布式进化网络。npm install @evomap/evolver 即可开始。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>GEP 协议驱动：每次 Agent 进化过程有完整记录，可审计、可回滚、可复用</li><li>支持 EvoMap Hub 连接：加入分布式 Worker Pool，共享进化资产</li><li>Review Mode：支持 human-in-the-loop 审核每次进化，人机协作</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Node.js</span><span class="tech-tag">npm</span><span class="tech-tag">GEP 协议</span><span class="tech-tag">EvoMap Hub</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>需要让 Agent 持续自我改进的 AI 工程团队；想把 prompt 工程系统化、版本化的开发者；探索 Agent 自主演化路径的 AI 研究者。</p></div>
+        <div class="recommend-quote">💬 "Agent 不应该靠人工 prompt 调整活着——Evolver 让 Agent 自己进化，每一步都有记录。"</div>
+      </div>
+    </div>
+
+    <!-- #7 aaddrick/claude-desktop-debian -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/aaddrick/claude-desktop-debian" target="_blank">aaddrick / claude-desktop-debian</a></div>
+          <div class="project-desc">Claude Desktop for Debian-based Linux distributions — deb/rpm/AppImage/AUR/Nix 五种格式，Linux 用户的 Claude 原生安装方案。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">3,486</span></span>
+            <span class="meta-item"><span>🍴</span><span>382</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#89E051"></span>Shell</span>
+            <span class="meta-item">MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude</span><span class="topic-badge">linux</span><span class="topic-badge">debian</span><span class="topic-badge">ubuntu</span><span class="topic-badge">claude-desktop</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>通过重新打包 Claude Desktop 官方 Windows 应用，为 Linux 发行版提供原生安装包：.deb（Debian/Ubuntu）、.rpm（Fedora/RHEL）、AppImage（发行版无关）、AUR（Arch Linux）、Nix Flake（NixOS）。支持实验性 Cowork Mode（bubblewrap 隔离），内置 claude-desktop --doctor 诊断工具，已累计 84 个发布版本。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>五种 Linux 安装格式：deb/rpm/AppImage/AUR/Nix，覆盖主流 Linux 发行版</li><li>实验性 Cowork Mode：内置 bubblewrap 隔离，home 目录只读，仅工作目录可写</li><li>84 个 Release 版本，项目成熟稳定，社区持续维护</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Shell</span><span class="tech-tag">Debian 打包</span><span class="tech-tag">RPM</span><span class="tech-tag">AppImage</span><span class="tech-tag">Nix Flake</span><span class="tech-tag">bubblewrap</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>在 Linux 上使用 Claude Desktop 的开发者；需要在 Debian/Ubuntu/Fedora/Arch/NixOS 安装 Claude 的用户；企业 Linux 环境中需要 Claude 工具的团队。</p></div>
+        <div class="recommend-quote">💬 "Linux 用户终于不用羡慕 Mac/Windows——这个项目让 Claude Desktop 在你的发行版上原生跑起来。"</div>
+      </div>
+    </div>
+
+    <!-- #8 SimoneAvogadro/android-reverse-engineering-skill -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/SimoneAvogadro/android-reverse-engineering-skill" target="_blank">SimoneAvogadro / android-reverse-engineering-skill</a></div>
+          <div class="project-desc">Claude Code skill to support Android app's reverse engineering — APK 反编译 + HTTP API 自动提取，无需原始源码。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">3,180</span></span>
+            <span class="meta-item"><span>🍴</span><span>324</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083fa1"></span>Markdown / Shell</span>
+            <span class="meta-item">MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">android</span><span class="topic-badge">reverse-engineering</span><span class="topic-badge">apk</span><span class="topic-badge">api-extraction</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>这是一个 Claude Code skill，输入 APK/XAPK/JAR/AAR 文件，自动用 jadx（+可选 Fernflower/Vineflower）反编译，提取并文档化 App 使用的 HTTP API——Retrofit 端点、OkHttp 调用、硬编码 URL、认证模式——让你无需原始源码就能复现接口。支持追踪从 Activity/Fragment 到 ViewModel 再到 HTTP 调用的完整调用链。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>反编译支持：APK/XAPK/JAR/AAR，单引擎或双引擎（jadx + Fernflower）对比</li><li>HTTP API 全提取：Retrofit 端点、OkHttp 调用、硬编码 URL、auth headers/tokens</li><li>完整调用链追踪：Activity/Fragment → ViewModel → Repository → HTTP 层</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Claude Code skill</span><span class="tech-tag">jadx</span><span class="tech-tag">Fernflower</span><span class="tech-tag">Vineflower</span><span class="tech-tag">dex2jar</span><span class="tech-tag">Java JDK 17+</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>安全研究人员分析 Android 应用 API 行为；移动端开发者逆向竞品接口；需要文档化 App HTTP 通信的测试工程师。</p></div>
+        <div class="recommend-quote">💬 "给 Claude Code 装上 Android 逆向工程技能——APK 进，HTTP API 文档出，不需要源码。"</div>
+      </div>
+    </div>
+
+    <!-- #9 thunderbird/thunderbolt -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/thunderbird/thunderbolt" target="_blank">thunderbird / thunderbolt</a></div>
+          <div class="project-desc">AI You Control: Choose your models. Own your data. Eliminate vendor lock-in — Thunderbird 团队出品的开源跨平台 AI 客户端。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">1,628</span></span>
+            <span class="meta-item"><span>🍴</span><span>82</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span>TypeScript</span>
+            <span class="meta-item">早期开发中</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-client</span><span class="topic-badge">self-hosting</span><span class="topic-badge">on-prem</span><span class="topic-badge">open-source</span><span class="topic-badge">multi-model</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Thunderbolt 是 Thunderbird 团队开发的开源跨平台 AI 客户端，定位是"你掌控的 AI"：自由选择模型（本地/云端/自建）、数据不出门、消除厂商锁定。支持 Web/iOS/Android/Mac/Linux/Windows 全平台。当前处于早期开发阶段，主要面向企业自托管部署，个人用户可结合 Ollama 或 llama.cpp 使用。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>模型自由：不绑定任何厂商，可接 Ollama/llama.cpp 本地模型，也可加 OpenAI 兼容 API key</li><li>全平台：Web/iOS/Android/Mac/Linux/Windows，一套 App 覆盖所有设备</li><li>企业级路线：自托管后端（Docker），正在进行安全审计，面向企业 on-prem 部署</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Docker</span><span class="tech-tag">Ollama 集成</span><span class="tech-tag">llama.cpp</span><span class="tech-tag">OpenAI 兼容 API</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>关注数据隐私、不想被单一 AI 厂商锁定的企业用户；想自建 AI 客户端基础设施的技术团队；Thunderbird 老用户希望在同一生态下使用 AI 工具。</p></div>
+        <div class="recommend-quote">💬 "Thunderbird 进军 AI——同样的理念：开源、自主、去锁定，这次是 AI 客户端。"</div>
+      </div>
+    </div>
+
+    <!-- #10 tractorjuice/arc-kit -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/tractorjuice/arc-kit" target="_blank">tractorjuice / arc-kit</a></div>
+          <div class="project-desc">Enterprise Architecture Governance &amp; Vendor Procurement Toolkit — AI 辅助企业架构治理，16 阶段结构化工作流，从需求到合规一条龙。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">764</span></span>
+            <span class="meta-item"><span>🍴</span><span>104</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083fa1"></span>Markdown</span>
+            <span class="meta-item">MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">enterprise-architecture</span><span class="topic-badge">governance</span><span class="topic-badge">wardley-mapping</span><span class="topic-badge">ai</span><span class="topic-badge">claude-code</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>ArcKit 把散乱的企业架构工作（架构原则制定、利益相关方分析、风险管理、业务案例论证、供应商采购、设计评审等）统一为 AI 辅助的结构化工作流，分 16 个阶段从项目规划到文档发布。内置英国政府合规要求（HM Treasury Orange/Green Book），Mermaid 自动生成架构图，支持 Wardley Mapping，133 个发布版本。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>16 阶段完整工作流：治理→利益相关方→风险→业务案例→需求→研究→战略→采购→设计评审→合规</li><li>英国政府合规内置：HM Treasury Orange Book、Green Book SOBC，UK Technology Code</li><li>支持 Claude Code、GitHub Copilot、Codex CLI，Mermaid 架构图 + Wardley Map</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">Claude Code</span><span class="tech-tag">GitHub Copilot</span><span class="tech-tag">Mermaid</span><span class="tech-tag">Wardley Mapping</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>需要系统化治理流程的企业架构师；政府/公共部门项目需要满足 UK 合规要求；供应商采购和 RFP 流程需要结构化管理的团队。</p></div>
+        <div class="recommend-quote">💬 "把企业架构治理从 Word 堆和会议室里救出来——ArcKit 提供 AI 辅助的 16 阶段系统化工作流。"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编程语言分布 -->
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <span class="lang-name">Python</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:20%;background:#3572A5"></div></div>
+        <span class="lang-count">2 项目 (20%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">TypeScript</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:20%;background:#3178C6"></div></div>
+        <span class="lang-count">2 项目 (20%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Markdown</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:20%;background:#083fa1"></div></div>
+        <span class="lang-count">2 项目 (20%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Rust</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:10%;background:#DEA584"></div></div>
+        <span class="lang-count">1 项目 (10%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Dart / Flutter</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:10%;background:#00B4AB"></div></div>
+        <span class="lang-count">1 项目 (10%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Jupyter Notebook</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:10%;background:#DA5B0B"></div></div>
+        <span class="lang-count">1 项目 (10%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Shell</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:10%;background:#89E051"></div></div>
+        <span class="lang-count">1 项目 (10%)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub Explore 精选 -->
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Explore 页面今日推荐与 Trending 高度重合，以下为今日 Explore 精选精要及热门话题：</p>
+      <div class="trending-list">
+        <div class="trending-item">
+          <span class="trending-num">01</span>
+          <div>
+            <a href="https://github.com/thunderbird/thunderbolt" target="_blank" style="font-weight:600">thunderbird/thunderbolt</a>
+            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">AI 客户端自主权代表 · ⭐1,628 · TypeScript</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">02</span>
+          <div>
+            <a href="https://github.com/BasedHardware/omi" target="_blank" style="font-weight:600">BasedHardware/omi</a>
+            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">全感知 AI 第二大脑 · ⭐10,530 · Dart/Flutter</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">03</span>
+          <div>
+            <a href="https://github.com/openai/openai-agents-python" target="_blank" style="font-weight:600">openai/openai-agents-python</a>
+            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">Multi-agent 框架标准参考 · ⭐22,424 · Python</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">04</span>
+          <div>
+            <a href="https://github.com/EvoMap/evolver" target="_blank" style="font-weight:600">EvoMap/evolver</a>
+            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">Agent 自进化路径工程化 · ⭐5,072 · TypeScript</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">05</span>
+          <div>
+            <a href="https://github.com/deepseek-ai/DeepGEMM" target="_blank" style="font-weight:600">deepseek-ai/DeepGEMM</a>
+            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">LLM 推理 CUDA 内核库 · ⭐6,562 · CUDA/Python</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">06</span>
+          <div>
+            <a href="https://github.com/Lordog/dive-into-llms" target="_blank" style="font-weight:600">Lordog/dive-into-llms</a>
+            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">最系统的中文 LLM 免费教程 · ⭐32,078 · Jupyter</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">07</span>
+          <div>
+            <span style="font-size:12px;color:var(--text-muted);">📌 Today's Topic: </span>
+            <a href="https://github.com/topics/css" target="_blank" style="font-weight:600">CSS</a>
+            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">GitHub Explore 今日热门话题</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">08</span>
+          <div>
+            <span style="font-size:12px;color:var(--text-muted);">🎯 Collection: </span>
+            <a href="https://github.com/collections/made-in-brazil" target="_blank" style="font-weight:600">Made in Brazil</a>
+            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">GitHub 精选 — 巴西开源生态优质项目</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>📅 报告生成时间：2026-04-19 &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">本报告由 <strong>skill-github-trending-report</strong> 自动生成 &nbsp;|&nbsp; 所有数据来自 GitHub 公开页面，无需 API Token</p>
+  </div>
+
+</div>
+
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>

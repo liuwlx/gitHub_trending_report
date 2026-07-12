@@ -1,0 +1,837 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-04-29</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue)22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-list { }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-04-29 · 数据源：GitHub Trending + Explore</div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">1.34M+</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">5</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">6</div><div class="stat-label">AI 相关项目</div></div>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🎙️ 微软 VibeVoice 开源前沿语音 AI 全家桶</div>
+        <p>microsoft/VibeVoice 是微软开源的语音 AI 研究框架，包含三个模型：VibeVoice-ASR（60分钟长音频单次识别，含说话人分离/时间戳，已入 HuggingFace Transformers）、VibeVoice-TTS（90分钟多说话人合成，ICLR 2026 Oral）、VibeVoice-Streaming（0.5B实时TTS，300ms首包延迟）。三模型均已开源，支持 50+ 语言，覆盖从转录到合成的完整语音 AI 链条。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🛠️ Claude Code 生态工具链持续爆发</div>
+        <p>今日 Trending 中三个项目直接服务于 Claude Code 生态：davila7/claude-code-templates（100+ 组件配置模板 + 监控面板）、mattpocock/skills（真实工程师日常技能合集）、Alishahryar1/free-claude-code（零成本代理方案）。Claude Code 的"第三方配件市场"正在形成，工具链生态快速标准化。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📚 资源型仓库三巨头同日上榜</div>
+        <p>free-programming-books（386k）、public-apis（428k）、system-design-primer（346k）三大经典资源库同日出现在 Trending，累计超过 115 万 Stars。这类"永恒价值"仓库每隔一段时间就会被新一批开发者发现，在 GitHub 生态中具有持久的传播生命力，折射出每季度的"新人涌入周期"。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🪐 Quarkdown：Markdown 进化为可编程文档语言</div>
+        <p>iamgio/quarkdown 把 Markdown 扩展成带有函数调用、变量、条件渲染的文档编程语言，一套源文件可导出为：论文 PDF（via paged.js）、交互式幻灯片（via reveal.js）、静态网站（like Notion/Obsidian）、Wiki 文档库。对比 LaTeX 的复杂语法，quarkdown 保持 Markdown 可读性同时具备 LaTeX 的文档表达能力。</p>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 public-apis/public-apis -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/public-apis/public-apis" target="_blank">public-apis / public-apis</a></div>
+          <div class="project-desc">A collective list of free APIs. 按类别收录数百个免费公开 API，标注认证/HTTPS/CORS 属性，持续社区维护。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">427,792</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">46,732</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">api</span>
+            <span class="topic-badge">free-api</span>
+            <span class="topic-badge">public-api</span>
+            <span class="topic-badge">list</span>
+            <span class="topic-badge">hackathon</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>public-apis 是目前 GitHub Stars 最多的 API 资源合集之一，收录数百个免费可用的公开 API，按 40+ 类别分组（动物、天气、地图、金融、游戏、新闻、科学等），每个 API 均标注是否需要认证、HTTPS 支持、CORS 支持等信息，帮助开发者快速筛选合适的数据源。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>40+ 分类，数百个免费 API 完整收录，覆盖绝大多数开发场景</li>
+            <li>每条目标注 Auth / HTTPS / CORS 三项属性，快速筛选过滤</li>
+            <li>社区维护：持续更新最新可用 API，失效链接定期清理</li>
+            <li>配套 Python 验证脚本，自动检测链接有效性</li>
+            <li>覆盖原型开发、学习测试、黑客马拉松等全场景</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Markdown</span><span class="tech-tag">Python（验证脚本）</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>快速找到免费 API 做原型验证；黑客马拉松参赛者选取数据源；学生练习 API 调用；研究人员寻找公开数据集接入点。</p>
+        </div>
+        <div class="recommend-quote">💬 "免费 API 的黄页——收藏了就等于收藏了一个做不完的 side project 仓库。"</div>
+      </div>
+    </div>
+
+    <!-- #2 EbookFoundation/free-programming-books -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/EbookFoundation/free-programming-books" target="_blank">EbookFoundation / free-programming-books</a></div>
+          <div class="project-desc">📚 Freely available programming books. 收录数千本免费编程书籍、课程、视频，覆盖 100+ 编程语言，提供 30+ 语言版本。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">386,479</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">66,153</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083FA1"></span> Markdown</span>
+            <span class="meta-item">📄 CC-BY</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">books</span>
+            <span class="topic-badge">programming</span>
+            <span class="topic-badge">education</span>
+            <span class="topic-badge">free</span>
+            <span class="topic-badge">ebook</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>free-programming-books 是 GitHub 最大的开源编程书籍资源合集，收录了全球数千本免费编程书籍、在线课程、视频教程、播客和互动学习平台，涵盖 100+ 编程语言和技术栈，并提供 30+ 语言版本的翻译目录，为开发者提供零成本自学完整路径。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>数千本免费编程书籍，涵盖 100+ 编程语言与技术栈</li>
+            <li>多媒体形式：书籍 + 在线课程 + 视频教程 + 播客 + 互动编程</li>
+            <li>30+ 语言版本，国际化覆盖广（含中文版）</li>
+            <li>社区持续贡献，每周都有新增</li>
+            <li>覆盖从编程入门到高级系统设计的全技术层级</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Markdown 纯文档资源库</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>自学编程的学生；寻找特定技术深度资料的工程师；教育机构整理参考资料；任何不想花钱买书的开发者。</p>
+        </div>
+        <div class="recommend-quote">💬 "66k Forks 说明了一切——全球开发者人手一份的免费编程书单。"</div>
+      </div>
+    </div>
+
+    <!-- #3 donnemartin/system-design-primer -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/donnemartin/system-design-primer" target="_blank">donnemartin / system-design-primer</a></div>
+          <div class="project-desc">Learn how to design large-scale systems. Prep for the system design interview. Includes Anki flashcards. 系统设计面试必备，含 Anki 记忆卡片。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">345,655</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">55,816</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 CC-BY-SA</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">system-design</span>
+            <span class="topic-badge">interview</span>
+            <span class="topic-badge">scalability</span>
+            <span class="topic-badge">distributed-systems</span>
+            <span class="topic-badge">architecture</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>system-design-primer 是最权威的系统设计学习资源之一，涵盖从 DNS/CDN 到数据库分片、消息队列、缓存、负载均衡、微服务的完整知识体系，提供配套 Anki 记忆卡片用于系统化备考，是 FAANG 等大厂系统设计面试的必备参考，同时附有真实案例（Twitter/Facebook/Amazon 系统设计拆解）。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>完整系统设计知识图谱：可扩展性、高可用、数据库选型、缓存策略等全覆盖</li>
+            <li>真实案例：Twitter/Facebook/Amazon 等真实系统设计详细拆解</li>
+            <li>配套 Anki 记忆卡片，结构化备考提升效率</li>
+            <li>中文等多语言翻译版本</li>
+            <li>Python 代码示例辅助理解数据结构和算法</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Markdown</span><span class="tech-tag">Python（代码示例）</span><span class="tech-tag">Anki（记忆卡）</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>准备大厂系统设计面试的工程师；希望提升系统架构思维的后端开发者；技术团队内部架构培训材料。</p>
+        </div>
+        <div class="recommend-quote">💬 "系统设计面试的圣经——没刷完这个就去面 FAANG 的，都是在裸考。"</div>
+      </div>
+    </div>
+
+    <!-- #4 microsoft/VibeVoice -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/microsoft/VibeVoice" target="_blank">microsoft / VibeVoice</a></div>
+          <div class="project-desc">Open-Source Frontier Voice AI. 微软开源的前沿语音 AI 全栈框架：60分钟 ASR + 90分钟多人 TTS + 实时流式 TTS，支持 50+ 语言。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">44,254</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">4,947</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">speech-recognition</span>
+            <span class="topic-badge">text-to-speech</span>
+            <span class="topic-badge">voice-ai</span>
+            <span class="topic-badge">microsoft</span>
+            <span class="topic-badge">open-source</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>VibeVoice 是微软开源的前沿语音 AI 研究框架，包含三大组件：① VibeVoice-ASR：统一语音识别模型，单次处理 60 分钟连续音频，输出结构化转录（谁/何时/说什么），已入 HuggingFace Transformers；② VibeVoice-TTS：长篇多说话人语音合成，支持 90 分钟 4 人对话（ICLR 2026 Oral）；③ VibeVoice-Streaming：0.5B 轻量实时 TTS，约 300ms 首包延迟。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>ASR：60分钟单次处理、说话人分离 + 时间戳、自定义热词、50+ 语言</li>
+            <li>TTS：90分钟长篇生成、4 说话人同场对话、富表现力语音、中英文多语言</li>
+            <li>Streaming：0.5B 小模型、300ms 首包延迟、流式文本输入</li>
+            <li>全部模型已上线 Hugging Face，支持 vLLM 高速推理</li>
+            <li>开放 Fine-tuning 代码，支持垂直领域定制</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">HuggingFace Transformers</span><span class="tech-tag">vLLM</span><span class="tech-tag">Colab Demo</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>会议录音自动转录与说话人分离；播客/有声书多人对话语音合成；实时语音助手；垂直领域语音数据标注与合成。</p>
+        </div>
+        <div class="recommend-quote">💬 "微软一次性开源了 ASR + TTS + 实时流式的完整语音 AI 链条——语音 AI 领域的基础设施级开源。"</div>
+      </div>
+    </div>
+
+    <!-- #5 mattpocock/skills -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/mattpocock/skills" target="_blank">mattpocock / skills</a></div>
+          <div class="project-desc">Skills for Real Engineers. Straight from my .claude directory. TypeScript 专家 Matt Pocock 日常真实使用的 AI 编程工作流技能合集，一键安装。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">35,599</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">2,793</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083FA1"></span> Markdown / TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">agent-skills</span>
+            <span class="topic-badge">ai-engineering</span>
+            <span class="topic-badge">cursor</span>
+            <span class="topic-badge">codex</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>�� 项目摘要</h4>
+          <p>mattpocock/skills 是 TypeScript 专家 Matt Pocock（Total TypeScript 创始人）从自己真实 .claude 目录中提炼的 Agent Skills 合集，代表真实工程工作流。包含规划设计、代码开发、工具配置、写作知识四大类。每个技能可通过 <code>npx skills@latest add</code> 一键安装，兼容 Claude Code / Cursor / Codex。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>规划设计：to-prd（GitHub Issue 联动）、to-issues（垂直切片拆解）、grill-me（决策树访谈）、design-an-interface（并行子代理多方案）</li>
+            <li>开发类：tdd（红绿重构循环）、triage-issue（根因分析 + TDD 计划）、improve-codebase-architecture（DDD 语言）</li>
+            <li>工具类：setup-pre-commit（Husky + lint-staged）、git-guardrails-claude-code（拦截危险 git 命令）</li>
+            <li>写作类：write-a-skill、edit-article、ubiquitous-language（DDD 术语表）、obsidian-vault</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Markdown</span><span class="tech-tag">YAML</span><span class="tech-tag">TypeScript</span><span class="tech-tag">Claude Code</span><span class="tech-tag">Cursor</span><span class="tech-tag">Codex</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>Claude Code / Cursor 重度用户；想把优秀工程师的 AI 工作流"拿来就用"的开发者；团队标准化 AI 编程实践的工程组织。</p>
+        </div>
+        <div class="recommend-quote">💬 "Matt Pocock 把他每天真正用的 AI 编程技能全开源了——这不是教程，是直接可用的工作流。"</div>
+      </div>
+    </div>
+
+    <!-- #6 abhigyanpatwari/GitNexus -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/abhigyanpatwari/GitNexus" target="_blank">abhigyanpatwari / GitNexus</a></div>
+          <div class="project-desc">The Zero-Server Code Intelligence Engine — 浏览器端代码知识图谱 + Graph RAG Agent，完全客户端运行，零服务器部署。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">32,437</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">3,681</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">knowledge-graph</span>
+            <span class="topic-badge">code-intelligence</span>
+            <span class="topic-badge">graph-rag</span>
+            <span class="topic-badge">browser-based</span>
+            <span class="topic-badge">mcp</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>GitNexus 是完全在浏览器端运行的代码知识图谱引擎，无需后端服务器。拖入 GitHub 仓库地址或 ZIP 文件，自动解析代码结构，生成交互式依赖知识图谱，内置 Graph RAG Agent 供自然语言提问。核心解决 Cursor / Claude Code 等工具不真正理解代码依赖关系、频繁引发级联破坏的问题。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>零服务器：完全客户端运行，数据不离开浏览器</li>
+            <li>知识图谱：函数/类/模块依赖可视化，360° 符号视图</li>
+            <li>Graph RAG Agent：自然语言查询，影响分析、变更检测、批量重命名</li>
+            <li>MCP 集成：可作为 Claude Code / Cursor 代码理解增强层</li>
+            <li>支持 10+ 编程语言（Python / TypeScript / Java / Go / Rust 等）</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">TypeScript</span><span class="tech-tag">浏览器端静态分析</span><span class="tech-tag">Graph RAG</span><span class="tech-tag">Cypher 查询</span><span class="tech-tag">MCP 协议</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>想让 AI 编码助手真正理解代码结构的开发者；大型代码库依赖梳理；架构重构前的影响面分析。</p>
+        </div>
+        <div class="recommend-quote">💬 "把整个代码库变成可问答的知识图谱，让 AI 改代码之前先搞清楚'改这里会牵连哪里'。"</div>
+      </div>
+    </div>
+
+    <!-- #7 davila7/claude-code-templates -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/davila7/claude-code-templates" target="_blank">davila7 / claude-code-templates</a></div>
+          <div class="project-desc">CLI tool for configuring and monitoring Claude Code. 100+ 组件模板（Agent/Command/Hook/MCP）+ 实时分析监控面板，npx 一键安装。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">26,041</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">2,608</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">templates</span>
+            <span class="topic-badge">cli</span>
+            <span class="topic-badge">agents</span>
+            <span class="topic-badge">mcp</span>
+            <span class="topic-badge">monitoring</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>claude-code-templates 是一个 npx CLI 工具，提供 100+ Claude Code 配置组件（Agent、Command、Setting、Hook、MCP），可通过交互式菜单或命令行参数一键安装到当前项目。额外附带四个开发工具：实时分析面板（Analytics）、对话监控 Chats（支持 Cloudflare Tunnel 远程访问）、健康检查诊断（Health Check）、插件管理面板（Plugin Dashboard）。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>100+ 组件：Agent（代码审查/前端开发等）、Command（测试生成/Bundle 优化/安全检查等）</li>
+            <li>Hook 支持：git pre-commit 校验等最佳实践钩子</li>
+            <li>MCP 集成：数据库/GitHub/开发工具等即插即用</li>
+            <li>四大监控工具：Analytics / Chats Monitor / Health Check / Plugin Dashboard</li>
+            <li>npx 零安装，--yes 参数支持脚本化批量配置</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">TypeScript</span><span class="tech-tag">Node.js CLI</span><span class="tech-tag">Shell</span><span class="tech-tag">Cloudflare Tunnel</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>Claude Code 项目快速初始化配置；团队统一 Claude Code 工作环境；监控和分析 Claude Code 使用情况；开发中快速插入最佳实践钩子和 MCP。</p>
+        </div>
+        <div class="recommend-quote">💬 "Claude Code 的 App Store + 仪表盘——一条命令把 100+ 最佳实践配置全装好。"</div>
+      </div>
+    </div>
+
+    <!-- #8 Alishahryar1/free-claude-code -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Alishahryar1/free-claude-code" target="_blank">Alishahryar1 / free-claude-code</a></div>
+          <div class="project-desc">Use claude-code for free in the terminal, VSCode extension or via discord. 通过透明代理将 Claude Code 接入 NVIDIA NIM / OpenRouter / 本地 LLM，无需 Anthropic API Key。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">17,161</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">2,412</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span>
+            <span class="topic-badge">free</span>
+            <span class="topic-badge">proxy</span>
+            <span class="topic-badge">nvidia-nim</span>
+            <span class="topic-badge">openrouter</span>
+            <span class="topic-badge">local-llm</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>free-claude-code 是轻量级 Python 代理服务（监听 :8082），将 Claude Code CLI 或 VSCode 插件发出的 Anthropic API 请求透明转发给免费/低价提供商：NVIDIA NIM（40 req/min 免费）、OpenRouter（含免费模型）、DeepSeek（Anthropic 格式兼容）、LM Studio、llama.cpp、Ollama（完全本地）。无需 Anthropic API Key。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>零 API Key：接入 NVIDIA NIM 或 OpenRouter 免费模型即可跑 Claude Code</li>
+            <li>6 类后端：NVIDIA NIM / OpenRouter / DeepSeek / LM Studio / llama.cpp / Ollama</li>
+            <li>本地化优化：5 类轻量请求本地响应，不消耗 API 配额</li>
+            <li>Thinking Tokens：&lt;think&gt; 标签 → Claude 原生 thinking blocks 转换</li>
+            <li>Discord Bot + Telegram 双 IM 支持</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">FastAPI/aiohttp</span><span class="tech-tag">Anthropic Messages API</span><span class="tech-tag">SSE 流式输出</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>希望零成本使用 Claude Code 的开发者；需要接入本地 LLM 的离线/隐私场景；OpenRouter 用户直连 Claude Code 工具链。</p>
+        </div>
+        <div class="recommend-quote">💬 "拦截 Claude Code 的 API 请求，转发给免费的 NVIDIA NIM 或本地 Ollama——不花一分钱也能跑 Claude Code。"</div>
+      </div>
+    </div>
+
+    <!-- #9 iamgio/quarkdown -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/iamgio/quarkdown" target="_blank">iamgio / quarkdown</a></div>
+          <div class="project-desc">🪐 Markdown with superpowers: from ideas to papers, presentations, websites, books, and knowledge bases. 可编程 Markdown 文档语言，一套源文件导出论文/幻灯片/网站/Wiki。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">11,665</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">305</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#A97BFF"></span> Kotlin</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">markdown</span>
+            <span class="topic-badge">document</span>
+            <span class="topic-badge">presentation</span>
+            <span class="topic-badge">latex-alternative</span>
+            <span class="topic-badge">kotlin</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>Quarkdown 将 Markdown 扩展为一种可编程的文档语言：保留 Markdown 可读性的同时，引入函数调用、变量、条件渲染、自定义函数等编程语言特性。一套 .qd 源文件可输出为：连续流网站（类 Notion/Obsidian）、分页 PDF 论文（via paged.js）、交互式幻灯片（via reveal.js）、Wiki 文档库，通过 .doctype {plain/paged/slides/docs} 一行切换目标格式。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>可编程 Markdown：函数调用（.function_name）、变量、条件、循环，彻底扩展 Markdown 能力边界</li>
+            <li>多目标输出：.doctype {plain/paged/slides/docs} 一行切换，一套源文件全格式覆盖</li>
+            <li>HTML + PDF 双导出，全文档类型均支持</li>
+            <li>LaTeX 对比：更短语法达到同等文档表达力，无需学习 LaTeX 繁琐命令</li>
+            <li>跨平台安装：脚本安装 / Homebrew / Scoop / GitHub Actions 全支持</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Kotlin</span><span class="tech-tag">paged.js（PDF 排版）</span><span class="tech-tag">reveal.js（幻灯片）</span><span class="tech-tag">HTML/CSS（渲染层）</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>写学术论文但不想学 LaTeX 的研究人员；做技术演讲同时产出文档的工程师；用 Markdown 管理知识库但需要动态/条件内容的团队。</p>
+        </div>
+        <div class="recommend-quote">💬 "Markdown 遇见 LaTeX 的表达力——一份源文件，变成论文、幻灯片、网站或 Wiki，选你所需。"</div>
+      </div>
+    </div>
+
+    <!-- #10 HunxByts/GhostTrack -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/HunxByts/GhostTrack" target="_blank">HunxByts / GhostTrack</a></div>
+          <div class="project-desc">Useful tool to track location or mobile number. 基于 Python 的 OSINT 地理位置追踪工具，支持手机号码信息查询与位置捕获。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">10,309</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">1,460</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">osint</span>
+            <span class="topic-badge">geolocation</span>
+            <span class="topic-badge">tracking</span>
+            <span class="topic-badge">phone-tracking</span>
+            <span class="topic-badge">python</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>GhostTrack 是基于 Python 的 OSINT 地理位置追踪工具，支持通过手机号码查询号码归属地（运营商、国家、时区等）信息，以及通过发送追踪链接获取目标设备的实时 GPS 位置。简单的 Python 环境，依赖少，兼容 Kali Linux / Termux，主要面向安全研究学习和授权渗透测试场景。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>手机号码信息查询（运营商、国家、时区等归属地信息）</li>
+            <li>追踪链接生成与位置捕获（获取目标设备 GPS 坐标）</li>
+            <li>简单 Python 环境，依赖少，易于搭建</li>
+            <li>Kali Linux / Termux 兼容，移动端也可运行</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span><span class="tech-tag">Phonenumbers 库</span><span class="tech-tag">Ngrok/隧道工具</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>OSINT 安全研究学习；渗透测试工程师学习地理位置信息收集技术。⚠️ 仅限合法授权场景使用，请遵守当地法律法规。</p>
+        </div>
+        <div class="recommend-quote">💬 "OSINT 工具箱的位置追踪模块——学习信息安全的好材料，使用时请确保合法授权。"</div>
+      </div>
+    </div>
+
+    <!-- #11 ComposioHQ/awesome-codex-skills -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ComposioHQ/awesome-codex-skills" target="_blank">ComposioHQ / awesome-codex-skills</a></div>
+          <div class="project-desc">A curated list of practical Codex skills for automating workflows across the Codex CLI and API. Composio 精选 Codex 技能合集，接入 1000+ 应用执行真实动作。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">3,667</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">242</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#083FA1"></span> Markdown</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">codex</span>
+            <span class="topic-badge">openai</span>
+            <span class="topic-badge">agent-skills</span>
+            <span class="topic-badge">automation</span>
+            <span class="topic-badge">workflow</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>awesome-codex-skills 是 Composio 精选的实用 Codex 技能合集，覆盖开发工具、生产力、通讯写作、数据分析、元工具五大类。每个技能为一个 SKILL.md 文件，包含说明和分步骤指导，支持接入 Composio 后可对接 1000+ 应用执行自动化动作（发邮件、建 Issue、发 Slack 等）。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>五大类技能：开发工具 / 生产力 / 通讯写作 / 数据分析 / 元工具</li>
+            <li>标准 SKILL.md 格式，即插即用到 Codex CLI</li>
+            <li>Composio 接入后可触发 1000+ 应用真实动作</li>
+            <li>活跃贡献社区，持续扩展新技能</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Markdown（SKILL.md）</span><span class="tech-tag">Composio（动作执行层）</span><span class="tech-tag">OpenAI Codex API</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>想为 Codex 添加真实动作能力的开发者；希望 Codex 不只生成文本、还能发邮件/建 Issue 的团队。</p>
+        </div>
+        <div class="recommend-quote">💬 "让 Codex 从'生成文本'进化到'执行任务'——发邮件、建 Issue、发 Slack，1000+ 应用任你选。"</div>
+      </div>
+    </div>
+
+    <!-- #12 CJackHwang/ds2api -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/CJackHwang/ds2api" target="_blank">CJackHwang / ds2api</a></div>
+          <div class="project-desc">Deepseek to API: A lightweight, high-performance full-stack middleware converting client protocols to universal APIs. 支持多账号轮换，兼容 OpenAI/Claude/Google 格式，支持 Vercel/Docker 部署。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">2,209</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">633</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#00ADD8"></span> Go</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">deepseek</span>
+            <span class="topic-badge">api</span>
+            <span class="topic-badge">middleware</span>
+            <span class="topic-badge">proxy</span>
+            <span class="topic-badge">openai</span>
+            <span class="topic-badge">vercel</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section">
+          <h4>📖 项目摘要</h4>
+          <p>ds2api 是轻量高性能的全栈中间件，将 DeepSeek 客户端协议转换为通用 API 格式，同时兼容 OpenAI、Claude、Google API 格式。支持多账号轮换（内置负载均衡防单账号限速）、编译后单二进制部署、Vercel Serverless 部署、Docker 容器化，专为解决 DeepSeek 客户端协议与标准 API 格式之间的转换问题而设计。</p>
+        </div>
+        <div class="detail-section">
+          <h4>✨ 核心特性</h4>
+          <ul class="feature-list">
+            <li>多协议兼容：同时兼容 OpenAI / Claude / Google API 格式</li>
+            <li>多账号轮换：内置负载均衡，防单账号限速</li>
+            <li>多部署方式：编译二进制 / Vercel Serverless / Docker</li>
+            <li>高性能：Go 核心，低延迟高并发</li>
+            <li>轻量级：无外部依赖，单文件部署</li>
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h4>🔧 技术栈</h4>
+          <div class="tech-tags">
+            <span class="tech-tag">Go</span><span class="tech-tag">TypeScript（前端界面）</span><span class="tech-tag">Docker</span><span class="tech-tag">Vercel Serverless</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h4>🎯 适用场景</h4>
+          <p>需要将 DeepSeek 接入现有 OpenAI SDK 的开发者；多账号 DeepSeek API 负载均衡；个人/小团队 API 网关自建。</p>
+        </div>
+        <div class="recommend-quote">💬 "把 DeepSeek 换上 OpenAI/Claude 的马甲——现有 SDK 一行不改，直接对接。"</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 编程语言分布 -->
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:42%;background:#3572A5"></div></div>
+        <div class="lang-count">5 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:25%;background:#083FA1"></div></div>
+        <div class="lang-count">3 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:17%;background:#3178C6"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Kotlin</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8%;background:#A97BFF"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Go</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8%;background:#00ADD8"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub Explore 精选 -->
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="trending-list">
+      <div class="trending-item">
+        <div class="trending-num">01</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;"><a href="https://github.com/fspecii/ace-step-ui" target="_blank">fspecii / ace-step-ui</a></div>
+          <div style="color:var(--text-muted);font-size:13px;">⭐ 1,488 · Python</div>
+          <div style="color:var(--text-muted);font-size:13px;margin-top:4px;line-height:1.6;">🎵 The Ultimate Open Source Suno Alternative — Professional UI for ACE-Step 1.5 AI Music Generation. Free, local, unlimited. Stop paying for Suno! 本地化运行 ACE-Step 1.5 AI 音乐生成模型的开源 Web UI，无次数限制。与今日 microsoft/VibeVoice 语音 AI 开源浪潮呼应，音频 AI 工具链正在全面向开源/本地部署迁移。</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">02</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;"><a href="https://github.com/trending?spoken_language_code=zh" target="_blank">GitHub Trending 中文项目精选</a></div>
+          <div style="color:var(--text-muted);font-size:13px;">GitHub Explore · 语言过滤</div>
+          <div style="color:var(--text-muted);font-size:13px;margin-top:4px;line-height:1.6;">今日中文社区贡献活跃，CJackHwang/ds2api（DeepSeek API 网关）来自国内开发者，反映了中国 AI 工具链开发者的深度参与——将本土 AI 模型（DeepSeek）无缝接入全球标准 API 生态的"翻译层"工具正在成为刚需。</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">03</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;"><a href="https://github.com/topics/voice-ai" target="_blank">热门话题：Voice AI</a></div>
+          <div style="color:var(--text-muted);font-size:13px;">GitHub Explore 热门话题</div>
+          <div style="color:var(--text-muted);font-size:13px;margin-top:4px;line-height:1.6;">随着 microsoft/VibeVoice 今日登榜，GitHub Voice AI 相关话题热度持续攀升。语音 AI 开源生态迎来新一轮爆发，从基础模型（ASR/TTS）到应用层（实时助手/会议转录）正全面开源化。</div>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">04</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;"><a href="https://github.com/topics/claude-code" target="_blank">热门话题：Claude Code 生态</a></div>
+          <div style="color:var(--text-muted);font-size:13px;">GitHub Explore 热门话题</div>
+          <div style="color:var(--text-muted);font-size:13px;margin-top:4px;line-height:1.6;">今日三个直接服务于 Claude Code 的项目同时上榜（templates + skills + free-claude-code），Claude Code 生态在 GitHub 上的标签热度持续攀升，正在从"单一工具"演变为一个有配件市场的平台生态。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>📅 报告生成时间：2026-04-29 &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">本报告由 <strong>skill-github-trending-report</strong> 自动生成 &nbsp;|&nbsp; 所有数据来自 GitHub 公开页面</p>
+    <p style="margin-top:8px;color:var(--text-muted);font-size:12px;">⚠️ 各项目 Stars 数为总累计 Stars，非今日新增。GhostTrack 和 ds2api 请在合法合规的前提下使用。</p>
+  </div>
+
+</div>
+
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-04-23</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .new-badge { display: inline-block; background: #1a3a1a; border: 1px solid var(--green); color: var(--green); border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 600; margin-left: 8px; vertical-align: middle; }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px rgba(88,166,255,0.13); }
+  .project-card.new-card { border-left: 3px solid var(--green); }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .lang-count { width: 120px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">AI 安全工具爆发 × LLMOps 补齐生产链路 × Agent Skills 分发层就位</div>
+    <div class="date-badge">📅 2026-04-23 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">7</div><div class="stat-label">今日新上榜</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">5</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">11</div><div class="stat-label">AI 相关项目</div></div>
+  </div>
+
+  <!-- 今日洞察 -->
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🔐 AI 渗透测试自动化元年正式开启——Shannon 以 39.9k stars 冲上 Trending</div>
+        <p>KeygraphHQ/shannon 今日进入全语言 Trending。这是一个白盒 AI 自动渗透测试工具：分析源码识别攻击向量，启动真实漏洞利用（注入/XSS/SSRF/越权），只有带可复现 PoC 的漏洞才进入报告。核心价值主张：Claude Code/Cursor 让团队持续不间断交付代码，但渗透测试一年才做一次，Shannon 填补这 364 天的安全空白。连续两日安全工具进入 Trending（昨日 PayloadsAllTheThings，今日 Shannon），AI 驱动的安全测试正在成为主流工程实践。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📊 LLMOps 补齐生产链路最后一块——Langfuse 进入 Trending</div>
+        <p>langfuse/langfuse（YC W23，25.8k stars）进入全语言 Trending，这是一个开源 LLM 可观测性 + 提示词管理 + 评估平台。它的出现标志着 LLM 应用开发正在从"跑起来就行"进入"需要监控/评估/持续迭代"的生产成熟阶段。OpenTelemetry + LangChain + OpenAI SDK + LiteLLM 全链路集成，自托管 Docker 一键部署，555 次发布速度极快。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🛠️ Agent Skills 安装基础设施标准化——vercel-labs/skills 补齐"分发层"</div>
+        <p>昨日 VoltAgent/awesome-agent-skills（内容目录）上 Trending，今日 vercel-labs/skills（npx skills CLI）上 Trending。两者形成"内容 + 分发"双轮驱动。更震撼的是 vercel-labs/skills 支持的工具数量：Claude Code、Codex、Cursor、Gemini CLI、Windsurf、GitHub Copilot、kimi-cli 等 <strong>60+ AI 编程工具</strong>，Agent Skills 生态的边界已经扩展到了整个 AI 编程工具市场，分发层的基础设施拼图已全部就位。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🌐 Open WebUI 134k stars 重回热榜——自托管 LLM 前端需求仍旺盛</div>
+        <p>open-webui/open-webui 以 134k stars（GitHub 历史最高关注度 LLM Web UI 项目之一）重返 Python Trending，通常意味着触发了重大版本更新或功能发布。叠加今日 Langfuse 也进入 Trending，说明"自托管完整 LLM 栈"的需求不仅没有被商业云产品取代，反而随着 AI 应用普及持续增长。worldmonitor 的 52k stars 和 Open WebUI 的 134k stars 同日出现，是今日星数最密集的一天。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 12 -->
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（全语言 Trending + Python Trending 综合）</div>
+
+    <!-- #1 Shannon NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/KeygraphHQ/shannon" target="_blank">KeygraphHQ / shannon</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Shannon Lite is an autonomous, white-box AI pentester for web applications and APIs. AI 自主渗透测试：分析源码 → 识别攻击向量 → 执行真实漏洞利用 → 只报告带 PoC 的漏洞。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">39,900</span></span>
+            <span class="meta-item"><span>🍴</span>4,400</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">pentesting</span><span class="topic-badge">security-automation</span><span class="topic-badge">penetration-testing</span><span class="topic-badge">security-audit</span><span class="topic-badge">ai-pentest</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Shannon 是 Keygraph 开发的自主白盒 AI 渗透测试工具。它分析 Web 应用源码识别攻击向量，通过浏览器自动化和命令行工具执行真实漏洞利用（注入攻击、认证绕过、SSRF、XSS），只有带可复现 PoC 的漏洞才进入最终报告。核心动机：Claude Code/Cursor 让团队每天持续交付，但渗透测试一年才做一次，Shannon 填补这 364 天的安全空白。在 OWASP Juice Shop 测试中识别出 20+ 个漏洞，包括认证绕过和数据库泄露。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>全自主运营：一条命令启动完整渗透测试，自动处理 2FA/TOTP 登录、浏览器导航、漏洞利用和报告生成</li><li>仅报告可复现 PoC：只有能被实际利用的漏洞才进入报告，零误报噪音</li><li>代码感知动态测试：分析源码指导攻击策略，再用实时浏览器/CLI 工具验证发现</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">浏览器自动化</span><span class="tech-tag">Nmap</span><span class="tech-tag">Subfinder</span><span class="tech-tag">Schemathesis</span><span class="tech-tag">AGPL-3.0</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>DevSecOps 团队在每次 Build 时做自动化安全回归；没有专职安全团队的中小型企业需要持续安全保障；安全工程师快速评估应用安全态势。</p></div>
+        <div class="recommend-quote">💬 "AI 编程时代的持续渗透测试工具，Claude Code 让你每天交付代码，Shannon 帮你每天做安全验证。AGPL-3.0 商业用途请评估许可证。"</div>
+      </div>
+    </div>
+
+    <!-- #2 worldmonitor NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/koala73/worldmonitor" target="_blank">koala73 / worldmonitor</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Real-time global intelligence dashboard. AI 驱动新闻聚合 + 地缘政治监控 + 基础设施追踪一体化，开源 Palantir 替代，本地 AI 零 API 密钥运行。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">52,000</span></span>
+            <span class="meta-item"><span>🍴</span>8,300</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript / JavaScript</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">osint</span><span class="topic-badge">geopolitics</span><span class="topic-badge">monitoring</span><span class="topic-badge">ai</span><span class="topic-badge">dashboard</span><span class="topic-badge">palantir</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>World Monitor 是一个实时全球情报仪表盘，把地缘政治监控、AI 新闻聚合和基础设施追踪整合在统一态势感知界面。核心能力：500+ 精选新闻源跨 15 类别 AI 合成简报；双引擎地图（globe.gl 3D 地球仪 + deck.gl WebGL 平面地图）45 个数据层；92 个股票交易所金融雷达；跨军事/经济/灾难/升级信号关联分析。支持本地 AI（Ollama，无需任何 API 密钥），21 种语言，一个代码库派生 5 个站点变体（世界/科技/金融/大宗商品/积极信息），还有 Tauri 2 原生桌面应用。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>500+ 新闻源 × 15 类别：AI 合成情报简报，覆盖地缘政治/军事/经济/灾难/网络安全</li><li>45 数据层双引擎地图：3D 地球仪和 WebGL 平面地图，可视化全球实时事件分布</li><li>本地 AI 完整运行：支持 Ollama，全功能离线，不依赖任何 API 密钥</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">JavaScript</span><span class="tech-tag">globe.gl</span><span class="tech-tag">deck.gl</span><span class="tech-tag">Ollama</span><span class="tech-tag">Tauri 2</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>研究人员/记者追踪地缘政治事件和全球风险；金融分析师监控多市场联动信号；企业需要构建 AI 驱动情报仪表盘。</p></div>
+        <div class="recommend-quote">💬 "开源版 Palantir，地缘政治 + 金融 + 灾害全覆盖，本地 AI 零 API 密钥，目前最完整的开源全球情报仪表盘。"</div>
+      </div>
+    </div>
+
+    <!-- #3 open-webui NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/open-webui/open-webui" target="_blank">open-webui / open-webui</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">User-friendly AI Interface (Supports Ollama, OpenAI API, ...). 134k stars，LLM Web UI 领域最高关注度项目之一，今日重回 Trending 通常意味着重大版本更新。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">134,000</span></span>
+            <span class="meta-item"><span>🍴</span>18,900</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python / JavaScript</span>
+            <span class="meta-item">📄 见仓库</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ollama</span><span class="topic-badge">openai</span><span class="topic-badge">rag</span><span class="topic-badge">mcp</span><span class="topic-badge">self-hosted</span><span class="topic-badge">llm-webui</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Open WebUI 是最流行的开源 LLM Web 交互界面，支持 Ollama 本地模型、OpenAI API 及任意 OpenAI 兼容接口。功能覆盖对话管理、RAG 知识库、MCP 工具集成、多模态支持、管道/插件扩展、用户权限管理。Docker 一键部署，支持离线运行。今日重回 Python Trending 通常意味着触发了重大版本发布或功能更新。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>Ollama + OpenAI 双模式：一套界面同时管理本地模型和 OpenAI 兼容 API，无缝切换</li><li>内置 RAG：本地知识库检索增强，上传文档直接进入对话上下文</li><li>MCP 工具支持：集成 MCP 协议扩展 AI 能力边界</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">JavaScript</span><span class="tech-tag">Ollama</span><span class="tech-tag">MCP</span><span class="tech-tag">Docker</span><span class="tech-tag">RAG</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>企业自托管 LLM 对话界面避免数据外泄；统一管理多个本地/云端模型；内置 RAG 知识库的团队 AI 工具。</p></div>
+        <div class="recommend-quote">💬 "134k stars 的开源 LLM 前端神器，自托管完整 AI 栈的首选，重回热榜通常代表有重大版本更新，值得立即关注。"</div>
+      </div>
+    </div>
+
+    <!-- #4 langfuse NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/langfuse/langfuse" target="_blank">langfuse / langfuse</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">🪢 Open source LLM engineering platform: Observability, evals, prompt management, playground. YC W23，LLM 应用生产链路最后一块拼图。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">25,800</span></span>
+            <span class="meta-item"><span>🍴</span>2,600</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 部分开源</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm-observability</span><span class="topic-badge">llmops</span><span class="topic-badge">prompt-management</span><span class="topic-badge">llm-evaluation</span><span class="topic-badge">observability</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Langfuse 是 YC W23 孵化的开源 LLM 工程平台，核心四大能力：LLM 应用可观测性（追踪 LLM 调用/检索/Agent 行动）、提示词版本管理（集中版本控制+缓存）、多维评估（LLM-as-a-judge/用户反馈/手动标注）、数据集管理。全面集成 OpenTelemetry、LangChain、OpenAI SDK、LiteLLM，自托管 Docker 部署，Python/JS/TS SDK 完整。555 次发布，迭代速度极快。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>LLM 可观测性：追踪完整调用链路，调试复杂日志和用户会话</li><li>提示词版本管理：集中管理、版本控制、服务端/客户端双重缓存</li><li>Playground：从追踪结果直接跳入 Playground 迭代有问题的提示词</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">OpenTelemetry</span><span class="tech-tag">LangChain</span><span class="tech-tag">OpenAI SDK</span><span class="tech-tag">LiteLLM</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>LLM 应用上线后需要监控质量和性能；提示词工程师需要版本管理和 A/B 测试；建立 LLM 评估体系的工程团队。</p></div>
+        <div class="recommend-quote">💬 "YC W23 出品的 LLM 可观测性平台，追踪→评估→提示词管理一体化，LLMOps 生产链路必备。"</div>
+      </div>
+    </div>
+
+    <!-- #5 vercel-labs/skills NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/vercel-labs/skills" target="_blank">vercel-labs / skills</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">The open agent skills tool — npx skills. Vercel 官方 Agent Skills 安装 CLI，60+ AI 编程工具统一支持，Agent Skills 分发层最终答案。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">15,700</span></span>
+            <span class="meta-item"><span>🍴</span>1,300</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 见仓库</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent-skills</span><span class="topic-badge">claude-code</span><span class="topic-badge">cursor</span><span class="topic-badge">windsurf</span><span class="topic-badge">codex</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>vercel-labs/skills 是 Vercel 官方发布的开放 Agent Skills 安装 CLI 工具（npx skills），提供统一命令在 60+ AI 编程工具上安装 Agent Skills。支持清单：Claude Code、Codex、Cursor、Gemini CLI、Windsurf、GitHub Copilot、kimi-cli、OpenCode、Cline、Roo、Goose、Trae、Warp 等 60+ 工具。与 VoltAgent/awesome-agent-skills 构成"内容 + 分发"双轮。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>60+ AI 工具统一安装：自动检测当前已安装 AI 工具，一条命令正确安装到所有工具</li><li>完整 CLI：install / list / find / update / init / remove 全生命周期管理</li><li>SKILL.md 标准格式：YAML frontmatter + Markdown，任何人都可创建符合规范的技能</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">npx</span><span class="tech-tag">Node.js</span><span class="tech-tag">SKILL.md 规范</span><span class="tech-tag">skills.sh</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>所有 AI 编程工具用户统一跨工具链安装管理 Agent Skills；企业统一管理内部 AI 开发规范技能。</p></div>
+        <div class="recommend-quote">💬 "Vercel 官方 Agent Skills CLI，60+ 工具统一支持，一条 npx 命令搞定，Agent 生态分发层的最终答案。"</div>
+      </div>
+    </div>
+
+    <!-- #6 Pixelle-Video NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/AIDC-AI/Pixelle-Video" target="_blank">AIDC-AI / Pixelle-Video</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">🚀 AI 全自动短视频引擎 | AI Fully Automated Short Video Engine. 输入主题全自动出视频：文案→配图→语音→合成，ComfyUI 架构，Windows 一键整合包。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">6,100</span></span>
+            <span class="meta-item"><span>🍴</span>952</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">video-generation</span><span class="topic-badge">aigc</span><span class="topic-badge">comfyui</span><span class="topic-badge">tts</span><span class="topic-badge">image-generation</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Pixelle-Video 是 AI 全自动短视频生成引擎，输入主题即可全自动生成完整视频：AI 智能创作解说词 → AI 生成配图（FLUX/WAN 2.1 等）→ AI 合成语音（Edge-TTS/Index-TTS/ChatTTS）→ 添加 BGM → 输出视频。基于 ComfyUI 架构，原子能力灵活组合。支持数字人口播、图生视频、动作迁移等高级功能，Windows 一键整合包，支持 GPT/通义千问/DeepSeek/Ollama 等多种 LLM。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>全自动视频生成：输入主题完成文案→配图→语音→视频合成全流程</li><li>10+ 场景模板：数字人口播/图生视频/动作迁移/固定画面等多种生产模式</li><li>ComfyUI 架构：原子能力可任意组合，支持自定义工作流</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">ComfyUI</span><span class="tech-tag">Edge-TTS</span><span class="tech-tag">FLUX</span><span class="tech-tag">WAN 2.1</span><span class="tech-tag">Apache-2.0</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>内容创作者自动化生产短视频；企业批量生成产品介绍类视频；开发者基于 ComfyUI 搭建自定义视频流水线。</p></div>
+        <div class="recommend-quote">💬 "输入主题全自动出短视频，ComfyUI 架构组件可替换，国产团队出品，内容创作者的生产力工具。"</div>
+      </div>
+    </div>
+
+    <!-- #7 free-claude-code NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Alishahryar1/free-claude-code" target="_blank">Alishahryar1 / free-claude-code</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Use claude-code for free in the terminal, VSCode extension or via discord. 无需 Anthropic API Key，代理接入免费 LLM 提供商，社区对 API 高成本的直接回应。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">3,700</span></span>
+            <span class="meta-item"><span>🍴</span>696</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">ai-coding</span><span class="topic-badge">free</span><span class="topic-badge">ollama</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>free-claude-code 是一个让用户免费使用 Claude Code CLI 和 VS Code 扩展的代理层，不需要 Anthropic API 密钥。通过接入多个免费/低成本 LLM 提供商（Ollama 本地模型、HuggingFace 等）把请求路由到 Claude Code 兼容接口。同时支持 Discord Bot 和 Telegram Bot 模式。作为社区对"高 API 成本"问题的直接响应，3.7k stars 体现了大量成本敏感用户的真实需求。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>零 API 费用：通过代理接入免费 LLM 提供商，绕过 Anthropic API 订阅</li><li>多平台支持：终端 CLI、VS Code 扩展、Discord Bot、Telegram Bot 四种方式</li><li>npx 一键安装：无需 clone 仓库，直接全局安装使用</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Ollama</span><span class="tech-tag">Discord.py</span><span class="tech-tag">Telegram</span><span class="tech-tag">MIT</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>API 成本敏感用户体验 Claude Code 工作流；学习 AI 编程 Agent 工作模式而无需付费；评估 Claude Code 适配性的团队。</p></div>
+        <div class="recommend-quote">💬 "社区对 API 高成本的直接回应，免费使用 Claude Code，注意模型能力会低于官方版本，适合学习和低要求场景。"</div>
+      </div>
+    </div>
+
+    <!-- #8 FinceptTerminal 持续 -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Fincept-Corporation/FinceptTerminal" target="_blank">Fincept-Corporation / FinceptTerminal</a></div>
+          <div class="project-desc">State-of-the-art financial intelligence platform. 开源 Bloomberg Terminal 替代，连续三日全语言 Trending 前列，C++20 + Qt6 + Python，金融分析领域持续刚需。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">10,735</span></span>
+            <span class="meta-item"><span>🍴</span>1,430</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#f34b7d"></span> C++ / Python</span>
+            <span class="meta-item">📄 AGPL-3.0 / 商业双授权</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">finance</span><span class="topic-badge">bloomberg-terminal</span><span class="topic-badge">quantitative-finance</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>连续三日位居全语言 Trending 前列的开源 Bloomberg Terminal 替代品。C++20 原生 + Qt6 UI + 嵌入 Python 分析引擎，CFA 级量化分析 + AI 投资研究助手。个人/教育 AGPL-3.0 免费，企业购买商业授权。连续三日 Trending 说明金融分析领域对高质量开源工具的持续强烈需求。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>CFA 级量化分析：股票/债券/衍生品/宏观经济全覆盖</li><li>AI 投资研究助手：集成 AI 辅助分析，支持自定义数据源</li><li>双授权：个人免费，企业商业授权</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C++20</span><span class="tech-tag">Qt6</span><span class="tech-tag">Python（嵌入）</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>量化研究员低成本替代 Bloomberg；学生/教育机构教学金融分析。</p></div>
+        <div class="recommend-quote">💬 "连续三日 Trending 的开源 Bloomberg 替代，金融分析领域开源工具刚需的明证。"</div>
+      </div>
+    </div>
+
+    <!-- #9 HKUDS/RAG-Anything -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/HKUDS/RAG-Anything" target="_blank">HKUDS / RAG-Anything</a></div>
+          <div class="project-desc">All-in-One RAG Framework supporting multimodal documents. 香港大学出品，PDF/图片/表格/公式全处理，多模态知识图谱自动构建。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">16,474</span></span>
+            <span class="meta-item"><span>🍴</span>1,976</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">retrieval-augmented-generation</span><span class="topic-badge">multi-modal-rag</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>香港大学数据智能实验室出品的多模态 RAG 框架，从文档解析到问答完整 Pipeline。全格式输入，图表/表格/公式各有专用分析器，多模态知识图谱自动抽取。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>全格式支持：PDF/Word/Excel/PPT/图片直接输入</li><li>多模态专项处理：图表/表格/公式各有专用分析器</li><li>多模态知识图谱：跨模态实体关系自动抽取</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">MinerU</span><span class="tech-tag">知识图谱</span><span class="tech-tag">多模态检索</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>企业对含图表公式的技术文档做智能问答；处理学术论文的科研人员。</p></div>
+        <div class="recommend-quote">💬 "处理复杂文档 RAG 框架设计最完整的开源选择，学术界出品工程质量扎实。"</div>
+      </div>
+    </div>
+
+    <!-- #10 sansan0/TrendRadar -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/sansan0/TrendRadar" target="_blank">sansan0 / TrendRadar</a></div>
+          <div class="project-desc">AI-driven public opinion &amp; trend monitor. 多平台热点聚合 + AI 过滤分析 + 手机直推，53.2k stars 国内开发者最实用工具。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">53,200</span></span>
+            <span class="meta-item"><span>🍴</span>23,491</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 GPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">rss</span><span class="topic-badge">ai</span><span class="topic-badge">mcp</span><span class="topic-badge">docker</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>多平台热点聚合（微博/抖音/知乎/B 站/GitHub 等）+ AI 过滤翻译分析 + 手机直推，Docker 部署，微信/飞书/钉钉/Telegram/Slack 多渠道推送，MCP 架构支持接入 AI 对话系统。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多平台聚合：覆盖国内外主流平台 + RSS 订阅源</li><li>AI 三级处理：过滤→翻译→分析简报流水线</li><li>MCP 架构：可接入 AI 对话做情感分析和趋势预测</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Docker</span><span class="tech-tag">MCP</span><span class="tech-tag">LLM</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>研究员追踪特定话题舆情；个人用户不刷手机但想掌握每日热点。</p></div>
+        <div class="recommend-quote">💬 "信息过载时代的 AI 过滤器，部署一次告别碎片化刷热点。"</div>
+      </div>
+    </div>
+
+    <!-- #11 zilliztech/claude-context -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/zilliztech/claude-context" target="_blank">zilliztech / claude-context</a></div>
+          <div class="project-desc">Code search MCP for Claude Code. 把整个代码库变成 AI 编程 Agent 的上下文，BM25 + 向量混合检索 + AST 分块 + 增量索引。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">6,141</span></span>
+            <span class="meta-item"><span>🍴</span>539</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">mcp</span><span class="topic-badge">code-search</span><span class="topic-badge">claude-code</span><span class="topic-badge">semantic-search</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>MCP 插件，把代码库索引到 Milvus，让 Claude Code 等 AI Agent 通过语义搜索找到整个代码库的相关片段，降低 Token 成本。混合 BM25 + Dense Vector 检索，AST 代码分块，Merkle Tree 增量索引。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>混合检索：BM25 + 向量双重覆盖关键词和语义搜索</li><li>增量索引：只重建改动文件，大型代码库友好</li><li>AST 分块：保证完整语义边界</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Milvus</span><span class="tech-tag">BM25</span><span class="tech-tag">AST</span><span class="tech-tag">MCP</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>百万行级代码库让 Claude Code 真正看懂整个项目；成本敏感场景减少 Token 消耗。</p></div>
+        <div class="recommend-quote">💬 "Claude Code 大型代码库必装 MCP 插件，让 AI 真正看懂整个项目，不再瞎摸象。"</div>
+      </div>
+    </div>
+
+    <!-- #12 ruvnet/RuView -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ruvnet/RuView" target="_blank">ruvnet / RuView</a></div>
+          <div class="project-desc">WiFi DensePose — real-time human pose estimation without cameras. 48.6k stars，WiFi 信号无摄像头感知，⚠️ Beta。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">48,607</span></span>
+            <span class="meta-item"><span>🍴</span>6,487</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT ⚠️ Beta</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">esp32</span><span class="topic-badge">wifi</span><span class="topic-badge">pose-estimation</span><span class="topic-badge">monitoring</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>用 ESP32 WiFi 设备 CSI 信号做无摄像头人体姿态估计、生命体征监测和存在感知，17 种感知应用场景，Beta 版本，精度依赖多节点部署。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>无摄像头感知：WiFi 信号替代视频，隐私友好</li><li>边缘部署：ESP32 低功耗，本地运行</li><li>17 种应用：姿态/跌倒/睡眠等预训练模型覆盖</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">ESP32</span><span class="tech-tag">DensePose</span><span class="tech-tag">WiFi CSI</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>老人独居安全监护；隐私要求高的空间感知；智能家居存在检测。</p></div>
+        <div class="recommend-quote">💬 "无摄像头室内感知最系统的开源方案，Beta 阶段，生产前请充分测试精度。"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language Distribution -->
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Python</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:41.7%;background:#3572A5"></div></div>
+        <span class="lang-count">5 项目 (41.7%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">TypeScript</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:25%;background:#3178C6"></div></div>
+        <span class="lang-count">3 项目 (25.0%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">JS / TS</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:16.7%;background:#f1e05a"></div></div>
+        <span class="lang-count">2 项目 (16.7%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">C++ / Python</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#f34b7d"></div></div>
+        <span class="lang-count">1 项目 (8.3%)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub Explore 精选 -->
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">今日新项目密集，Explore 与 Trending 高度重合，额外推荐：</p>
+      <div>
+        <div class="trending-item">
+          <span class="trending-num">01</span>
+          <div><a href="https://github.com/KeygraphHQ/shannon" target="_blank" style="font-weight:600">KeygraphHQ/shannon</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">今日 Trending #1 · AI 自主渗透测试 · ⭐39.9k · 每次 Build 都做安全验证</span></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">02</span>
+          <div><a href="https://github.com/koala73/worldmonitor" target="_blank" style="font-weight:600">koala73/worldmonitor</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">52k stars 开源全球情报仪表盘 · Ollama 本地 AI 零 API 密钥</span></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">03</span>
+          <div><a href="https://github.com/open-webui/open-webui" target="_blank" style="font-weight:600">open-webui/open-webui</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">134k stars 重回热榜 · 关注最新版本更新内容 · Ollama/MCP 全支持</span></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">04</span>
+          <div><a href="https://github.com/langfuse/langfuse" target="_blank" style="font-weight:600">langfuse/langfuse</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">YC W23 · LLM 可观测性+评估平台 · ⭐25.8k · LLMOps 生产必备</span></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">05</span>
+          <div><a href="https://github.com/vercel-labs/skills" target="_blank" style="font-weight:600">vercel-labs/skills</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">Vercel 官方 Agent Skills CLI · 60+ AI 工具统一支持 · ⭐15.7k</span></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">06</span>
+          <div><a href="https://github.com/Z4nzu/hackingtool" target="_blank" style="font-weight:600">Z4nzu/hackingtool</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">黑客工具集合 · Python · 连续第三日安全工具进入 Trending，AI 安全浪潮延续</span></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">07</span>
+          <div><a href="https://github.com/kyegomez/swarms" target="_blank" style="font-weight:600">kyegomez/swarms</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">企业级多 Agent 编排框架 · 20+ 架构模式 · ⭐6.5k · Apache-2.0</span></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">08</span>
+          <div><a href="https://github.com/davila7/claude-code-templates" target="_blank" style="font-weight:600">davila7/claude-code-templates</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">Claude Code 提示词模板合集 · 今日进入 Python Trending</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>📅 报告生成时间：2026-04-23 &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">本报告由 <strong>skill-github-trending-report</strong> 自动生成 &nbsp;|&nbsp; 所有数据来自 GitHub 公开页面，无需 API Token</p>
+  </div>
+
+</div>
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>

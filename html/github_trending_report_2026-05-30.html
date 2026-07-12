@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-30</title>
+<style>
+:root {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d; --border: #30363d;
+  --text: #c9d1d9; --text2: #8b949e; --accent: #58a6ff; --accent2: #3fb950;
+  --accent3: #f78166; --gold: #e3b341; --silver: #8b949e; --bronze: #d18016;
+  --new-badge: #238636; --cont-badge: #1f6feb;
+  --python: #3572A5; --typescript: #3178C6; --cpp: #f34b7d;
+  --markdown: #083fa1; --shell: #89e051; --jupyter: #da5b0b;
+}
+.light {
+  --bg: #f6f8fa; --bg2: #ffffff; --bg3: #f0f2f4; --border: #d0d7de;
+  --text: #24292f; --text2: #57606a; --accent: #0969da; --accent2: #1a7f37;
+  --accent3: #cf222e; --gold: #9a6700; --silver: #57606a; --bronze: #953800;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo { font-size: 20px; }
+.header-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.header-date { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.theme-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.theme-btn:hover { background: var(--border); }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+.stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.freeze-banner { background: linear-gradient(135deg, #1a1f2e, #21262d); border: 1px solid var(--gold); border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px; }
+.freeze-icon { font-size: 22px; line-height: 1; }
+.freeze-text { flex: 1; }
+.freeze-title { font-size: 14px; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+.freeze-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.section-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.insights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
+.insight-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; border-left: 3px solid var(--accent); }
+.insight-card:nth-child(2) { border-left-color: var(--accent2); }
+.insight-card:nth-child(3) { border-left-color: var(--gold); }
+.insight-card:nth-child(4) { border-left-color: var(--accent3); }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.insight-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
+.project-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s; }
+.project-card:hover { border-color: var(--accent); }
+.top-card { border-left: 3px solid var(--cont-badge); }
+.new-card { border-left: 3px solid var(--new-badge); }
+.rank-1 { border-left: 3px solid var(--gold); }
+.rank-2 { border-left: 3px solid var(--silver); }
+.rank-3 { border-left: 3px solid var(--bronze); }
+.card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.card-rank { font-size: 20px; font-weight: 800; min-width: 36px; color: var(--text2); }
+.rank-1 .card-rank { color: var(--gold); }
+.rank-2 .card-rank { color: var(--silver); }
+.rank-3 .card-rank { color: var(--bronze); }
+.card-title-area { flex: 1; }
+.card-repo { font-size: 14px; font-weight: 600; color: var(--accent); }
+.card-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.new-badge { background: var(--new-badge); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.cont-badge { background: var(--cont-badge); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.hot-badge { background: #b94040; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.lang-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; color: #fff; }
+.lang-python { background: var(--python); }
+.lang-typescript { background: var(--typescript); }
+.lang-markdown { background: var(--markdown); }
+.lang-shell { background: var(--shell); color: #1a1a1a; }
+.card-meta { padding: 0 16px 10px; display: flex; gap: 14px; flex-wrap: wrap; }
+.meta-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text2); }
+.meta-stars { color: var(--gold); }
+.meta-growth { color: var(--accent2); }
+.meta-hot { color: #f78166; font-weight: 700; }
+.card-detail { border-top: 1px solid var(--border); padding: 12px 16px; display: none; }
+.card-detail.open { display: block; }
+.detail-section { margin-bottom: 10px; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.detail-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.detail-tag { background: var(--bg3); border: 1px solid var(--border); font-size: 11px; padding: 2px 8px; border-radius: 10px; color: var(--text2); }
+.toggle-btn { display: block; width: 100%; background: var(--bg3); border: none; border-top: 1px solid var(--border); color: var(--text2); padding: 8px; cursor: pointer; font-size: 11px; text-align: center; }
+.toggle-btn:hover { background: var(--border); color: var(--text); }
+.growth-table { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px; overflow-x: auto; }
+.growth-table table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.growth-table th { color: var(--text2); font-weight: 600; padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+.growth-table td { color: var(--text); padding: 8px 10px; border-bottom: 1px solid var(--bg3); }
+.growth-table tr:last-child td { border-bottom: none; }
+.growth-table .td-rank { font-weight: 700; color: var(--text2); }
+.growth-table .td-hot { color: var(--accent2); font-weight: 700; }
+.growth-table .td-pct { font-weight: 700; }
+.growth-table .pct-high { color: #f78166; }
+.growth-table .pct-mid { color: var(--gold); }
+.growth-table .pct-low { color: var(--text2); }
+.lang-dist { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px; }
+.lang-bar-row { margin-bottom: 10px; }
+.lang-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+.lang-bar-track { background: var(--bg3); border-radius: 4px; height: 8px; overflow: hidden; }
+.lang-bar-fill { height: 100%; border-radius: 4px; }
+.week-timeline { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px; }
+.week-row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--bg3); }
+.week-row:last-child { border-bottom: none; }
+.week-date { font-size: 11px; font-weight: 700; color: var(--accent); min-width: 60px; padding-top: 2px; }
+.week-theme { font-size: 12px; font-weight: 600; color: var(--text); min-width: 160px; }
+.week-detail { font-size: 11px; color: var(--text2); flex: 1; }
+.week-today { background: rgba(88,166,255,0.06); border-radius: 6px; padding: 8px 12px; margin: 0 -8px; }
+.explore-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 32px; }
+.explore-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 14px; }
+.explore-num { font-size: 18px; font-weight: 800; color: var(--text2); min-width: 28px; }
+.explore-content { flex: 1; }
+.explore-repo { font-size: 13px; font-weight: 600; color: var(--accent); }
+.explore-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.explore-meta { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 20px 24px; text-align: center; font-size: 12px; color: var(--text2); }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <span class="header-logo">📊</span>
+    <div>
+      <div class="header-title">GitHub Trending 日报</div>
+      <div class="header-date">2026-05-30 · 历史首次全留榜 · stable-worldmodel +19.9% · Harness Engineering 概念登场 · MoneyPrinterTurbo Day 4</div>
+    </div>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()">☀️ 切换主题</button>
+</div>
+
+<div class="container">
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">今日 Top 项目</div></div>
+    <div class="stat-card"><div class="stat-value">~584k</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--gold)">0</div><div class="stat-label">新上榜（历史首次全留榜）</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--accent2)">+7,668</div><div class="stat-label">今日总增量 Stars</div></div>
+  </div>
+
+  <!-- 全留榜特别提示 -->
+  <div class="freeze-banner">
+    <div class="freeze-icon">🔒</div>
+    <div class="freeze-text">
+      <div class="freeze-title">历史首次：All-Language Trending Top 12 全部连续留榜（05-29 = 05-30）</div>
+      <div class="freeze-desc">自 05-12 本系列日报追踪开始，今日是首次出现 Top 12 全部项目连续留榜的情况。这不是数据延迟——所有 12 个项目均有真实 Stars 增量，合计 +7,668 Stars。<strong style="color:var(--text)">"Plugin 战争"格局已成共识，2026年5月最后工作日（周五）的技术快照。</strong> Python Trending 今日唯一新入：ai-boost/awesome-harness-engineering（Harness Engineering awesome list）。</div>
+    </div>
+  </div>
+
+  <div class="section-title">🔍 今日洞察</div>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-title">🔒 历史首次：Top 12 全部留榜——"Plugin 战争"格局稳态，2026年5月最后工作日快照</div>
+      <div class="insight-text">今日（05-30，周五）All-Language Trending Top 12 与昨日（05-29）完全相同，无一新入或退出——本系列日报（05-12 起）追踪史上首次。今日 12 项合计 +7,668 Stars 说明热度仍高。原因三重：周五效应（GitHub Trending 刷新频率相对低）+ Plugin 战争格局已成（无更强项目出现）+ 积累增量实力强。05-29 确立的 Plugin 战争三角（claude-code/#5 + cursor/plugins/#7 + compound-engineering/#3）代表了 2026 年 AI 编程工具生态的周级别共识，短期内不会轻易被替代。今日 Top 12 是 2026年5月 AI 工具生态的定格快照。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🚀 stable-worldmodel +221（+19.9%）今日增速最高 · liteparse +684（+9.9%）第三 · cursor/plugins +152（+12.7%）第二</div>
+      <div class="insight-text">今日增速最高的三个项目均是昨日新入的"低基数"项目：stable-worldmodel（+19.9%，1,109→1,330）、cursor/plugins（+12.7%，1,199→1,351）、liteparse（+9.9%，6,879→7,563）。规律："低基数新项目在第 2 天进入快速传播期"——初始的 GitHub 首页曝光之后，社区口碑传播开始发挥作用。stable-worldmodel +19.9% 说明具身 AI / RL 社区正在快速发现这个"世界模型研究的 stable-baselines3"；cursor/plugins +12.7% 说明 Cursor 开发者社区对官方 Plugin 规范的高度期待；liteparse +9.9% 说明文档基础设施赛道持续热度。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">📋 ai-boost/awesome-harness-engineering（Python Trending 今日唯一新入，1,378 Stars）——"Harness Engineering"概念以 awesome list 登场</div>
+      <div class="insight-text">"Awesome list for AI agent harness engineering: tools, patterns, evals, memory, MCP, permissions, observability, and orchestration." 8 个维度是 2026 年 AI agent 治理工程的核心系统分类。与 affaan-m/ECC（"agent harness performance optimization system"）的 harness 命名形成呼应——ECC 是实现层，awesome-harness-engineering 是知识整合层。本周完整叙事：Skills（agent 行为配置）→ Plugins（IDE 层扩展）→ Harness Engineering（agent 治理评估）——从"让 agent 会做什么"到"在哪个 IDE 做"到"如何评估和治理 agent"，三层递进完整呈现。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🎯 MoneyPrinterTurbo Day 4 守 #1（70,763，+1,904/天）+ taste-skill Day 5（28,594，+925/天）——本周最强"双常青"</div>
+      <div class="insight-text">MoneyPrinterTurbo：5天累计 60,880→70,763 = +9,883（+16.3%），今日绝对增量最高 +1,904/天。taste-skill：5天累计 23,588→28,594 = +5,006（+21.2%！），今日 Top 12 第三高增速 +3.3%/天。两者类型不同：MoneyPrinterTurbo 是"大盘蓝筹"（每日 +1,904 绝对领先）；taste-skill 是"小盘成长"（每日 +3.3% 增速持续高位）。两者共同说明：无论 IDE 如何竞争，AI 内容生产工具（视频生成）和 AI 输出品质工具（anti-slop）是独立于 IDE 平台战争的持续刚需。</div>
+    </div>
+  </div>
+
+  <div class="section-title">📈 今日增量排行榜</div>
+  <div class="growth-table">
+    <table>
+      <thead>
+        <tr>
+          <th>排名</th>
+          <th>项目</th>
+          <th>今日 Stars</th>
+          <th>昨日 Stars</th>
+          <th>单日增量</th>
+          <th>增速</th>
+          <th>在榜</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-rank">#01</td><td><a href="https://github.com/harry0703/MoneyPrinterTurbo" target="_blank">MoneyPrinterTurbo</a></td><td>70,763</td><td>68,859</td><td class="td-hot">+1,904</td><td class="td-pct pct-low">+2.8%</td><td>Day 4</td></tr>
+        <tr><td class="td-rank">#02</td><td><a href="https://github.com/microsoft/markitdown" target="_blank">microsoft/markitdown</a></td><td>130,757</td><td>129,015</td><td class="td-hot">+1,742</td><td class="td-pct pct-low">+1.4%</td><td>Day 2</td></tr>
+        <tr><td class="td-rank">#06</td><td><a href="https://github.com/Leonxlnx/taste-skill" target="_blank">Leonxlnx/taste-skill</a></td><td>28,594</td><td>27,669</td><td class="td-hot">+925</td><td class="td-pct pct-low">+3.3%</td><td><strong>Day 5</strong></td></tr>
+        <tr><td class="td-rank">#08</td><td><a href="https://github.com/run-llama/liteparse" target="_blank">run-llama/liteparse</a></td><td>7,563</td><td>6,879</td><td>+684</td><td class="td-pct pct-mid">+9.9%</td><td>Day 2</td></tr>
+        <tr><td class="td-rank">#05</td><td><a href="https://github.com/anthropics/claude-code" target="_blank">anthropics/claude-code</a></td><td>128,080</td><td>127,689</td><td>+391</td><td class="td-pct pct-low">+0.3%</td><td>Day 2</td></tr>
+        <tr><td class="td-rank">#10</td><td><a href="https://github.com/byoungd/English-level-up-tips" target="_blank">English-level-up-tips</a></td><td>49,843</td><td>49,452</td><td>+391</td><td class="td-pct pct-low">+0.8%</td><td>Day 3</td></tr>
+        <tr><td class="td-rank">#04</td><td><a href="https://github.com/twentyhq/twenty" target="_blank">twentyhq/twenty</a></td><td>48,557</td><td>48,215</td><td>+342</td><td class="td-pct pct-low">+0.7%</td><td>Day 4</td></tr>
+        <tr><td class="td-rank">#12</td><td><a href="https://github.com/Crosstalk-Solutions/project-nomad" target="_blank">project-nomad</a></td><td>27,089</td><td>26,759</td><td>+330</td><td class="td-pct pct-low">+1.2%</td><td>Day 2</td></tr>
+        <tr><td class="td-rank">#03</td><td><a href="https://github.com/EveryInc/compound-engineering-plugin" target="_blank">compound-engineering</a></td><td>18,260</td><td>18,002</td><td>+258</td><td class="td-pct pct-low">+1.4%</td><td>Day 2</td></tr>
+        <tr><td class="td-rank">#09</td><td><a href="https://github.com/galilai-group/stable-worldmodel" target="_blank">stable-worldmodel</a></td><td>1,330</td><td>1,109</td><td>+221</td><td class="td-pct pct-high">+19.9%🔥</td><td>Day 2</td></tr>
+        <tr><td class="td-rank">#07</td><td><a href="https://github.com/cursor/plugins" target="_blank">cursor/plugins</a></td><td>1,351</td><td>1,199</td><td>+152</td><td class="td-pct pct-mid">+12.7%</td><td>Day 2</td></tr>
+        <tr><td class="td-rank">#11</td><td><a href="https://github.com/Biohub/esm" target="_blank">Biohub/esm</a></td><td>2,588</td><td>2,521</td><td>+67</td><td class="td-pct pct-low">+2.7%</td><td>Day 2</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:10px;font-size:11px;color:var(--text2)">增速排名：stable-worldmodel（+19.9%🔥）> cursor/plugins（+12.7%）> liteparse（+9.9%）> taste-skill（+3.3%）> MoneyPrinterTurbo（+2.8%）</div>
+  </div>
+
+  <div class="section-title">🏆 今日 Top 12</div>
+  <div class="projects-grid">
+
+    <!-- #01 MoneyPrinterTurbo -->
+    <div class="project-card rank-1 top-card">
+      <div class="card-header">
+        <div class="card-rank">#01</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/harry0703/MoneyPrinterTurbo" target="_blank">harry0703/MoneyPrinterTurbo</a>
+          <div class="card-desc">利用AI大模型，一键生成高清短视频 — AI LLM 驱动的视频生成引擎</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 4 · #1 连续守位</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 70,763</span>
+        <span class="meta-item">🍴 10,192</span>
+        <span class="meta-item meta-growth">▲ +1,904/天（+2.8%）</span>
+        <span class="meta-item meta-growth">📊 5天累计 +9,883（+16.3%）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 4，今日突破 70,000 Stars（70,763）。单日绝对增量 +1,904 今日 Top 12 最高，5天总增量 +9,883（+16.3%）。连续 4 天稳守 #1，"大盘蓝筹"型增长——每日稳定 +1,000~+2,000 Stars。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">核心功能</div>
+          <div class="detail-tags">
+            <span class="detail-tag">AI LLM 一键视频生成</span>
+            <span class="detail-tag">DeepSeek / Moonshot</span>
+            <span class="detail-tag">Ollama 本地模型</span>
+            <span class="detail-tag">多语言字幕</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #02 microsoft/markitdown -->
+    <div class="project-card rank-2 top-card">
+      <div class="card-header">
+        <div class="card-rank">#02</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/microsoft/markitdown" target="_blank">microsoft/markitdown</a>
+          <div class="card-desc">Python tool for converting files and office documents to Markdown — 微软官方，今日突破 130k！</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2 · 突破 130k</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 130,757</span>
+        <span class="meta-item">🍴 8,966</span>
+        <span class="meta-item meta-growth">▲ +1,742/天（+1.4%）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">今日突破 130,000 Stars（130,757），昨日 129,015。单日 +1,742，绝对增量 Top 12 第二高。微软官方文档→Markdown 转换工具，"文档→Markdown 基础设施"三角核心，与 liteparse、MinerU 共同构成 agent 工作流数据摄取层。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #03 compound-engineering-plugin -->
+    <div class="project-card rank-3 top-card">
+      <div class="card-header">
+        <div class="card-rank">#03</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/EveryInc/compound-engineering-plugin" target="_blank">EveryInc/compound-engineering-plugin</a>
+          <div class="card-desc">Official Compound Engineering plugin — 8 平台 · 161 次发布</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-markdown">Markdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 18,260</span>
+        <span class="meta-item">🍴 1,385</span>
+        <span class="meta-item meta-growth">▲ +258/天（+1.4%）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 2，+258 Stars（+1.4%）。Plugin 战争三角成员，"每单位工程工作应使后续更容易"的 CE 方法论持续传播。支持 Claude Code / Cursor / Codex / GitHub Copilot / Factory Droid / Qwen Code / OpenCode / Kiro 等 8 个平台。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #04 twentyhq/twenty -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#04</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/twentyhq/twenty" target="_blank">twentyhq/twenty</a>
+          <div class="card-desc">The open alternative to Salesforce, designed for AI</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 4</span>
+            <span class="lang-badge lang-typescript">TypeScript</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 48,557</span>
+        <span class="meta-item">🍴 6,889</span>
+        <span class="meta-item meta-growth">▲ +342/天（+0.7%）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 4，4天总增量：47,153→48,557 = +1,404（+3.0%）。今日 +342（+0.7%），稳定增长。AI-native CRM，与 claude-code/cursor 共同构成 agent "操作企业应用"的完整栈：IDE Plugin 层 → 工程方法论层 → 业务应用层（twenty CRM）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #05 anthropics/claude-code -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#05</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/anthropics/claude-code" target="_blank">anthropics/claude-code</a>
+          <div class="card-desc">Agentic coding tool that lives in your terminal — Anthropic 官方 Claude Code CLI</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-typescript">TypeScript</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 128,080</span>
+        <span class="meta-item">🍴 20,929</span>
+        <span class="meta-item meta-growth">▲ +391/天（+0.3%）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 2，128,080 Stars，Forks 20,929。大型成熟仓库 +0.3%/天属正常稳态增长。今日与 cursor/plugins（#7）仍然共同守榜，"Plugin 战争"中 Anthropic 和 Cursor 两大 AI coding IDE 并肩同框第 2 天。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #06 taste-skill -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#06</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/Leonxlnx/taste-skill" target="_blank">Leonxlnx/taste-skill</a>
+          <div class="card-desc">Taste-Skill - gives your AI good taste. stops the AI from generating boring, generic slop</div>
+          <div class="card-badges">
+            <span class="hot-badge">Day 5 🔥 +21.2% 五日总涨</span>
+            <span class="lang-badge lang-markdown">Markdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 28,594</span>
+        <span class="meta-item">🍴 2,116</span>
+        <span class="meta-item meta-hot">▲ +925/天（+3.3%）Top12 增速第三</span>
+        <span class="meta-item meta-growth">📊 5天累计 +5,006（+21.2%！）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 5！5天总增量 +5,006（+21.2%），本系列本周增速最高的留榜项目。今日 +925（+3.3%），Top 12 单日增速第三高。在 Skills 浪潮退潮的今日，taste-skill 是唯一连续 5 天守榜的 Skills 类项目，"让 AI 有好品味"的需求超越 IDE 平台竞争。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #07 cursor/plugins -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#07</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/cursor/plugins" target="_blank">cursor/plugins</a>
+          <div class="card-desc">Cursor plugin specification and official plugins — Cursor 官方插件规范</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-typescript">TypeScript</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 1,351</span>
+        <span class="meta-item">🍴 114</span>
+        <span class="meta-item meta-hot">▲ +152/天（+12.7%）增速第二</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 2，+152（+12.7%），今日 Top 12 增速第二高。从昨日发布即 Trending（1,199 Stars）到今日 1,351，Cursor 开发者社区对官方 Plugin 规范高度期待，持续快速发现。仓库结构：plugin.json + SKILL.md + .mdc rules + mcp.json，与 Anthropic Skills 规范完全对齐。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #08 run-llama/liteparse -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#08</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/run-llama/liteparse" target="_blank">run-llama/liteparse</a>
+          <div class="card-desc">A fast, helpful, and open-source document parser — LlamaIndex 出品</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 7,563</span>
+        <span class="meta-item">🍴 456</span>
+        <span class="meta-item meta-hot">▲ +684/天（+9.9%）增速第三</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 2，+684（+9.9%），今日 Top 12 增速第三高。LlamaIndex（run-llama）出品，文档→Markdown 三角成员。2天总计：6,879→7,563 = +684，接近 8,000 Stars。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #09 galilai-group/stable-worldmodel -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#09</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/galilai-group/stable-worldmodel" target="_blank">galilai-group/stable-worldmodel</a>
+          <div class="card-desc">A platform for reproducible world model research and evaluation</div>
+          <div class="card-badges">
+            <span class="hot-badge">Day 2 · 增速 #1 +19.9%🔥</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 1,330</span>
+        <span class="meta-item">🍴 156</span>
+        <span class="meta-item meta-hot">▲ +221/天（+19.9%）今日增速最高！</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 2，+221（+19.9%），今日 Top 12 增速最高！昨日进入 Top 12（1,109 Stars），今日 1,330，具身 AI / RL 社区正在快速传播这个"世界模型研究的 stable-baselines3"。统一接口覆盖世界模型研究三阶段（数据收集→训练→MPC评估），支持 100+ Atari 游戏 / DeepMind Control Suite / OGBench / LeRobot。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #10 English-level-up-tips -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#10</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/byoungd/English-level-up-tips" target="_blank">byoungd/English-level-up-tips</a>
+          <div class="card-desc">An advanced guide to learn English — 离谱英语学习指南，接近 50k！</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 3 · 接近 50k</span>
+            <span class="lang-badge lang-markdown">Markdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 49,843</span>
+        <span class="meta-item">🍴 5,211</span>
+        <span class="meta-item meta-growth">▲ +391/天（+0.8%）· 距 50k 仅差 157 Stars！</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 3，49,843 Stars，距 50,000 Stars 里程碑仅差 157 Stars！明日或后天有望突破 50k。3天总增量：49,452→49,843（+ ~391/天）。在 AI coding 工具主导的 Trending 中，英语学习项目的持续留榜说明技术升级与语言能力提升的同步需求。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #11 Biohub/esm -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#11</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/Biohub/esm" target="_blank">Biohub/esm</a>
+          <div class="card-desc">ESM — Evolutionary Scale Modeling，蛋白质序列语言模型</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 2,588</span>
+        <span class="meta-item">🍴 314</span>
+        <span class="meta-item meta-growth">▲ +67/天（+2.7%）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 2，+67（+2.7%）。蛋白质语言模型，Chan Zuckerberg Biohub 维护，本系列首个生命科学 AI 项目入 Top 12。稳定增长说明生命科学 AI 社区持续关注。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #12 project-nomad -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#12</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/Crosstalk-Solutions/project-nomad" target="_blank">Crosstalk-Solutions/project-nomad</a>
+          <div class="card-desc">Project N.O.M.A.D — 离线生存 AI 计算机，69次发布</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-shell">Shell</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 27,089</span>
+        <span class="meta-item">🍴 2,660</span>
+        <span class="meta-item meta-growth">▲ +330/天（+1.2%）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日亮点</div>
+          <div class="detail-text">Day 2，+330（+1.2%）。"Node for Offline Media, Archives, and Data"——离线优先 AI 知识服务器，69次发布的长期成熟项目。去中心化/离线 AI 需求持续，与 vllm（本地推理）共同构成"主权 AI"草根实践趋势。</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">📊 语言分布</div>
+  <div class="lang-dist">
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>Python（42%）</span><span>MoneyPrinterTurbo / markitdown / liteparse / stable-worldmodel / Biohub-esm</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:42%;background:var(--python)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>TypeScript（25%）</span><span>twentyhq/twenty / anthropics/claude-code / cursor/plugins</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:25%;background:var(--typescript)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>Markdown（25%）</span><span>compound-engineering-plugin / taste-skill / English-level-up-tips</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:25%;background:var(--markdown)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>Shell（8%）</span><span>Crosstalk-Solutions/project-nomad</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:8%;background:var(--shell)"></div></div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:var(--text2)">与 05-29 完全相同（全留榜日）。Python 42% / TypeScript 25% / Markdown 25% / Shell 8%。</div>
+  </div>
+
+  <div class="section-title">📅 本周演化回顾（05-24~05-30）</div>
+  <div class="week-timeline">
+    <div class="week-row">
+      <div class="week-date">05-24~26</div>
+      <div class="week-theme">Skills 浪潮启动期</div>
+      <div class="week-detail">karpathy-skills / ECC / Understand-Anything / taste-skill 主导；SKILL.md 格式 agent 配置工具浪潮开启</div>
+    </div>
+    <div class="week-row">
+      <div class="week-date">05-27</div>
+      <div class="week-theme">Skills 浪潮顶峰</div>
+      <div class="week-detail">superpowers（209k）入 #12；Understand-Anything Day 4 +7,236（+22.9%！本系列单日最高）；taste-skill +3,746（+18.9%）；Markdown 占比达 50% 历史峰值</div>
+    </div>
+    <div class="week-row">
+      <div class="week-date">05-29</div>
+      <div class="week-theme">Plugin 战争爆发</div>
+      <div class="week-detail">claude-code + cursor/plugins + compound-engineering 同日入 Top 12；markitdown + liteparse"文档→Markdown"三角浮现；2天换血 8/12 席；ECC/stop-slop/Understand-Anything 相继退出</div>
+    </div>
+    <div class="week-row week-today">
+      <div class="week-date" style="color:var(--gold)">05-30 今日</div>
+      <div class="week-theme" style="color:var(--gold)">Plugin 战争稳态 · 历史首次全留榜</div>
+      <div class="week-detail">Top 12 全部连续留榜（本系列首次）；stable-worldmodel +19.9% 增速最高；ai-boost/awesome-harness-engineering Python Trending 新入；"Harness Engineering"概念登场；本周三层叙事完整：Skills→Plugin→Harness</div>
+    </div>
+  </div>
+
+  <div class="section-title">🌟 Explore 精选</div>
+  <div class="explore-grid">
+
+    <div class="explore-card">
+      <div class="explore-num">#1</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/ai-boost/awesome-harness-engineering" target="_blank">ai-boost/awesome-harness-engineering</a>
+        <div class="explore-desc">Awesome list for AI agent harness engineering: tools, patterns, evals, memory, MCP, permissions, observability, and orchestration — Python Trending 今日唯一新入</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 1,378</span>
+          <span class="meta-item">🍴 145</span>
+          <span class="new-badge">今日新入</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:6px;line-height:1.5">今日全部 Trending 中唯一的新入项目。8 个维度（tools/patterns/evals/memory/MCP/permissions/observability/orchestration）是 AI agent 治理工程的系统性知识图谱。与 affaan-m/ECC（"agent harness performance optimization system"）的 harness 命名呼应。本周叙事最后一环：Skills（配置）→ Plugins（执行）→ Harness Engineering（治理评估）。</div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">#2</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/OpenBMB/VoxCPM" target="_blank">OpenBMB/VoxCPM</a>
+        <div class="explore-desc">VoxCPM2: Tokenizer-Free TTS for Multilingual Speech Generation, Creative Voice Design, and True-to-Life Cloning — Python Trending</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 22,412</span>
+          <span class="meta-item">🍴 2,642</span>
+          <span class="meta-item meta-hot">▲ +527/天（+2.4%，Python Trending 增速最高）</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:6px;line-height:1.5">今日 Python Trending 增速最高（+527，+2.4%）。"Tokenizer-Free TTS"——TTS 新一代架构，配合 MOSS-TTS（+47）今日 AI 语音生成双热，赛道持续升温。</div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">#3</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/hardikpandya/stop-slop" target="_blank">hardikpandya/stop-slop</a>
+        <div class="explore-desc">A skill file for removing AI tells from prose — All-Language #15，今日增速 +5.5%！</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 7,157</span>
+          <span class="meta-item">🍴 502</span>
+          <span class="meta-item meta-hot">▲ +373/天（+5.5%）</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:6px;line-height:1.5">今日 All-Language #15（退出 Top 12），但单日 +373（+5.5%）增速依然强劲。在今日全留榜的 Top 12 环境下，stop-slop 虽已退出但仍在 Trending 页面，说明 anti-slop 需求从未真正冷却。</div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">#4</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/codecrafters-io/build-your-own-x" target="_blank">codecrafters-io/build-your-own-x</a>
+        <div class="explore-desc">Master programming by recreating your favorite technologies from scratch — All-Language #17，连续 2 天 Trending</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 507,631</span>
+          <span class="meta-item">🍴 48,209</span>
+          <span class="meta-item meta-growth">▲ +560/天</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:6px;line-height:1.5">连续 2 天在 All-language Trending #17，507,631 Stars（+560 今日），本系列日报迄今 Trending 页面出现的 Stars 最高记录。今日仍在 Trending 说明真实日活跃用户每天都在发现这个项目。</div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">#5</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/shiyu-coder/Kronos" target="_blank">shiyu-coder/Kronos</a>
+        <div class="explore-desc">Kronos: A Foundation Model for the Language of Financial Markets — Python Trending</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 27,480</span>
+          <span class="meta-item">🍴 4,752</span>
+          <span class="meta-item meta-growth">▲ +229/天（+0.8%）</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:6px;line-height:1.5">Python Trending 连续出现多天（+229/天），金融市场语言模型专业社区持续活跃。今日 27,480 Stars，本周在 Python Trending 已连续多日稳定曝光。</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  GitHub Trending 日报 · 2026-05-30 · 2026年5月最后工作日 · 数据来源：github.com/trending + github.com/trending/python?since=daily<br>
+  <span style="opacity:0.6">本报告由自动化工作流生成</span>
+</footer>
+
+<script>
+function toggleDetail(btn) {
+  const detail = btn.nextElementSibling;
+  const isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open', !isOpen);
+  btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const btn = document.querySelector('.theme-btn');
+  btn.textContent = document.body.classList.contains('light') ? '🌙 切换主题' : '☀️ 切换主题';
+}
+</script>
+</body>
+</html>

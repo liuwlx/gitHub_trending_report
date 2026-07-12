@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-20</title>
+<style>
+:root {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d; --border: #30363d;
+  --text: #c9d1d9; --text2: #8b949e; --accent: #58a6ff; --accent2: #3fb950;
+  --accent3: #f78166; --gold: #e3b341; --silver: #8b949e; --bronze: #d18016;
+  --new-badge: #238636; --cont-badge: #1f6feb;
+  --python: #3572A5; --typescript: #3178C6; --rust: #dea584;
+  --markdown: #083fa1; --jupyter: #da5b0b;
+}
+.light {
+  --bg: #f6f8fa; --bg2: #ffffff; --bg3: #f0f2f4; --border: #d0d7de;
+  --text: #24292f; --text2: #57606a; --accent: #0969da; --accent2: #1a7f37;
+  --accent3: #cf222e; --gold: #9a6700; --silver: #57606a; --bronze: #953800;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo { font-size: 20px; }
+.header-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.header-date { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.theme-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.theme-btn:hover { background: var(--border); }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+.stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.section-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.insights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
+.insight-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; border-left: 3px solid var(--accent); }
+.insight-card:nth-child(2) { border-left-color: var(--gold); }
+.insight-card:nth-child(3) { border-left-color: var(--accent3); }
+.insight-card:nth-child(4) { border-left-color: var(--accent2); }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.insight-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
+.project-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s; }
+.project-card:hover { border-color: var(--accent); }
+.top-card { border-left: 3px solid var(--cont-badge); }
+.new-card { border-left: 3px solid var(--new-badge); }
+.rank-1 { border-left: 3px solid var(--gold); }
+.rank-2 { border-left: 3px solid var(--silver); }
+.rank-3 { border-left: 3px solid var(--bronze); }
+.card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.card-rank { font-size: 20px; font-weight: 800; min-width: 36px; color: var(--text2); }
+.rank-1 .card-rank { color: var(--gold); }
+.rank-2 .card-rank { color: var(--silver); }
+.rank-3 .card-rank { color: var(--bronze); }
+.card-title-area { flex: 1; }
+.card-repo { font-size: 14px; font-weight: 600; color: var(--accent); }
+.card-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.new-badge { background: var(--new-badge); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.cont-badge { background: var(--cont-badge); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.lang-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; color: #fff; }
+.lang-python { background: var(--python); }
+.lang-typescript { background: var(--typescript); }
+.lang-rust { background: var(--rust); color: #1a1a1a; }
+.lang-markdown { background: var(--markdown); }
+.lang-jupyter { background: var(--jupyter); }
+.card-meta { padding: 0 16px 10px; display: flex; gap: 14px; flex-wrap: wrap; }
+.meta-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text2); }
+.meta-stars { color: var(--gold); }
+.meta-growth { color: var(--accent2); }
+.meta-alert { color: var(--accent3); font-weight: 600; }
+.card-detail { border-top: 1px solid var(--border); padding: 12px 16px; display: none; }
+.card-detail.open { display: block; }
+.detail-section { margin-bottom: 10px; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.detail-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.detail-tag { background: var(--bg3); border: 1px solid var(--border); font-size: 11px; padding: 2px 8px; border-radius: 10px; color: var(--text2); }
+.toggle-btn { display: block; width: 100%; background: var(--bg3); border: none; border-top: 1px solid var(--border); color: var(--text2); padding: 8px; cursor: pointer; font-size: 11px; text-align: center; }
+.toggle-btn:hover { background: var(--border); color: var(--text); }
+.lang-dist { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px; }
+.lang-bar-row { margin-bottom: 10px; }
+.lang-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+.lang-bar-track { background: var(--bg3); border-radius: 4px; height: 8px; overflow: hidden; }
+.lang-bar-fill { height: 100%; border-radius: 4px; }
+.explore-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 32px; }
+.explore-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 14px; }
+.explore-num { font-size: 18px; font-weight: 800; color: var(--text2); min-width: 28px; }
+.explore-content { flex: 1; }
+.explore-repo { font-size: 13px; font-weight: 600; color: var(--accent); }
+.explore-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.explore-meta { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 20px 24px; text-align: center; font-size: 12px; color: var(--text2); }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <span class="header-logo">📊</span>
+    <div>
+      <div class="header-title">GitHub Trending 日报</div>
+      <div class="header-date">2026-05-20 · Skills 宇宙爆炸日 · obra/superpowers 198.7k 新高 · rtk 降耗 60-90% · Skills 四强同框</div>
+    </div>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()">☀️ 切换主题</button>
+</div>
+
+<div class="container">
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">今日 Top 项目</div></div>
+    <div class="stat-card"><div class="stat-value">~924k</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--new-badge)">8</div><div class="stat-label">今日新上榜</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--cont-badge)">4</div><div class="stat-label">Day 2 持续</div></div>
+  </div>
+
+  <div class="section-title">🔍 今日洞察</div>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-title">🌌 "Skills 宇宙"爆炸日——Top 4 全部是 Skills/Agent Methodology 仓库，合计 577k Stars，创本系列日报 Skills 单日记录</div>
+      <div class="insight-text">前四名全部是 Skills/Methodology 仓库：obra/superpowers（198.7k）+ multica-ai/andrej-karpathy-skills（138.7k）+ anthropics/skills（137.7k）+ msitarzewski/agency-agents（101.9k）= 577k Stars。本系列日报（05-06至今）从未出现过的"Skills 四强同框"格局，标志着 Agent Skills 已从"早期尝鲜者的实验"变成"每个 AI 开发者的标配基础设施"。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">👑 obra/superpowers（198,743 ⭐）——本系列日报 Stars 新高，Agent Skills 领域"方法论级"作品今日登顶</div>
+      <div class="insight-text">198,743 Stars 超越本系列日报最高记录（05-12 SD-webui 162.9k），首次突破 198k。定位："A complete software development methodology for your coding agents, built on top of composable skills."——将 Skills 从"工具"升维到"完整方法论"，支持 8 大 agent 平台（Claude Code / Codex / Gemini CLI / Cursor / OpenCode / Copilot CLI 等）。作者 Jesse Vincent（obra）是知名开源贡献者。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">⚡ rtk-ai/rtk（51.1k，Rust）——"60-90% token 降耗"CLI 代理，今日最务实 Agent 基础设施</div>
+      <div class="insight-text">"CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies." git status: ~2,000 tokens → ~200 tokens（-90%）。四大策略：Smart Filtering / Grouping / Truncation / Deduplication，169 次发布极其活跃。支持 Claude Code / Copilot / Gemini CLI / Codex / Cursor / Windsurf 等。在 API 按 token 计费的背景下，"不改代码省 60-90%"是今日最直接省钱的工具。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🔄 四项目连续 Day 2——microsoft / HKUDS/CLI-Anything / ZhuLinsen / K-Dense-AI 今日全部持续上榜</div>
+      <div class="insight-text">microsoft/ai-agents-for-beginners（+1,474）、HKUDS/CLI-Anything（+1,631，今日持续项目增速最快）、ZhuLinsen/daily_stock_analysis（+1,149，Fork/Star=0.966 持续异常）、K-Dense-AI/scientific-agent-skills（+688）均 Day 2。HKUDS/CLI-Anything 日增 +1,631 说明"一切软件 Agent-Native"的产品方向持续获得认可。</div>
+    </div>
+  </div>
+
+  <div class="section-title">🏆 今日 Top 12</div>
+  <div class="projects-grid">
+
+    <!-- #01 obra/superpowers -->
+    <div class="project-card rank-1 new-card">
+      <div class="card-header">
+        <div class="card-rank">#01</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/obra/superpowers" target="_blank">obra/superpowers</a>
+          <div class="card-desc">An agentic skills framework & software development methodology that works — 本系列日报 Stars 新高，Agent 方法论级作品</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="new-badge" style="background:#9a6700">🏆 日报 Stars 新高</span>
+            <span class="lang-badge lang-markdown">Markdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 198,743</span>
+        <span class="meta-item">🍴 17,731</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">"Superpowers is a complete software development methodology for your coding agents, built on top of a set of composable skills and some initial instructions that make sure your agent uses them."——不只是 Skills 集合，而是一套"如何让 agent 有效使用 Skills 的完整方法论"。作者 Jesse Vincent（obra）是知名开源贡献者，5 次发布。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">支持平台</div>
+          <div class="detail-tags">
+            <span class="detail-tag">Claude Code</span>
+            <span class="detail-tag">Codex CLI</span>
+            <span class="detail-tag">Codex App</span>
+            <span class="detail-tag">Factory Droid</span>
+            <span class="detail-tag">Gemini CLI</span>
+            <span class="detail-tag">OpenCode</span>
+            <span class="detail-tag">Cursor</span>
+            <span class="detail-tag">GitHub Copilot CLI</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">198.7k Stars，本系列日报最高 Stars 新高！obra/superpowers 的意义在于"方法论"层次的提升——它不是教你用哪些 Skills，而是提供一套"如何让 agent 有效使用 Skills 的思维框架"。今日以 198.7k 领衔，加上其他三个 Skills 仓库同框，标志着 2026 年 Agent Skills 已成为每个 AI 开发者的标配基础设施。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #02 multica-ai/andrej-karpathy-skills -->
+    <div class="project-card rank-2 new-card">
+      <div class="card-header">
+        <div class="card-rank">#02</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/multica-ai/andrej-karpathy-skills" target="_blank">multica-ai/andrej-karpathy-skills</a>
+          <div class="card-desc">A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pitfalls</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-markdown">Markdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 138,654</span>
+        <span class="meta-item">🍴 14,221</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">核心形式：单一 CLAUDE.md 文件（极简无依赖）。内容来源：Andrej Karpathy 对 LLM 编码常见陷阱的系统性观察总结，覆盖 Claude Code 行为优化，避免 LLM 常见编码错误模式。拷贝一个文件即可使用，14.2k forks 说明大量开发者直接 fork 并个性化修改。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">"Karpathy 说过的 LLM 编码坑，我帮你整合成一个 CLAUDE.md。"138.7k Stars 证明了开发者对"一行命令改善 Claude Code 质量"的强烈需求。今日与 obra/superpowers（完整方法论）形成有趣对比：一个是"最小可行 Skills 配置"，一个是"完整 Agent 开发方法论"——两种哲学都获得了数十万开发者的认可。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #03 anthropics/skills -->
+    <div class="project-card rank-3 top-card">
+      <div class="card-header">
+        <div class="card-rank">#03</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/anthropics/skills" target="_blank">anthropics/skills</a>
+          <div class="card-desc">Public repository for Agent Skills — Anthropic 官方 Agent Skills，05-11 首次上榜后 9 天重返，+5,843 Stars</div>
+          <div class="card-badges">
+            <span class="cont-badge">重返（9天后）</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 137,743</span>
+        <span class="meta-item">🍴 16,247</span>
+        <span class="meta-item meta-growth">↑ +5,843（9天）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">05-11（131,900）→ 05-20（137,743），+5,843 Stars（9 天 ~649/天持续增长）。今日与 obra/superpowers + multica-ai/andrej-karpathy-skills + msitarzewski/agency-agents 共同形成"Skills 四强同框"，Anthropic 官方仓库在 Skills 四强中代表"平台规范层"——其 Skills 定义事实上成为行业参考标准。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Anthropic 官方 Skills 仓库今日重返，9 天内稳定增长 +5.8k Stars（~649/天）。今日在 Skills 四强中代表"平台规范层"：Anthropic 作为 Claude Code 背后的公司，其 Skills 定义事实上成为行业参考标准，印证了"规范层领跑→应用层跟进"的 Skills 生态发展路径。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #04 msitarzewski/agency-agents -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#04</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/msitarzewski/agency-agents" target="_blank">msitarzewski/agency-agents</a>
+          <div class="card-desc">A complete AI agency at your fingertips — 从 Reddit 帖子诞生，每个 Agent 有专属个性、专业知识和可交付成果</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-markdown">Markdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 101,886</span>
+        <span class="meta-item">🍴 16,837</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">Agency 部门覆盖</div>
+          <div class="detail-tags">
+            <span class="detail-tag">💻 工程 Division</span>
+            <span class="detail-tag">🎨 设计 Division</span>
+            <span class="detail-tag">📢 营销 Division</span>
+            <span class="detail-tag">💰 付费媒体 Division</span>
+            <span class="detail-tag">💼 销售 Division</span>
+            <span class="detail-tag">📊 产品 Division</span>
+            <span class="detail-tag">🎬 项目管理</span>
+            <span class="detail-tag">🧪 测试 Division</span>
+            <span class="detail-tag">🥽 空间计算</span>
+            <span class="detail-tag">🎮 游戏开发</span>
+            <span class="detail-tag">📚 学术 Division</span>
+            <span class="detail-tag">💵 金融 Division</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Reddit 起源 + 个性化 Agent 角色扮演的组合爆炸了！101.9k Stars，16.8k forks（forks/stars=0.165）。agency-agents 的精髓是"你的 AI agent 不只是工具，它应该有专业领域、工作风格和可预期的交付物"。今日与 obra（方法论）和 multica-ai（最小配置）形成 Skills 三种哲学的完整呈现：方法论层 + 最小配置层 + 角色人格层。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #05 unslothai/unsloth -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#05</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/unslothai/unsloth" target="_blank">unslothai/unsloth</a>
+          <div class="card-desc">Unsloth Studio is a web UI for training and running open models like Gemma 4, Qwen3.6, DeepSeek, gpt-oss locally</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 64,749</span>
+        <span class="meta-item">🍴 5,728</span>
+        <span class="meta-item">📄 Apache-2.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">本地模型训练 Web UI，支持 Gemma 4 / Qwen3.6 / DeepSeek / gpt-oss 等主流开源模型，无需云端完全本地运行，极大降低模型微调门槛（Web UI 取代命令行），高效显存利用（以更少 GPU 内存实现同等微调效果）。Python / PyTorch / CUDA / Triton 技术栈。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日唯一"模型训练/微调"方向项目。在前四个 Skills 仓库之后，unsloth 代表了"如果你想训练自己的 Agent 专用模型"的需求层——Skills 让现有模型更聪明，unsloth 让你可以自己训练新模型。两种路径今日并存，完整覆盖 Agent 能力提升的两大方向。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #06 microsoft/ai-agents-for-beginners -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#06</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/microsoft/ai-agents-for-beginners" target="_blank">microsoft/ai-agents-for-beginners</a>
+          <div class="card-desc">12 Lessons to Get Started Building AI Agents — 微软官方课程，Day 2，+1,474 Stars</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-jupyter">Jupyter</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 64,546</span>
+        <span class="meta-item">🍴 21,339</span>
+        <span class="meta-item meta-growth">↑ +1,474</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">05-18（63,072）→ 05-20（64,546），+1,474 Stars（Day 2，~737/天）。今日与 unslothai/unsloth 同框，两者共同构成"学习 AI Agent + 训练本地模型"的完整入门路径：先学会构建 Agent（microsoft），再学会训练专属模型（unsloth）。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Day 2 稳步增长，每日 +737 Stars 说明微软官方课程的持续曝光效应。今日在 Skills 四强主导的格局中，microsoft 代表"从零开始学习"的那部分开发者群体——Skills 生态的壮大也在同步带动 Agent 学习资源的需求。21k forks 是今日全榜最高 forks 数。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #07 rtk-ai/rtk -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#07</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/rtk-ai/rtk" target="_blank">rtk-ai/rtk</a>
+          <div class="card-desc">CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies — 169 次发布</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-rust">Rust</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 51,127</span>
+        <span class="meta-item">🍴 3,116</span>
+        <span class="meta-item meta-growth">169 次发布</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">CLI 代理拦截器：在 agent 和 shell 之间插入 Rust 代理层。四大降 token 策略：Smart Filtering（去噪）/ Grouping（聚合同类）/ Truncation（保留关键）/ Deduplication（折叠重复）。效果：git status ~2,000 tokens → ~200 tokens（-90%）。Auto-Rewrite Hook 自动把 `git status` 重写为 `rtk git status`，无需修改代码。单 Rust 二进制，零依赖，169 次发布极其活跃。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">支持工具</div>
+          <div class="detail-tags">
+            <span class="detail-tag">Claude Code</span>
+            <span class="detail-tag">GitHub Copilot</span>
+            <span class="detail-tag">Gemini CLI</span>
+            <span class="detail-tag">Codex</span>
+            <span class="detail-tag">Cursor</span>
+            <span class="detail-tag">Windsurf</span>
+            <span class="detail-tag">Cline / Roo Code</span>
+            <span class="detail-tag">Kilo Code</span>
+            <span class="detail-tag">Antigravity</span>
+            <span class="detail-tag">Hermes</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日最务实、最能直接省钱的工具！在 Claude API 按 token 计费的背景下，"不改代码、每次 LLM 调用省 60-90% token"是极高价值的工程贡献。169 次发布 + 51.1k Stars，Rust 单二进制开箱即用，是今日 Top 12 中最符合"工程师气质"的项目。Skills 让 agent 更聪明，rtk 让 agent 更省钱——两个方向今日完美互补。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #08 ZhuLinsen/daily_stock_analysis -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#08</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/ZhuLinsen/daily_stock_analysis" target="_blank">ZhuLinsen/daily_stock_analysis</a>
+          <div class="card-desc">LLM驱动的 A/H/美股智能分析：多数据源行情 + 实时新闻 + LLM决策仪表盘 + 多渠道推送，零成本定时运行</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 37,897</span>
+        <span class="meta-item meta-alert">🍴 36,606 (ratio=0.966!)</span>
+        <span class="meta-item meta-growth">↑ +1,149</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">05-18（36,748）→ 05-20（37,897），+1,149 Stars（Day 2，~575/天）。Fork/Star = 36,606/37,897 = 0.966，今日全榜最高 Fork/Star 比率，依然维持"必须 fork 才能自部署"的极端异常特征。金融 AI 自动化长尾效应持续，每天约 575 新用户 fork 用于自部署。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">连续第 2 天上榜，Fork/Star = 0.966，今日全榜最高 Fork/Star。"自部署工具型"项目的完美案例：零成本白嫖 = 必须 fork，"必须 fork 才能用"的设计天然推高 Fork 率至接近 1.0。金融 AI 自动化的需求持续刚性存在。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #09 HKUDS/CLI-Anything -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#09</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/HKUDS/CLI-Anything" target="_blank">HKUDS/CLI-Anything</a>
+          <div class="card-desc">"CLI-Anything: Making ALL Software Agent-Native" — 港大 HKUDS，Day 2，+1,631 Stars，今日持续项目增速最快</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 37,889</span>
+        <span class="meta-item">🍴 3,623</span>
+        <span class="meta-item meta-growth">↑ +1,631（今日持续最快）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">05-18（36,258）→ 05-20（37,889），+1,631 Stars（Day 2，~816/天），今日持续项目中增速最快。今日与 obra/superpowers（Agent 方法论层）共同构成 Agent 生态的"方法论层 + 工具接口层"——Skills 告诉 agent 该做什么，CLI-Anything 告诉 agent 该怎么操作任何软件。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Day 2 日增 +1,631 Stars，持续项目中增速最快，说明"让所有软件 Agent-Native"的产品方向持续获得认可。今日在 Skills 四强主导的格局中，CLI-Anything 代表了"工具接口层"——Skills 内容驱动 agent 行为，CLI-Anything 基础设施让 agent 能调用任何工具，两者今日完美互补。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #10 frappe/erpnext -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#10</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/frappe/erpnext" target="_blank">frappe/erpnext</a>
+          <div class="card-desc">Free and Open Source Enterprise Resource Planning (ERP) — 今日唯一传统企业软件，完整开源 ERP 系统</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 34,354</span>
+        <span class="meta-item">🍴 11,316</span>
+        <span class="meta-item">📄 GPL-3.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">完整开源 ERP：会计 / 人力资源 / 库存 / 制造 / 项目管理 / 销售 / 采购，Frappe Framework（Python + MariaDB），社区版免费，活跃全球社区（主要印度、东南亚等新兴市场），11.3k forks 是今日非 Skills 类仓库中 forks 最多的。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日唯一传统企业软件项目，在 Skills 四强主导的 Trending 中格外另类——恰恰说明了开源 ERP 的持续刚需与 AI 热潮无直接关联，代表了"企业级开源软件"的稳定需求层。34.4k Stars + 11.3k forks 代表数十万企业用户支撑的稳定开源项目。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #11 Alishahryar1/free-claude-code -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#11</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/Alishahryar1/free-claude-code" target="_blank">Alishahryar1/free-claude-code</a>
+          <div class="card-desc">Use claude-code for free in the terminal, VSCode extension or discord like OpenClaw (voice supported)</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 26,465</span>
+        <span class="meta-item">🍴 3,946</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">免费使用 Claude Code：终端 / VSCode 扩展 / Discord 三种方式，语音支持（voice supported），类 OpenClaw 体验，Python 实现跨平台。26.5k Stars + 3.9k forks（forks/stars=0.149），大量开发者选择自部署。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">"免费 Claude Code"的强烈刚需——在 Claude Code 订阅费用持续上涨的背景下，这类工具自然获得大量关注。今日与 rtk-ai/rtk（降低 token 消耗）同框，两者代表了"降低 AI 开发成本"的两种路径：rtk 减少 token 消耗，free-claude-code 直接绕过付费。Skills 四强让 agent 更强，rtk + free-claude-code 让 agent 更便宜——今日完整覆盖 Agent 生产化的"能力"和"成本"两大维度。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #12 K-Dense-AI/scientific-agent-skills -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#12</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/K-Dense-AI/scientific-agent-skills" target="_blank">K-Dense-AI/scientific-agent-skills</a>
+          <div class="card-desc">A set of ready to use Agent Skills for research, science, engineering, analysis, finance and writing — 135 科研 Skills，Day 2</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 2</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 24,818</span>
+        <span class="meta-item">🍴 2,606</span>
+        <span class="meta-item meta-growth">↑ +688</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">05-18（24,130）→ 05-20（24,818），+688 Stars（Day 2，~344/天）。今日与 Skills 四强同框，scientific-agent-skills 代表了 Skills 向"专业科研领域"的深度延伸——对比 Skills 四强的"通用方法论 Skills"，今日完整呈现了 Skills 生态广度（通用方法论）+ 深度（科研垂直）同步扩张的格局。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Day 2 稳步增长。135 个科研 Skills（100+ 数据库 + 70+ Python 科研包），覆盖药物发现/基因组学/量子计算等专业领域，76 次发布说明持续专业维护。今日在 Skills 四强主导的格局中，科研 Skills 代表了"垂直专业化"方向——Skills 生态正从"一刀切"向"分层专业化"进化。</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Language Distribution -->
+  <div class="section-title">🌐 语言分布</div>
+  <div class="lang-dist">
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>🐍 Python</span><span>7 项目（58%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:58%;background:var(--python)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>📝 Markdown</span><span>3 项目（25%）— Skills 方法论仓库主导</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:25%;background:var(--markdown)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>🦀 Rust</span><span>1 项目（8%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:8%;background:var(--rust)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>📓 Jupyter Notebook</span><span>1 项目（8%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:8%;background:var(--jupyter)"></div></div>
+    </div>
+  </div>
+
+  <!-- Explore -->
+  <div class="section-title">🌟 GitHub Explore 精选</div>
+  <div class="explore-grid">
+
+    <div class="explore-card">
+      <div class="explore-num">01</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/tinyhumansai/openhuman" target="_blank">tinyhumansai/openhuman</a>
+        <div class="explore-desc">Your Personal AI super intelligence. Private, Simple and extremely powerful. 21,852 ⭐（05-18: 15,400 → 05-20: 21,852，2天 +6,452 Stars，+42%，~3,226/天）。从 05-12 的 1,676 Stars 到今日 21,852，8 天总增速 +1,203%！TypeScript 实现，今日全语言 Trending，以 2,966 Stars 之差刚好落出 Top 12（#12 K-Dense-AI 24,818）。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 21,852</span>
+          <span class="meta-item meta-growth">↑ +6,452（2天）</span>
+          <span class="lang-badge lang-typescript" style="font-size:10px;padding:2px 7px">TypeScript</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">02</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/anthropics/claude-plugins-official" target="_blank">anthropics/claude-plugins-official</a>
+        <div class="explore-desc">Official, Anthropic-managed directory of high quality Claude Code Plugins. 20,327 ⭐，2,513 forks，今日全语言 + Python 双榜。今日与 anthropics/skills（#03，137.7k）同框，Anthropic 以"官方 Skills + 官方 Plugins"双重身份出现在 Trending，标志着 Anthropic 正在从"模型公司"向"AI coding 生态平台"全面转型：Skills 定义 agent 行为规范，Plugins 扩展 Claude Code 能力边界。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 20,327</span>
+          <span class="meta-item">🍴 2,513</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">03</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/humanlayer/12-factor-agents" target="_blank">humanlayer/12-factor-agents</a>
+        <div class="explore-desc">What are the principles we can use to build LLM-powered software that is actually good enough to put in the hands of production customers? 21,265 ⭐（05-18: 20,204 → 05-20: 21,265，+1,061 Stars，~530/天）。以 3,553 Stars 之差落出 Top 12。今日在 Skills 四强主导的格局中，12-factor-agents 代表了"Agent 生产化工程原则"视角，与 obra/superpowers（方法论）互补，共同构成"Agent 工程化"的完整讨论。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 21,265</span>
+          <span class="meta-item meta-growth">↑ +1,061（2天）</span>
+          <span class="lang-badge lang-typescript" style="font-size:10px;padding:2px 7px">TypeScript</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">04</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/HKUDS/ViMax" target="_blank">HKUDS/ViMax</a>
+        <div class="explore-desc">"ViMax: Agentic Video Generation (Director, Screenwriter, Producer, and Video Generator All-in-One)." 5,575 ⭐，935 forks，今日全语言 + Python 双榜，HKUDS（AI-Trader + CLI-Anything 同组织，港大）第三个上 Trending 的产品！今日 HKUDS 同时有 CLI-Anything（#09，Day 2）+ ViMax（Explore），揭示港大 HKUDS 完整多模态 Agent 布局：CLI（代码 Agent 工具接口）+ ViMax（视频生成 Agent）+ AI-Trader（金融 Agent）。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 5,575</span>
+          <span class="meta-item">🍴 935</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">05</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/alirezarezvani/claude-skills" target="_blank">alirezarezvani/claude-skills</a>
+        <div class="explore-desc">313+ Claude Code skills & agent skills & plugins for Claude Code, Codex, Gemini CLI, Cursor, and 8 more coding agents — engineering, marketing, product, compliance, C-level advisory, research, business operations, commercial & finance, and your daily productivity skills. 15,555 ⭐，2,123 forks，今日 Python Trending。今日 Skills 类仓库（Top 12 内 4 个 + Explore 本条）合计 6 个不同 Skills 仓库同日出现，印证"Skills 宇宙爆炸日"的判断。313+ Skills 的覆盖范围（工程/营销/产品/合规/C-level 咨询/研究/商务/金融）是今日 Explore 中最全面的通用 Skills 集合。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 15,555</span>
+          <span class="meta-item">🍴 2,123</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  GitHub Trending 日报 · 2026-05-20 · 数据来源：GitHub Trending（全语言）+ Python Trending · 生成时间：2026-05-20
+</footer>
+
+<script>
+function toggleDetail(btn) {
+  const detail = btn.previousElementSibling;
+  if (detail.classList.contains('open')) {
+    detail.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    detail.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const btn = document.querySelector('.theme-btn');
+  btn.textContent = document.body.classList.contains('light') ? '🌙 切换主题' : '☀️ 切换主题';
+}
+</script>
+</body>
+</html>

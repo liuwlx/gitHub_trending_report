@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-08</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px #58a6ff22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-card.new-card { border: 1.5px solid var(--green); }
+  .project-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .new-badge { background: #0f2d13; border: 1px solid var(--green); color: var(--green); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-05-08 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">~318k</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">5</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">11</div><div class="stat-label">今日新上榜</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🏛️ github/spec-kit（93k）——GitHub 官方以平台级力度背书"Spec-Driven Development"，直接狙击 vibe coding</div>
+        <p>GitHub 官方出品 spec-kit（93,239 ⭐ + 8,089 forks + 142 releases），今日毫无悬念占据日榜第一。核心观点：Spec-Driven Development 让规格书变成可执行的，直接生成实现，替代"vibe coding"。6 步工作流对应 /speckit.* slash command，specify CLI 支持 30+ AI coding Agent（Claude Code / Cursor / Windsurf 等），社区 Extensions / Presets 生态已成型。这完美接续本周 karpathy-skills（哲学原则）→ agent-skills（工程 Skill）→ spec-kit（规格可执行）的三层叙事——AI coding 范式从"感觉驱动"向"规格驱动"的平台级迁移正式开始。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🦆 aaif-goose/goose（44.6k）——Block（Jack Dorsey）的开源 AI Agent 入驻 Linux Foundation，Agent 赛道里程碑</div>
+        <p>goose 是 Block 公司旗下、现已转入 Linux Foundation Agentic AI Foundation（AAIF）的开源通用 AI agent，44,643 ⭐ + 4,564 forks。不只是代码助手：研究/写作/自动化/数据分析全覆盖；桌面+CLI+API 三端；Rust 构建；15+ LLM Provider；70+ MCP 扩展。goose 进入 Linux Foundation 是今日最重要的生态信号：AI agent 从公司私有生态走向开放基金会治理，类比早年 Kubernetes 进入 CNCF，Agent 赛道正式进入"基金会时代"。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🗂️ VectifyAI/PageIndex（29.9k）——"vectorless RAG"挑战传统向量检索，FinanceBench SOTA 98.7%</div>
+        <p>核心挑战：similarity ≠ relevance，向量相似度无法代替真正的相关性。PageIndex 受 AlphaGo 启发：① 为文档生成"目录树"层次索引 ② LLM 通过树搜索推理式检索，无向量库 + 无分块，FinanceBench 达到 98.7%（SOTA）。今日与 github/spec-kit 同框，今日 Trending 的主旋律是 <strong>"reasoning over vibe"</strong>：spec-kit 用规格推理替代感觉编程，PageIndex 用文档推理替代向量相似度检索。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📊 今日大换血：11/12 新上榜，"机构开源日"——GitHub / Block-AAIF / AWS / Anthropic / OpenAI / Vercel 同日集中释放</div>
+        <p>今日 Trending 最显著特征：11/12 新上榜（近期最高换血率），且多来自顶级机构。GitHub 推出 spec-kit，Block/AAIF 的 goose，AWS 的 aidlc-workflows（Explore），Anthropic 的 financial-services，OpenAI 的 plugins（Explore），Vercel 的 open-agents（Explore）同日上榜。当大厂集中释放 AI 工具栈时，往往意味着某个方法论（今日：spec-driven + agent governance）已从"社区自发探索"进入"平台级标准化"阶段。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 github/spec-kit -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/github/spec-kit" target="_blank">github / spec-kit</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">💫 Toolkit to help you get started with Spec-Driven Development. GitHub 官方出品，93k Stars + 8k forks + 142 releases，specify CLI + 30+ AI coding Agent 支持，社区扩展生态成型。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">93,239</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>8,089</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">spec-driven</span><span class="topic-badge">github-official</span><span class="topic-badge">claude-code</span><span class="topic-badge">cursor</span><span class="topic-badge">windsurf</span><span class="topic-badge">ai-coding</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>GitHub 官方出品，"Spec-Driven Development" 的完整工具链：规格书从一次性脚手架变为可执行实现的核心驱动力。specify CLI 一键初始化，6 步工作流配合 /speckit.* slash commands，支持 30+ AI coding Agent，Community Extensions / Presets / Walkthroughs 生态已成型，142 次发布，极高迭代节奏。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Spec-Driven Development：规格书变成可执行的，直接生成实现，替代 vibe coding</li>
+          <li>specify CLI：`specify init` 一键初始化，生成 slash commands 和 SKILL.md</li>
+          <li>6 步工作流：Establish principles → Create spec → Clarify → Plan → Break tasks → Implement</li>
+          <li>Slash Commands：/speckit.constitution / /speckit.specify / /speckit.plan / /speckit.tasks / /speckit.implement / /speckit.clarify / /speckit.checklist</li>
+          <li>30+ AI Agent 支持：Claude Code / Cursor / Windsurf / GitHub Copilot / Gemini CLI 等</li>
+          <li>社区扩展：Community Extensions / Presets / Walkthroughs 完整生态，142 次发布</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">specify CLI</span><span class="tech-tag">Markdown</span><span class="tech-tag">SKILL.md</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Claude Code / Cursor 用户系统化 spec-driven 工作流；AI 编程项目规格驱动实践；取代"凭感觉写代码"的工程化路径。</p></div>
+        <div class="recommend-quote">💬 "本周 AI coding 方法论三连：karpathy-skills（哲学原则）→ agent-skills（工程 Skill）→ spec-kit（规格可执行）。GitHub 官方背书 spec-driven，AI coding 范式从 vibe coding 向规格驱动的平台级迁移正式开始。"</div>
+      </div>
+    </div>
+
+    <!-- #2 aaif-goose/goose -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/aaif-goose/goose" target="_blank">aaif-goose / goose</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Your native open source AI agent — desktop app, CLI, and API — for code, workflows, and everything in between. Block 出品，现已加入 Linux Foundation AAIF，44.6k Stars + 4,564 forks，Rust 构建，15+ LLM Provider，70+ MCP 扩展。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">44,643</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>4,564</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#dea584"></span> Rust</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-agent</span><span class="topic-badge">linux-foundation</span><span class="topic-badge">mcp</span><span class="topic-badge">rust</span><span class="topic-badge">block</span><span class="topic-badge">aaif</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Block 公司出品的开源通用 AI agent，现已转入 Linux Foundation Agentic AI Foundation（AAIF）治理。不只是代码助手——研究/写作/自动化/数据分析全覆盖。桌面（macOS/Linux/Windows）+ CLI + API 三端，Rust 原生构建，15+ LLM Provider（Anthropic/OpenAI/Google/Ollama/OpenRouter/Azure/Bedrock），70+ MCP 扩展，支持自定义发行版。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>三端支持：桌面应用（macOS/Linux/Windows）+ CLI + API 嵌入</li>
+          <li>通用 AI agent：代码/研究/写作/自动化/数据分析，不只是代码助手</li>
+          <li>15+ LLM Provider：Anthropic/OpenAI/Google/Ollama/OpenRouter/Azure/Bedrock，支持订阅账户</li>
+          <li>70+ MCP 扩展：Model Context Protocol 开放标准</li>
+          <li>Rust 构建：原生性能与跨平台可移植性</li>
+          <li>Linux Foundation AAIF：Agentic AI Foundation 开放治理</li>
+          <li>Custom Distributions：预配置 Provider + 扩展 + 品牌的自定义发行版</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Rust</span><span class="tech-tag">Tauri</span><span class="tech-tag">MCP</span><span class="tech-tag">CLI</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>跨平台通用 AI agent 桌面工具；MCP 扩展生态集成；企业自定义 AI agent 发行版。</p></div>
+        <div class="recommend-quote">💬 "goose 加入 Linux Foundation AAIF 是今日最重要的生态信号——AI agent 从公司私有生态走向开放基金会治理，类比早年 Kubernetes 进入 CNCF，Agent 赛道正式进入'基金会时代'。"</div>
+      </div>
+    </div>
+
+    <!-- #3 addyosmani/agent-skills -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/addyosmani/agent-skills" target="_blank">addyosmani / agent-skills</a></div>
+          <div class="project-desc">Production-grade engineering skills for AI coding agents. 连续第 2 日上榜，Stars 从 31,246 增至 33,578，日增 2,332，今日唯一持续项目。今日与 github/spec-kit 互补同框。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">33,578</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>3,868</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#aaaaaa"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">cursor</span><span class="topic-badge">windsurf</span><span class="topic-badge">skills</span><span class="topic-badge">engineering</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Google Chrome 团队 Engineering Manager Addy Osmani 出品，20 个工程生命周期 Skill，7 个 slash command（/spec / /plan / /build / /test / /review / /code-simplify / /ship），覆盖 Define→Plan→Build→Verify→Review→Ship，Claude Code / Cursor / Windsurf / Gemini CLI / Copilot / OpenCode / Kiro 全 IDE 支持，连续第 2 日上榜，日增 2,332。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>20 Skill × 6 阶段：Define / Plan / Build / Verify / Review / Ship</li>
+          <li>7 slash commands：/spec / /plan / /build / /test / /review / /code-simplify / /ship</li>
+          <li>上下文自动激活：设计 API → api-and-interface-design，构建 UI → frontend-ui-engineering</li>
+          <li>全 IDE 支持：Claude Code / Cursor / Windsurf / Gemini CLI / Copilot / OpenCode / Kiro</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">SKILL.md</span><span class="tech-tag">AGENTS.md</span></div></div>
+        <div class="recommend-quote">💬 "连续第 2 日，日增 2,332——今日与 github/spec-kit 同框形成完美互补：agent-skills 是 AI coding agent 的行为约束层，spec-kit 是规格执行层，两者叠加使用可将 AI coding 工作流系统化。"</div>
+      </div>
+    </div>
+
+    <!-- #4 VectifyAI/PageIndex -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/VectifyAI/PageIndex" target="_blank">VectifyAI / PageIndex</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG. 29.9k Stars + 2,510 forks，无向量库 + 无分块，树形索引 + LLM 推理式检索，FinanceBench SOTA 98.7%。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">29,861</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,510</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">rag</span><span class="topic-badge">vectorless</span><span class="topic-badge">reasoning</span><span class="topic-badge">document</span><span class="topic-badge">finance</span><span class="topic-badge">mcp</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>挑战传统 RAG 的核心假设：similarity ≠ relevance。受 AlphaGo 启发，PageIndex 用两步推理替代向量相似度：① 为文档生成层次化"目录树"索引 ② LLM 通过树搜索推理式检索。无向量数据库、无分块、可解释性强（可追溯到页码/章节），FinanceBench 98.7% SOTA，支持自托管/云服务/企业私有，MCP 集成，Vision RAG（直接在页面图像上推理）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Vectorless RAG：无向量数据库，用文档结构 + LLM 推理替代向量相似度</li>
+          <li>No Chunking：文档按自然章节组织，不切块，保持结构完整性</li>
+          <li>两步检索：生成"目录树"→ LLM 树搜索推理检索</li>
+          <li>FinanceBench 98.7% SOTA，超过所有传统 vector RAG 方案</li>
+          <li>可解释：每次检索可追溯页码和章节，无"vibe retrieval"黑箱</li>
+          <li>Vision RAG：直接在页面图像上推理，无需 OCR</li>
+          <li>多部署：自托管/云服务/企业私有 + MCP + API</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">OpenAI Agents SDK</span><span class="tech-tag">MCP</span><span class="tech-tag">Jupyter</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>专业文档（财报/法律/医疗）深度问答；金融领域知识提取；替代向量数据库的 RAG 系统重构。</p></div>
+        <div class="recommend-quote">💬 "98.7% FinanceBench SOTA + 'similarity ≠ relevance'——PageIndex 是今日技术颠覆性最强的项目，对'向量是 RAG 唯一真理'的质疑将引发更多探索。今日与 spec-kit 共同传递'reasoning over vibe'的核心信号。"</div>
+      </div>
+    </div>
+
+    <!-- #5 cheahjs/free-llm-api-resources -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/cheahjs/free-llm-api-resources" target="_blank">cheahjs / free-llm-api-resources</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">A list of free LLM inference resources accessible via API. 今日晋入 Top 12，20,996 ⭐ + 2,127 forks，三日连续 Trending（05-06 Explore → 05-07 Explore → 05-08 Top 12），今日同时出现在全语言和 Python 双榜。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">20,996</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,127</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#aaaaaa"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">free-api</span><span class="topic-badge">llm</span><span class="topic-badge">inference</span><span class="topic-badge">resources</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>免费 LLM 推理 API 资源列表，涵盖所有主流 Provider 的免费/免费层 API，自动维护有效性，2,127 forks。三日连续 Trending，今日与 decolua/9router（Explore，免费 AI coding 路由）同框，"如何免费高效用好 AI"成为今日隐线主题。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>覆盖所有主流 LLM Provider 的免费推理 API 资源</li>
+          <li>标注速率限制 / 模型版本 / API 兼容性</li>
+          <li>社区维护，持续更新</li>
+          <li>今日同时出现全语言 + Python 双榜</li>
+        </ul></div>
+        <div class="recommend-quote">💬 "三日连续 Trending 终晋 Top 12——AI 工具爆发期开发者对'免费 API 资源'的需求持续攀升，今日与 9router（Explore，连接 40+ 免费 Provider）同框，今日隐线主题是'免费高效用 AI'。"</div>
+      </div>
+    </div>
+
+    <!-- #6 Hmbown/DeepSeek-TUI -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Hmbown/DeepSeek-TUI" target="_blank">Hmbown / DeepSeek-TUI</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Coding agent for DeepSeek models that runs in your terminal. 三日飙升入 Top 12：05-06（~10.9k）→ 05-07（15.6k，+4.7k）→ 05-08（20.5k，+4.9k），三日累计增约 9.6k Stars，今日首次晋入 Top 12。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">20,490</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,577</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">deepseek</span><span class="topic-badge">tui</span><span class="topic-badge">terminal</span><span class="topic-badge">coding-agent</span><span class="topic-badge">cli</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>终端运行的 DeepSeek 专属编程 Agent，TUI（Terminal User Interface）界面，专为 DeepSeek-V3 / R1 模型优化，本地运行，无需 GUI。三日飙升：05-06 约 10.9k → 05-07 15.6k（+4.7k）→ 05-08 20.5k（+4.9k），是今日 Top 12 中增速最快的项目，三日日增均维持在 4.7k+ 水平。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>终端 DeepSeek 专属编程 Agent，TUI 界面无需 GUI</li>
+          <li>专为 DeepSeek-V3 / R1 模型优化</li>
+          <li>三日日增均 4.7k+，今日 Top 12 增速最快</li>
+          <li>本地运行，无云依赖</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Textual</span><span class="tech-tag">DeepSeek API</span></div></div>
+        <div class="recommend-quote">💬 "三日飙升近 10k Stars，今日终晋 Top 12——DeepSeek-TUI 的增速说明 DeepSeek 终端编程 Agent 的需求量比想象中大得多，是今日 Top 12 中最具爆发动能的项目。"</div>
+      </div>
+    </div>
+
+    <!-- #7 xming521/WeClone -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/xming521/WeClone" target="_blank">xming521 / WeClone</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">🚀 One-stop solution for creating your AI twin from chat history. 从聊天记录微调 LLM 捕捉个人风格，绑定聊天机器人创建数字分身，17,828 ⭐ + 1,513 forks，中英双语，微信/QQ/Telegram 聊天记录支持。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">17,828</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,513</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-twin</span><span class="topic-badge">fine-tuning</span><span class="topic-badge">digital-self</span><span class="topic-badge">qlora</span><span class="topic-badge">wechat</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>从聊天记录一键创建 AI 数字分身：微调 LLM 捕捉个人语言风格 / 口头禅 / 思维方式，绑定聊天机器人部署，支持微信/QQ/Telegram 聊天记录解析，QLoRA / LoRA 高效微调（普通消费级 GPU 可运行），中文聊天记录特别优化。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>全流程一站式：数据清洗 → 微调 → 部署 → 聊天绑定</li>
+          <li>支持微信/QQ/Telegram 聊天记录格式解析</li>
+          <li>QLoRA / LoRA 高效微调，普通消费级 GPU 可运行</li>
+          <li>中文聊天记录特别优化</li>
+          <li>数字分身绑定：创建后可接入聊天机器人使用</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LLaMA-Factory</span><span class="tech-tag">QLoRA</span><span class="tech-tag">Gradio</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 数字分身创建；个人风格 LLM 微调实验；聊天数据 fine-tuning 学习。</p></div>
+        <div class="recommend-quote">💬 "'用聊天记录复刻自己'——WeClone 是今日最具人文想象力的项目，17.8k Stars + 1.5k forks 说明'AI 数字分身'的需求远超预期，今日与 Open-LLM-VTuber（Explore）同框，'个性化 AI 角色'是今日 Trending 的隐线主题之二。"</div>
+      </div>
+    </div>
+
+    <!-- #8 docusealco/docuseal -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/docusealco/docuseal" target="_blank">docusealco / docuseal</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Open source DocuSign alternative. Create, fill, and sign digital documents ✍️. 15,782 ⭐ + 1,419 forks，今日唯一的 Ruby 项目，今日 Top 12 中唯一的非 AI 工具 SaaS 替代方案。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">15,782</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,419</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#701516"></span> Ruby</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">docusign-alternative</span><span class="topic-badge">e-signature</span><span class="topic-badge">self-hosted</span><span class="topic-badge">ruby</span><span class="topic-badge">pdf</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>DocuSign 开源替代，完整电子签名工作流：PDF 表单填写/签名收集/文档发送，自托管（数据本地控制），支持手绘/打字/图片三种签名类型，Docker 一键部署，Ruby on Rails 技术栈。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>完整电子签名工作流：PDF 填写 / 签名收集 / 文档发送</li>
+          <li>多种签名：手绘 / 打字 / 图片签名</li>
+          <li>自托管：数据完全本地控制</li>
+          <li>Docker 一键部署</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Ruby</span><span class="tech-tag">Rails</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Docker</span></div></div>
+        <div class="recommend-quote">💬 "今日唯一非 AI 工具的 SaaS 替代项目——在 AI 工具爆发的背景下，docuseal 持续上 Trending 说明'可自托管的 SaaS 替代方案'有稳定社区需求，与昨日 LadybirdBrowser 的逻辑类似：基础/生产力工具的社区热情不减。"</div>
+      </div>
+    </div>
+
+    <!-- #9 anthropics/financial-services -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/anthropics/financial-services" target="_blank">anthropics / financial-services</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Anthropic 官方金融服务示例库，Stars 从昨日（05-07）Explore 时的 9,421 增至今日 12,894（日增 3,473），1,636 forks，今日晋入 Top 12。今日与 PageIndex（金融 RAG SOTA）同框。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">12,894</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,636</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">anthropic</span><span class="topic-badge">claude</span><span class="topic-badge">finance</span><span class="topic-badge">compliance</span><span class="topic-badge">official</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Anthropic 官方金融服务领域 Claude 应用示例库：合规分析/风险评估/财务报告/监管文件处理，Claude API 金融场景最佳实践，企业级金融 AI 应用参考实现。日增 3,473 Stars 说明爆发式增长，今日同时出现在全语言 + Python 双 Trending。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>金融领域 Claude 最佳实践：合规 / 风险 / 报告 / 监管</li>
+          <li>Anthropic 官方出品，权威性强</li>
+          <li>企业级金融 AI 应用参考实现</li>
+          <li>日增 3,473 Stars（昨日 9,421 → 今日 12,894）</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Claude API</span><span class="tech-tag">Anthropic SDK</span></div></div>
+        <div class="recommend-quote">💬 "昨日 9.4k → 今日 12.9k，日增 3,473——Anthropic 官方金融库爆发式增长，与 PageIndex（FinanceBench SOTA）今日同框，金融 AI 基础设施受到双重关注。"</div>
+      </div>
+    </div>
+
+    <!-- #10 Arindam200/awesome-ai-apps -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Arindam200/awesome-ai-apps" target="_blank">Arindam200 / awesome-ai-apps</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">A collection of projects showcasing RAG, agents, workflows, and other AI use cases. 11,987 ⭐ + 1,527 forks，今日晋入 Top 12（昨日 Python Trending 中未入前 12）。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">11,987</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>1,527</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-apps</span><span class="topic-badge">rag</span><span class="topic-badge">agents</span><span class="topic-badge">workflows</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>RAG / Agent / 工作流 / AI 应用多场景示例集合，社区贡献持续扩充，涵盖完整 AI 应用开发各类用例，1,527 forks。今日与昨日 Shubhamsaboo/awesome-llm-apps（109k，可运行原创模板）形成对比：今日是社区用例集合，昨日是原创可运行模板。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>RAG / Agent / 工作流 / AI 应用多场景示例集合</li>
+          <li>社区贡献，持续扩充</li>
+          <li>Python 技术栈，LangChain / LangGraph / Claude / OpenAI</li>
+        </ul></div>
+        <div class="recommend-quote">💬 "今日与昨日 awesome-llm-apps（109k，原创可运行模板）构成'可运行 AI 应用资源'双雄——今日是社区用例集合，昨日是原创模板，两种范式的开发者需求同样强劲。"</div>
+      </div>
+    </div>
+
+    <!-- #11 InsForge/InsForge -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/InsForge/InsForge" target="_blank">InsForge / InsForge</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">The all-in-one, open-source backend platform for agentic coding. Stars 从昨日（05-07）Explore 时的 8,566 增至今日 8,994（日增 428），740 forks，今日晋入 Top 12。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">8,994</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>740</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">backend</span><span class="topic-badge">ai-gateway</span><span class="topic-badge">postgres</span><span class="topic-badge">agentic</span><span class="topic-badge">supabase-alternative</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>AI agent 原生后端全栈：Postgres 核心 + Auth + Storage + Compute + Hosting + AI Gateway，类 Supabase 架构但专为 coding agent 工作流设计，编程 Agent 可端到端构建全栈应用，AI Gateway 统一代理多个 LLM Provider。两日连涨晋入 Top 12。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Agent 原生后端全栈：Database / Auth / Storage / Compute / Hosting / AI Gateway</li>
+          <li>Postgres 核心，coding agent 可端到端构建全栈应用</li>
+          <li>AI Gateway：统一代理多个 LLM Provider</li>
+          <li>类 Supabase 架构，专为 agentic coding 场景设计</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Docker</span></div></div>
+        <div class="recommend-quote">💬 "两日连涨晋入 Top 12——今日与 goose（通用 agent）和 spec-kit（规格驱动）同框，Agent 基础设施（运行时 + 工作流规范 + 后端全栈）今日完整亮相。"</div>
+      </div>
+    </div>
+
+    <!-- #12 freemocap/freemocap -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/freemocap/freemocap" target="_blank">freemocap / freemocap</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Free Motion Capture for Everyone 💀✨. 8,176 ⭐ + 719 forks，今日 Top 12 中唯一的"非 AI / 非生产力工具"项目，基于普通网络摄像头的免费运动捕捉系统，Blender 集成。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">8,176</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>719</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 AGPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">motion-capture</span><span class="topic-badge">blender</span><span class="topic-badge">opencv</span><span class="topic-badge">free</span><span class="topic-badge">animation</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>基于普通网络摄像头的完全免费运动捕捉系统，无需昂贵专业设备（OptiTrack 等），Python 实现，输出标准骨骼数据，支持 Blender 集成，适用于动画/游戏/生物力学研究。今日 Top 12 中唯一的非 AI 编程工具。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>完全免费的运动捕捉，基于普通网络摄像头</li>
+          <li>输出标准骨骼数据，Blender 等 3D 工具集成</li>
+          <li>适用：独立游戏开发 / 生物力学研究 / 动画制作</li>
+          <li>OpenCV + MediaPipe 驱动</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">OpenCV</span><span class="tech-tag">MediaPipe</span><span class="tech-tag">Blender</span></div></div>
+        <div class="recommend-quote">💬 "今日 Top 12 中唯一的非 AI 编程工具——freemocap 以'让普通人用普通摄像头做运动捕捉'的使命出现在 AI 工具密集的 Trending 中，说明'民主化'始终是 GitHub 社区的共鸣点，无论是 AI 民主化还是专业工具民主化。"</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:58%;background:#3572A5"></div></div>
+        <div class="lang-count">7 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:17%;background:#aaaaaa"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Rust</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#dea584"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Ruby</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#701516"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#3178C6"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="insight-box">
+      <div class="trending-item">
+        <div class="trending-num">01</div>
+        <div>
+          <a href="https://github.com/vercel-labs/open-agents" target="_blank"><strong>vercel-labs / open-agents</strong></a> ⭐ 5,162 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">TypeScript. "An open source template for building cloud agents." Vercel 官方出品，647 forks。今日与 spec-kit（GitHub）和 goose（Block/AAIF）同框——GitHub / Block / Vercel 三大平台今日同日布局 Agent，Vercel 正式入场 cloud agent 模板赛道。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">02</div>
+        <div>
+          <a href="https://github.com/Open-LLM-VTuber/Open-LLM-VTuber" target="_blank"><strong>Open-LLM-VTuber / Open-LLM-VTuber</strong></a> ⭐ 7,555
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "Talk to any LLM with hands-free voice interaction, voice interruption, and Live2D taking face running locally across platforms." 979 forks，本地运行 Live2D 虚拟形象 + 语音 LLM 交互。今日与 WeClone（数字分身微调）同框，"个性化 AI 角色"是今日 Trending 的隐线主题。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">03</div>
+        <div>
+          <a href="https://github.com/awslabs/aidlc-workflows" target="_blank"><strong>awslabs / aidlc-workflows</strong></a> ⭐ 1,597 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "AI-Driven Life Cycle (AI-DLC) adaptive workflow steering rules for AI coding agents." AWS 官方出品，301 forks。在 GitHub 官方发布 spec-kit 的同一天，AWS 也悄然发布了自己的 AI coding agent 工作流规则库，今日是大厂集中布局 AI coding 方法论的一天，GitHub / AWS 双方官方库同日上 Trending。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">04</div>
+        <div>
+          <a href="https://github.com/decolua/9router" target="_blank"><strong>decolua / 9router</strong></a> ⭐ 4,949 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">"Unlimited FREE AI coding. Connect Claude Code, Codex, Cursor, Cline, Copilot to FREE Claude/GPT/Gemini via 40+ providers. Auto-fallback, RTK -40% tokens, never hit limits." 1,020 forks，连接所有 AI coding 工具到 40+ 免费 Provider，自动 fallback，减少 40% tokens。今日与 free-llm-api-resources（Top 12 #5）同框，"免费高效用 AI"是今日 Trending 隐线主题。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">05</div>
+        <div>
+          <a href="https://github.com/openai/plugins" target="_blank"><strong>openai / plugins</strong></a> ⭐ 1,031 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "OpenAI Plugins". OpenAI 官方新发布仓库，132 forks，极低 Stars 却上 Python Trending 说明是全新发布。今日 GitHub（spec-kit）+ Anthropic（financial-services Top 12）+ OpenAI（plugins）+ AWS（aidlc-workflows）四家官方仓库同日上 Trending，是名副其实的"大厂官方开源日"。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📊 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/trending/python?since=daily" target="_blank">Python Trending</a></p>
+    <p style="margin-top:8px;">生成时间：2026-05-08 · 仅供参考，不构成投资或法律建议</p>
+  </div>
+
+</div>
+
+<script>
+function toggleDetail(btn) {
+  var details = btn.nextElementSibling;
+  if (details.classList.contains('open')) {
+    details.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    details.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+}
+</script>
+</body>
+</html>

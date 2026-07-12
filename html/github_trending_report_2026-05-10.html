@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-10</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px #58a6ff22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-card.new-card { border: 1.5px solid var(--green); }
+  .project-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .new-badge { background: #0f2d13; border: 1px solid var(--green); color: var(--green); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .cont-badge { background: #2d1d0a; border: 1px solid var(--orange); color: var(--orange); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-05-10 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">~516k</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">3</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">9</div><div class="stat-label">今日新上榜</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🔧 ChromeDevTools/chrome-devtools-mcp（38.97k）——Chrome 官方 DevTools MCP，AI coding agent 首次获得浏览器原生调试权限</div>
+        <p>Chrome DevTools 官方团队出品（Google 背书），38,971 ⭐ + 2,465 forks + 47 releases。让 Claude Code / Cursor / Copilot / Gemini 通过 MCP 直接控制和检查 Chrome：性能 traces 可操作分析、网络请求 / 截图 / source-mapped stack traces 调试、Puppeteer 可靠自动化。这是今日技术价值最高的项目——浏览器调试从"人工操作 DevTools"向"AI agent 原生接入"迈出第一步。与 spec-kit + agent-skills + chrome-devtools-mcp，AI coding 的<strong>写-规范-调试闭环首次在同一天 Trending 出现</strong>。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">💎 hesreallyhim/awesome-claude-code（43.2k）——Claude Code 生态精华资源库，本周四大维度完整成型</div>
+        <p>43,201 ⭐ + 3,671 forks，精选 Claude Code 的 skills / hooks / slash-commands / agent orchestrators / applications / plugins，强调代码质量、安全性、原创性。今日与 agent-skills（Day 4，37,757）同框构成 Claude Code 双雄。本周 Claude Code 生态四大维度完整成型：karpathy-skills（05-06，原则）→ agent-skills（05-07，工程 Skill）→ spec-kit（05-08，规格驱动）→ awesome-claude-code（05-10，生态资源），这是今日跨日叙事中最值得记录的里程碑。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📚 中文 LLM 学习三部曲：minimind（49.4k）+ hello-agents（45.97k）+ dive-into-llms（36.66k）——教育大周</div>
+        <p>今日三个大型中文 LLM 学习资源同时上榜：minimind（"2小时从零训练 64M LLM"，<strong>做 LLM</strong>）+ hello-agents（《从零开始构建智能体》，<strong>用 LLM 构建 Agent</strong>）+ dive-into-llms（《动手学大模型》，<strong>学 LLM 原理</strong>），构成完整三部曲。三个项目合计超 131k Stars，在 AI 工具越来越易用的时代，中文社区"动手学"内容的热情不减反增——说明"真正理解底层"的需求与"快速使用工具"的需求并行存在。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🏛️ 今日大换血背后：从"新兴团队爆款"到"大平台工具"——Trending 信号质量升级</div>
+        <p>05-08 Top 12 主要是 goose（Block/AAIF）、PageIndex（VectifyAI）等新兴团队项目，今日则是 Chrome DevTools 官方（Google）、PaddleOCR（百度飞桨）、Datawhale（中文 AI 教育最大社区）、ByteDance（UI-TARS）、Anthropic（claude-agent-sdk）、HKUDS（港大）集中亮相。这种"创业者/个人主导 → 机构/大厂主导"的 Trending 轮换模式在近 5 日出现了 2 次（05-08、05-10），说明 AI coding 生态工具层正在进入快速机构化阶段。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 github/spec-kit -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/github/spec-kit" target="_blank">github / spec-kit</a> <span class="cont-badge">持续 Day 3</span></div>
+          <div class="project-desc">💫 Toolkit to help you get started with Spec-Driven Development. GitHub 官方出品，Day 3 持续上榜，Stars 从 05-08 的 93,239 增至今日 94,739，8,236 forks。今日与 chrome-devtools-mcp + agent-skills 同框，AI coding 写-规范-调试闭环首次完整呈现。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">94,739</span></span>
+            <span class="meta-item">🍴 8,236</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">spec-driven</span><span class="topic-badge">github-official</span><span class="topic-badge">claude-code</span><span class="topic-badge">cursor</span><span class="topic-badge">ai-coding</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 今日亮点</h4><p>持续 Day 3 的 spec-kit 今日意义不同于前两天：今日它不再是独立热点，而是 AI coding 工作流三件套（规格→约束→调试）的"锚点"。chrome-devtools-mcp（#6）的加入让 AI coding 工作流首次实现写代码→规格约束→浏览器调试的完整闭环。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Spec-Driven Development：规格书变成可执行的，直接生成实现</li>
+          <li>specify CLI：一键初始化，6 步工作流对应 slash commands</li>
+          <li>30+ AI Agent 支持：Claude Code / Cursor / Windsurf / Copilot 等</li>
+          <li>Community Extensions / Presets / Walkthroughs 完整生态</li>
+          <li>142 次发布，持续高迭代</li>
+        </ul></div>
+        <div class="recommend-quote">💬 "持续 Day 3——今日 spec-kit（规格）+ agent-skills（约束）+ chrome-devtools-mcp（调试）同日 Trending，AI coding 工作流三件套完整成型，是本周 Trending 跨日叙事的最强收束信号。"</div>
+      </div>
+    </div>
+
+    <!-- #2 PaddlePaddle/PaddleOCR -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/PaddlePaddle/PaddleOCR" target="_blank">PaddlePaddle / PaddleOCR</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Turn any PDF or image document into structured data for your AI. A powerful, lightweight OCR toolkit that bridges the gap between images/PDFs and LLMs. Supports 100+ languages. 百度飞桨官方出品，77,521 ⭐ + 10,400 forks，以"LLM 前置数据处理层"新定位重上 Trending。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">77,521</span></span>
+            <span class="meta-item">🍴 10,400</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ocr</span><span class="topic-badge">llm-preprocessing</span><span class="topic-badge">pdf</span><span class="topic-badge">paddlepaddle</span><span class="topic-badge">100-languages</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>百度飞桨官方出品，77.5k Stars + 10.4k forks，今日以"桥接图像/PDF 与 LLM"的 AI 原生新定位重上 Trending。100+ 语言 OCR，轻量级 CPU 部署，支持 PP-OCR / PP-Structure / PP-ChatOCRv3 三大系列，覆盖表格/公式/图表/印章/手写体。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>100+ 语言 OCR，准确率行业领先</li>
+          <li>PDF 转结构化数据，直接喂给 LLM（新定位：LLM 前置数据处理层）</li>
+          <li>轻量级，CPU 部署，端到端无需专用 GPU</li>
+          <li>PP-OCR / PP-Structure / PP-ChatOCRv3 三大系列</li>
+          <li>覆盖：表格 / 公式 / 图表 / 印章 / 手写体</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PaddlePaddle</span><span class="tech-tag">ONNX</span></div></div>
+        <div class="recommend-quote">💬 "PaddleOCR 今日以'LLM 前置数据处理层'重上 Trending——文档→结构化→LLM 推理的管道中，今日每个环节都有工具出现：PaddleOCR（文档结构化）+ PageIndex（推理式检索，Explore 候选）。"</div>
+      </div>
+    </div>
+
+    <!-- #3 jingyaogong/minimind -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/jingyaogong/minimind" target="_blank">jingyaogong / minimind</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">🧠「大模型」2小时完全从0训练64M的小参数LLM！Train a 64M-parameter LLM from scratch in just 2h! 49,407 ⭐ + 6,276 forks，中文 LLM 学习三部曲"做 LLM"篇，Stars 最高。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">49,407</span></span>
+            <span class="meta-item">🍴 6,276</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm</span><span class="topic-badge">from-scratch</span><span class="topic-badge">minimind</span><span class="topic-badge">chinese</span><span class="topic-badge">pretrain</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>2 小时从零训练 64M 参数 LLM，极低门槛，完整训练流程（预训练/SFT/RLHF/LoRA/DPO），支持 MOE 架构，支持 MiniMind-V（多模态），中文优先，完整模型架构注释，极适合学习。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>2 小时从零训练 64M 参数 LLM，极低时间门槛</li>
+          <li>完整流程：预训练 / SFT / RLHF / LoRA 微调 / DPO</li>
+          <li>支持 MOE（Mixture of Experts）架构实现</li>
+          <li>MiniMind-V：多模态视觉语言模型支持</li>
+          <li>中文优先，自定义 BPE tokenizer</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">CUDA</span></div></div>
+        <div class="recommend-quote">💬 "今日与 hello-agents（45.9k）和 dive-into-llms（36.7k）同框，三者各有侧重：minimind（做 LLM）+ hello-agents（用 LLM 构建 Agent）+ dive-into-llms（学 LLM 原理）= 今日中文 AI 教育完整三部曲。"</div>
+      </div>
+    </div>
+
+    <!-- #4 datawhalechina/hello-agents -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/datawhalechina/hello-agents" target="_blank">datawhalechina / hello-agents</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">📚《从零开始构建智能体》——从零开始的智能体原理与实践教程。Datawhale 出品，45,976 ⭐ + 5,548 forks，今日同时出现在全语言 + Python 双榜，与 easy-vibe（Explore）构成 Datawhale 今日双项目亮相。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">45,976</span></span>
+            <span class="meta-item">🍴 5,548</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 CC-BY-4.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent</span><span class="topic-badge">datawhale</span><span class="topic-badge">chinese</span><span class="topic-badge">langchain</span><span class="topic-badge">tutorial</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Datawhale（国内最大 AI 教育社区）出品，《从零开始构建智能体》完整教程，中文原创。覆盖 Agent 原理/Function Calling/工具使用/多 Agent 框架，配套可运行 Jupyter Notebook，支持 LangChain / LangGraph / AutoGen / CrewAI。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>《从零开始构建智能体》完整中文教程</li>
+          <li>覆盖：Agent 原理 / Function Calling / 工具使用 / 多 Agent 框架</li>
+          <li>配套可运行 Jupyter Notebook</li>
+          <li>支持 LangChain / LangGraph / AutoGen / CrewAI 等主流框架</li>
+          <li>Datawhale 社区维护，活跃贡献者众多</li>
+        </ul></div>
+        <div class="recommend-quote">💬 "Datawhale 今日双项目亮相（hello-agents Top 12 + easy-vibe Explore），覆盖从编程零基础（easy-vibe）到 AI Agent 开发（hello-agents）的完整学习路径，是国内 AI 教育生态今日最强势的机构出场。"</div>
+      </div>
+    </div>
+
+    <!-- #5 hesreallyhim/awesome-claude-code -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/hesreallyhim/awesome-claude-code" target="_blank">hesreallyhim / awesome-claude-code</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">A curated list of awesome skills, hooks, slash-commands, agent orchestrators, applications, and plugins for Claude Code by Anthropic. 43,201 ⭐ + 3,671 forks，Claude Code 生态精华资源库，今日与 agent-skills（Day 4）构成 Claude Code 双雄组合。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">43,201</span></span>
+            <span class="meta-item">🍴 3,671</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#aaaaaa"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">awesome-list</span><span class="topic-badge">skills</span><span class="topic-badge">hooks</span><span class="topic-badge">slash-commands</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>精选 Claude Code 的 skills / hooks / slash-commands / agent orchestrators / applications / plugins，强调代码质量、安全性、原创性，社区贡献+人工精选（非自动收录），持续跟进 Claude Code 最新特性（hooks / projects / memory 等）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>全品类覆盖：skills / hooks / slash-commands / orchestrators / apps / plugins</li>
+          <li>强调代码质量、安全性、原创性三原则</li>
+          <li>持续跟进 Claude Code 最新特性</li>
+          <li>社区贡献，人工精选，非自动收录</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">Claude Code</span><span class="tech-tag">AGENTS.md</span><span class="tech-tag">SKILL.md</span></div></div>
+        <div class="recommend-quote">💬 "本周 Claude Code 生态四大维度完整成型：karpathy-skills（原则，05-06）→ agent-skills（工程 Skill，05-07）→ spec-kit（规格，05-08）→ awesome-claude-code（资源，05-10）。这四个项目合并是目前最系统的 Claude Code 使用指南。"</div>
+      </div>
+    </div>
+
+    <!-- #6 ChromeDevTools/chrome-devtools-mcp -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank">ChromeDevTools / chrome-devtools-mcp</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Chrome DevTools for coding agents. Chrome DevTools 官方团队（Google）出品，38,971 ⭐ + 2,465 forks + 47 releases，通过 MCP 让 AI coding agent 直接控制和检查 Chrome 浏览器，今日技术价值最高项目。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">38,971</span></span>
+            <span class="meta-item">🍴 2,465</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">chrome-devtools</span><span class="topic-badge">mcp</span><span class="topic-badge">google-official</span><span class="topic-badge">claude-code</span><span class="topic-badge">puppeteer</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Chrome DevTools 官方团队出品的 MCP server，让 Claude Code / Cursor / Copilot / Gemini 等 coding agent 直接接入 Chrome 原生调试能力。性能 insights（Chrome DevTools traces + CrUX 真实用户数据）、高级调试（网络/截图/控制台 + source-mapped stack traces）、Puppeteer 可靠自动化、CLI 模式（无需 MCP），47 次发布，高迭代。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>官方 MCP server：一行配置接入 Claude Code / Cursor / Copilot / Gemini</li>
+          <li>性能分析：Chrome DevTools traces + CrUX 真实用户体验数据</li>
+          <li>高级调试：网络请求 / 截图 / 控制台消息 + source-mapped stack traces</li>
+          <li>可靠自动化：Puppeteer 驱动，自动等待 action 完成</li>
+          <li>CLI 模式：不需要 MCP 也可命令行独立使用</li>
+          <li>47 次发布，Google 官方维护，长期支持</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Chrome DevTools Protocol</span><span class="tech-tag">Puppeteer</span><span class="tech-tag">MCP</span><span class="tech-tag">Node.js</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI coding agent 调试前端应用；自动化 UI 测试生成；性能回归分析自动化；CI/CD 中的 headless 浏览器调试。</p></div>
+        <div class="recommend-quote">💬 "今日技术价值最高——Chrome 官方 DevTools 团队直接提供 MCP server，浏览器调试进入 AI agent 工作流的里程碑。与 spec-kit + agent-skills 组合，AI coding 写-规范-调试闭环首次在同一天 Trending 完整出现。"</div>
+      </div>
+    </div>
+
+    <!-- #7 addyosmani/agent-skills -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/addyosmani/agent-skills" target="_blank">addyosmani / agent-skills</a> <span class="cont-badge">持续 Day 4</span></div>
+          <div class="project-desc">Production-grade engineering skills for AI coding agents. 连续第 4 日上榜，Stars 从 05-08 的 33,578 增至今日 37,757（2 日增 +4,179），4,209 forks，今日与 awesome-claude-code 构成 Claude Code 生态双雄。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">37,757</span></span>
+            <span class="meta-item">🍴 4,209</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#aaaaaa"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">cursor</span><span class="topic-badge">skills</span><span class="topic-badge">engineering</span><span class="topic-badge">day-4</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 持续上榜亮点</h4><p>连续 Day 4（05-07 → 05-08 → 05-09 → 05-10），2 日增 4,179 Stars，是今日 Top 12 中连续上榜天数最长的项目，持续增长说明价值被不断验证。今日与 awesome-claude-code 同框是今日最重要的"生态协同"信号：agent-skills（行为约束层）+ awesome-claude-code（生态资源层）= Claude Code 双翼。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>20 Skill × 6 阶段：Define / Plan / Build / Verify / Review / Ship</li>
+          <li>7 slash commands：/spec / /plan / /build / /test / /review / /code-simplify / /ship</li>
+          <li>全 IDE：Claude Code / Cursor / Windsurf / Gemini CLI / Copilot / Kiro</li>
+          <li>上下文自动激活，按任务类型自动匹配对应 Skill</li>
+        </ul></div>
+        <div class="recommend-quote">💬 "连续 Day 4，今日与 awesome-claude-code 同框——agent-skills 是行为约束层，awesome-claude-code 是生态资源层，两者叠加是目前 Claude Code 使用者的最佳组合。"</div>
+      </div>
+    </div>
+
+    <!-- #8 Lordog/dive-into-llms -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Lordog/dive-into-llms" target="_blank">Lordog / dive-into-llms</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">《动手学大模型 Dive into LLMs》系列编程实践教程。36,657 ⭐ + 4,506 forks，中英双语，覆盖 Transformer 原理到 RAG 全栈，今日 LLM 学习三部曲"学 LLM 原理"篇。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">36,657</span></span>
+            <span class="meta-item">🍴 4,506</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm</span><span class="topic-badge">tutorial</span><span class="topic-badge">chinese</span><span class="topic-badge">transformer</span><span class="topic-badge">hands-on</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>系列编程实践教程，中英双语，覆盖 Transformer 原理 / 预训练 / 微调 / RLHF / Agent / RAG 全栈，每章配套可运行代码，持续跟进最新 LLM 技术进展，适合有编程基础的 AI 学习者。</p></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">Jupyter</span><span class="tech-tag">Transformers</span></div></div>
+        <div class="recommend-quote">💬 "今日与 minimind（做）和 hello-agents（用）构成完整的'LLM 学习三部曲'——三者合计 131k Stars，中文 AI 教育内容在 Trending 上的影响力今日与任何工具项目不相上下。"</div>
+      </div>
+    </div>
+
+    <!-- #9 bytedance/UI-TARS-desktop -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/bytedance/UI-TARS-desktop" target="_blank">bytedance / UI-TARS-desktop</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">The Open-Source Multimodal AI Agent Stack: Connecting Cutting-Edge AI Models and Agent Infra. ByteDance 出品，31,652 ⭐ + 3,145 forks，Agent TARS（通用多模态 Agent）+ UI-TARS Desktop（GUI 自动化）双产品栈。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">31,652</span></span>
+            <span class="meta-item">🍴 3,145</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">multimodal</span><span class="topic-badge">agent</span><span class="topic-badge">bytedance</span><span class="topic-badge">gui-agent</span><span class="topic-badge">mcp</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>ByteDance 出品，包含 Agent TARS（通用多模态 AI Agent CLI + Web UI，终端+浏览器+计算机全覆盖，MCP 内核，Hybrid Browser Agent：GUI/DOM/混合策略）和 UI-TARS Desktop（Remote Computer Operator + Remote Browser Operator，免配置远程控制），支持 Anthropic / VolcEngine doubao 等多 Provider。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Agent TARS：通用多模态 AI Agent，终端 / 浏览器 / 计算机全覆盖</li>
+          <li>Hybrid Browser Agent：GUI Agent / DOM / 混合策略三选一</li>
+          <li>MCP 内核：基于 MCP，支持挂载任意 MCP Server</li>
+          <li>Event Stream：协议驱动数据流追踪 + 调试</li>
+          <li>UI-TARS Desktop：Remote Computer / Browser Operator，免配置</li>
+          <li>支持 Claude / doubao 等多 LLM Provider</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Electron</span><span class="tech-tag">MCP</span><span class="tech-tag">Puppeteer</span></div></div>
+        <div class="recommend-quote">💬 "今日与 chrome-devtools-mcp 同框——两者都是'AI agent 控制浏览器'，但路径不同：chrome-devtools-mcp 用 DevTools Protocol（调试视角），UI-TARS 用视觉+DOM（用户视角）。今日 Trending 告诉我们 AI agent 操控浏览器将有多种路径共存。"</div>
+      </div>
+    </div>
+
+    <!-- #10 sgl-project/sglang -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/sgl-project/sglang" target="_blank">sgl-project / sglang</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">SGLang is a high-performance serving framework for large language models and multimodal models. 27,588 ⭐ + 5,808 forks，高性能 LLM 推理服务框架，RadixAttention + 共享 KV cache，吞吐量优于 vLLM（多数场景），支持 LLM + VLM 双模。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">27,588</span></span>
+            <span class="meta-item">🍴 5,808</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm-serving</span><span class="topic-badge">inference</span><span class="topic-badge">radix-attention</span><span class="topic-badge">vllm-alternative</span><span class="topic-badge">multimodal</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>高性能 LLM 推理服务框架，RadixAttention 共享 KV cache 前缀降延迟，SGLang Runtime（SRT）优化 Attention/Schedule/Memory，支持 Llama/Qwen/DeepSeek/Mistral/Gemma 等主流模型，OpenAI API 兼容，LLM + VLM 双模，5,808 forks。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>RadixAttention：共享 KV cache 前缀，降低重复前缀场景延迟</li>
+          <li>SGLang Runtime（SRT）：优化 Attention / Schedule / Memory</li>
+          <li>支持 LLM + VLM（Vision Language Models）双模</li>
+          <li>OpenAI API 兼容接口</li>
+          <li>支持 Llama / Qwen / DeepSeek / Mistral / Gemma 等主流模型</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">CUDA</span><span class="tech-tag">Triton</span><span class="tech-tag">OpenAI API</span></div></div>
+        <div class="recommend-quote">💬 "SGLang 以 27.6k + 5.8k forks 今日上 Trending，是 vLLM 之后值得持续关注的 LLM serving 框架第二选择，今日上榜可能与 DeepSeek 系列最新支持或性能基准更新有关。"</div>
+      </div>
+    </div>
+
+    <!-- #11 anthropics/financial-services -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/anthropics/financial-services" target="_blank">anthropics / financial-services</a> <span class="cont-badge">持续 Day 3</span></div>
+          <div class="project-desc">Anthropic 官方金融服务示例库。连续第 3 日上榜，Stars 从 05-08 的 12,894 增至今日 17,870（2 日增 +4,976），2,293 forks。三日轨迹：Explore 9.4k → Top 12 12.9k → Top 12 17.9k，持续高速增长。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">17,870</span></span>
+            <span class="meta-item">🍴 2,293</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">anthropic</span><span class="topic-badge">claude</span><span class="topic-badge">finance</span><span class="topic-badge">compliance</span><span class="topic-badge">official</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 持续上榜亮点</h4><p>三日累计：05-07 Explore（9.4k）→ 05-08 Top 12（12.9k）→ 05-10 Top 12（17.9k），持续高速增长，2 日增 4,976 Stars，说明 Anthropic 金融 API 示例库的需求极为旺盛。今日与 HKUDS/AI-Trader 同框，金融 AI 教程层+实战层今日全链路呈现。</p></div>
+        <div class="recommend-quote">💬 "连续 Day 3 保持高增速——今日与 AI-Trader（#12）同框，金融 AI 全链路：Claude 金融 API 教程（financial-services）+ 全自动 Agent 交易（AI-Trader），金融 AI 赛道今日最强联合信号。"</div>
+      </div>
+    </div>
+
+    <!-- #12 HKUDS/AI-Trader -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/HKUDS/AI-Trader" target="_blank">HKUDS / AI-Trader</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">"AI-Trader: 100% Fully-Automated Agent-Native Trading". 港大 HKUDS 数据科学实验室出品，15,127 ⭐ + 2,490 forks，完全自动化的 Agent 原生交易系统。今日 HKUDS 双项目同时上榜（AI-Trader Top 12 + ViMax Explore）。</div>
+          <div class="project-meta">
+            <span class="meta-item">⭐ <span class="stars">15,127</span></span>
+            <span class="meta-item">🍴 2,490</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">trading</span><span class="topic-badge">agent-native</span><span class="topic-badge">hkuds</span><span class="topic-badge">fully-automated</span><span class="topic-badge">finance-ai</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>港大 HKUDS 数据科学实验室出品，100% 全自动 Agent 原生交易系统：行情→分析→决策→执行全链路 Agent 驱动（非脚本自动化），支持股票/加密货币/期货多资产类别，对接主流交易平台 API。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>100% 全自动 Agent 原生交易：从行情到执行全链路</li>
+          <li>Agent-Native 架构：Agent 驱动自主决策，非脚本自动化</li>
+          <li>支持多资产类别：股票 / 加密货币 / 期货</li>
+          <li>对接主流交易平台 API</li>
+          <li>HKUDS 学术背景，港大数据科学研究室</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LLM API</span><span class="tech-tag">Trading API</span></div></div>
+        <div class="recommend-quote">💬 "HKUDS 今日双项目亮相（AI-Trader Top 12 + ViMax Explore），金融交易 Agent + 视频生成 Agent，技术广度极高。今日与 financial-services 同框，金融 AI 从'教程'到'实战'全链路 Trending 呈现。"</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:67%;background:#3572A5"></div></div>
+        <div class="lang-count">8 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:17%;background:#aaaaaa"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:17%;background:#3178C6"></div></div>
+        <div class="lang-count">2 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="insight-box">
+      <div class="trending-item">
+        <div class="trending-num">01</div>
+        <div>
+          <a href="https://github.com/datawhalechina/easy-vibe" target="_blank"><strong>datawhalechina / easy-vibe</strong></a> ⭐ 8,741 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "💻 vibe coding 2026 | Your first modern programming course for beginners to master step by step." Datawhale 出品，870 forks。今日与 hello-agents（Top 12 #4）同框，Datawhale 今日双项目亮相，覆盖从编程零基础（easy-vibe）到 AI Agent 开发（hello-agents）的完整学习路径，是国内 AI 教育生态今日最强出场。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">02</div>
+        <div>
+          <a href="https://github.com/rowboatlabs/rowboat" target="_blank"><strong>rowboatlabs / rowboat</strong></a> ⭐ 13,910 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">TypeScript. "Open-source AI coworker, with memory." 1,378 forks，内置持久记忆的开源 AI 协作工作伙伴。今日与 rohitg00/agentmemory（全语言 Trending，3,712 ⭐，"Persistent memory for AI coding agents"）同框，agent memory 是今日 Trending 的另一条隐线主题——两个 memory 方向项目同日上全语言 Trending，"记忆"是 2026 年 AI agent 赛道的必争基础设施。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">03</div>
+        <div>
+          <a href="https://github.com/lsdefine/GenericAgent" target="_blank"><strong>lsdefine / GenericAgent</strong></a> ⭐ 10,355 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "Self-evolving agent: grows skill tree from 3.3K-line seed, achieving full system control with 6x less token consumption." 1,175 forks，自进化 Agent：从 3.3K 行种子代码生长 skill tree，实现完整系统控制，token 消耗降低 6 倍。今日 Python Trending 中技术架构最具研究价值的 Agent 项目，"自进化"赛道值得持续关注。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">04</div>
+        <div>
+          <a href="https://github.com/anthropics/claude-agent-sdk-python" target="_blank"><strong>anthropics / claude-agent-sdk-python</strong></a> ⭐ 6,775 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. Anthropic 官方 Claude Agent SDK Python 版本，972 forks。今日与 financial-services（Top 12 #11）和 awesome-claude-code（Top 12 #5）同框，Anthropic 今日三项目同时在 Trending（financial-services + claude-agent-sdk-python + ViMax 引用），是 Anthropic 生态今日最密集的集体曝光，Claude Agent SDK 是 Claude Code 生态基础设施层的最新补充。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">05</div>
+        <div>
+          <a href="https://github.com/HKUDS/ViMax" target="_blank"><strong>HKUDS / ViMax</strong></a> ⭐ 3,620 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Python. "ViMax: Agentic Video Generation (Director, Screenwriter, Producer, and Video Generator All-in-One)." 665 forks，一个 AI agent 同时担任导演+编剧+制片人+视频生成器，全流程视频生成。今日与 AI-Trader（Top 12 #12）同属 HKUDS 实验室——HKUDS 今日双项目亮相（金融交易 Agent + 视频生成 Agent），同一实验室两个完全不同赛道同日上 Trending，技术广度令人印象深刻。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📊 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/trending/python?since=daily" target="_blank">Python Trending</a></p>
+    <p style="margin-top:8px;">生成时间：2026-05-10 · 仅供参考，不构成投资或法律建议</p>
+  </div>
+
+</div>
+
+<script>
+function toggleDetail(btn) {
+  var details = btn.nextElementSibling;
+  if (details.classList.contains('open')) {
+    details.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    details.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+}
+</script>
+</body>
+</html>

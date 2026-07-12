@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GitHub Trending 日报 - 2026-04-14</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <style>
+    body { background: radial-gradient(circle at top left, rgba(13,110,253,.08), transparent 28%), radial-gradient(circle at top right, rgba(255,193,7,.12), transparent 24%), var(--bs-body-bg); }
+    .report-shell { max-width: 1240px; }
+    .hero-card { border: 0; border-radius: 1.5rem; background: linear-gradient(135deg, #0d6efd 0%, #3d8bfd 55%, #6f42c1 100%); }
+    .hero-card .text-soft { color: rgba(255,255,255,.86); }
+    .surface-card,.stats-card,.rank-item { border-radius: 1.25rem; }
+    .surface-card { border: 0; box-shadow: 0 .5rem 1.25rem rgba(15,23,42,.06); }
+    .stats-card { border: 0; box-shadow: 0 .35rem 1rem rgba(15,23,42,.05); }
+    .stats-icon { width: 3rem; height: 3rem; display: inline-flex; align-items: center; justify-content: center; border-radius: .9rem; background: rgba(13,110,253,.08); font-size: 1.4rem; }
+    .rank-item { overflow: hidden; box-shadow: 0 .4rem 1.2rem rgba(15,23,42,.05); }
+    .top3 { box-shadow: 0 .8rem 1.6rem rgba(255,193,7,.18); }
+    .rank-chip { min-width: 3rem; min-height: 3rem; border-radius: .9rem; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; background: var(--bs-tertiary-bg); }
+    .language-label { min-width: 8rem; }
+    .section-title { letter-spacing: -.02em; }
+  </style>
+</head>
+<body>
+  <div class="container-fluid py-4 py-lg-5 report-shell">
+    <div class="d-flex justify-content-end align-items-center mb-3"><button id="themeToggle" class="btn btn-outline-secondary rounded-pill px-3" type="button">🌗 切换主题</button></div>
+    <section class="card hero-card text-white shadow-sm mb-4"><div class="card-body p-4 p-lg-5"><div class="d-inline-flex align-items-center rounded-pill bg-white bg-opacity-10 px-3 py-2 small fw-semibold mb-3">GitHub Daily Brief</div><h1 class="display-5 fw-bold mb-2">🔥 GitHub Trending 日报</h1><p class="lead text-soft mb-3">把今天最值得看的热门开源项目整理成一眼能扫完的用户视角摘要。</p><div class="d-inline-flex flex-wrap gap-2"><span class="badge rounded-pill text-bg-light text-dark px-3 py-2">🗓 2026-04-14</span><span class="badge rounded-pill text-bg-light text-dark px-3 py-2">数据源：GitHub Trending + Explore</span></div></div></section>
+    <section class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 mb-4">
+      <div class="col"><div class="card stats-card h-100"><div class="card-body"><div class="stats-icon mb-3">📈</div><div class="display-6 fw-bold">16</div><div class="text-secondary">Trending 项目数</div></div></div></div>
+      <div class="col"><div class="card stats-card h-100"><div class="card-body"><div class="stats-icon mb-3">⭐</div><div class="display-6 fw-bold">34.3k</div><div class="text-secondary">今日累计新增 Stars</div></div></div></div>
+      <div class="col"><div class="card stats-card h-100"><div class="card-body"><div class="stats-icon mb-3">🧱</div><div class="display-6 fw-bold">7</div><div class="text-secondary">编程语言数</div></div></div></div>
+      <div class="col"><div class="card stats-card h-100"><div class="card-body"><div class="stats-icon mb-3">🤖</div><div class="display-6 fw-bold">13</div><div class="text-secondary">AI 相关项目数</div></div></div></div>
+    </section>
+    <section class="card surface-card mb-4"><div class="card-body p-4"><div class="d-flex justify-content-between align-items-end gap-3 mb-3"><div><h2 class="h3 section-title mb-1">🧭 今日观察</h2><p class="text-secondary mb-0">根据今天抓到的 Trending 数据整理 4 条适合快速扫读的观察。</p></div></div><div class="list-group list-group-flush"><div class="list-group-item px-0 py-3"><div class="fw-semibold mb-1">🤖 AI / Agent 相关项目仍是主舞台</div><div class="text-secondary">今天约有 13 个项目和 AI、Agent 或 Claude Code 生态直接相关，占比约 81.2%。</div></div><div class="list-group-item px-0 py-3"><div class="fw-semibold mb-1">🧭 高热度方向 讨论度很高</div><div class="text-secondary">在今天的 16 个 Trending 项目里，这一类方向出现了 3 次，说明大家正在找更可落地的工作方式。</div></div><div class="list-group-item px-0 py-3"><div class="fw-semibold mb-1">📦 Python 生态今天最活跃</div><div class="text-secondary">在 16 个 Trending 项目里，Python 占了 6 个，今天的主流讨论仍然集中在这条技术栈上。</div></div><div class="list-group-item px-0 py-3"><div class="fw-semibold mb-1">🔥 NousResearch/hermes-agent 是今天的增速王</div><div class="text-secondary">它今天新增约 11.3k stars，适合优先打开看看它究竟踩中了什么需求。</div></div></div></div></section>
+    <section class="mb-4"><div class="d-flex justify-content-between align-items-end gap-3 mb-3"><div><h2 class="h3 section-title mb-1">📈 今日热门 Top 12</h2><p class="text-secondary mb-0">按总 Stars 排序，Top 3 额外高亮，并支持展开看项目摘要、核心特性和适用场景。</p></div></div><div class="accordion d-grid gap-3" id="rankingAccordion">
+    <div class="accordion-item rank-item shadow-sm border-0 top3 border border-warning-subtle bg-warning-subtle">
+      <h3 class="accordion-header">
+        <button class="accordion-button  fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#rank1" aria-expanded="true">
+          <span class="rank-chip me-3">01</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">microsoft/markitdown</span>
+            <span class="text-secondary small">Python tool for converting files and office documents to Markdown</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 107.2k</span>
+              <span>🍴 6.8k</span>
+              <span>● Python</span>
+              <span>+2.8k</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank1" class="accordion-collapse collapse show" data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-light me-1 mb-1">markdown</span><span class="badge rounded-pill text-bg-light me-1 mb-1">pdf</span><span class="badge rounded-pill text-bg-light me-1 mb-1">openai</span><span class="badge rounded-pill text-bg-light me-1 mb-1">microsoft-office</span><span class="badge rounded-pill text-bg-light me-1 mb-1">autogen</span><span class="badge rounded-pill text-bg-light me-1 mb-1">langchain</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">markitdown 本质上是一个把多种文件统一转成 Markdown 的文档处理工具。 它最想解决的是“知识入库前要处理 PDF、Office 和各种附件，手工清洗太费时间”这件事。 从README、仓库简介看，当前最明确的能力集中在文档转换、Markdown、LLM 数据预处理。 如果你是做知识库、企业搜索、RAG 或文档自动化处理的开发者和平台团队，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>把 PDF、Word、Excel、PPT 等文件统一整理成 Markdown，后面做摘要、问答和入库都会轻松很多。</li><li>强调保留文档结构，不只是抽裸文本，给 LLM 使用时上下文会更完整。</li><li>很适合作为知识处理流水线的前置层，能替你省掉一堆格式转换脚本。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">Python</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">文档转换</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">Markdown</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">LLM 数据预处理</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">PDF</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合做知识库、企业搜索、RAG 或文档自动化处理的开发者和平台团队。 如果你现在正被“知识入库前要处理 PDF、Office 和各种附件，手工清洗太费时间”卡住，可以优先把它拿来对标、试点或做内部验证。 如果你只想找一个开箱即用的终端产品，它更像底层能力而不是最终应用。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你快速判断，现有文档处理链路值不值得换成更统一的 Markdown 入口。 第一次打开建议先看支持的文件类型、Markdown 质量，以及和 LLM/MCP 的接法，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">378</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">305</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">337</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">249</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0 top3 border border-warning-subtle bg-warning-subtle">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#rank2" aria-expanded="false">
+          <span class="rank-chip me-3">02</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">hacksider/Deep-Live-Cam</span>
+            <span class="text-secondary small">real time face swap and one-click video deepfake with only a single image</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 90.3k</span>
+              <span>🍴 13.1k</span>
+              <span>● Python</span>
+              <span>+217</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank2" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">Deep-Live-Cam 本质上是一个最近热度很高的开源项目。 它最想解决的是“需要先搞清它到底是工具、平台还是方法库，值不值得继续深挖”这件事。 从公开资料看，当前最明确的能力集中在开源趋势、能力评估。 如果你是想快速判断项目价值和适配度的开发者和团队，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>先看它解决的核心问题，再看能力边界，通常比先研究实现细节更省时间。</li><li>适合把它当成方向样本或对标对象，而不是第一眼就决定重投入。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">Python</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">开源趋势</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">能力评估</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合想快速判断项目价值和适配度的开发者和团队。 如果你现在正被“需要先搞清它到底是工具、平台还是方法库，值不值得继续深挖”卡住，可以优先把它拿来对标、试点或做内部验证。 如果公开资料还不够清楚，先看示例、FAQ 和 issue 讨论会更有效。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你快速完成一次“值不值得继续跟进”的判断。 第一次打开建议先看README 里最能说明边界的部分、示例和典型使用方式，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0 top3 border border-warning-subtle bg-warning-subtle">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#rank3" aria-expanded="false">
+          <span class="rank-chip me-3">03</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">NousResearch/hermes-agent</span>
+            <span class="text-secondary small">The agent that grows with you</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 78.8k</span>
+              <span>🍴 10.5k</span>
+              <span>● Python</span>
+              <span>+11.3k</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank3" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-light me-1 mb-1">ai</span><span class="badge rounded-pill text-bg-light me-1 mb-1">openai</span><span class="badge rounded-pill text-bg-light me-1 mb-1">hermes</span><span class="badge rounded-pill text-bg-light me-1 mb-1">codex</span><span class="badge rounded-pill text-bg-light me-1 mb-1">ai-agents</span><span class="badge rounded-pill text-bg-light me-1 mb-1">claude</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">hermes-agent 本质上是一套带学习闭环的通用 Agent 系统。 它最想解决的是“很多 Agent 任务能跑起来，但不会沉淀经验，也很难跨渠道持续进步”这件事。 从README、仓库简介、官网/公开资料看，当前最明确的能力集中在通用 Agent、学习闭环、多入口接入。 如果你是在做通用助手、自动化代理或多渠道接入的 AI 产品与工程团队，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>它卖点不只是“能干活”，而是强调越用越会积累技能和经验。</li><li>支持多模型和多入口，适合评估通用 Agent 是否能真正走进团队日常使用场景。</li><li>如果你关心 Agent 长期可用性，它比一次性 demo 更值得细看。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">Python</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">通用 Agent</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">学习闭环</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">多入口接入</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">Agent</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">Claude</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合在做通用助手、自动化代理或多渠道接入的 AI 产品与工程团队。 如果你现在正被“很多 Agent 任务能跑起来，但不会沉淀经验，也很难跨渠道持续进步”卡住，可以优先把它拿来对标、试点或做内部验证。 先看学习闭环和运维复杂度，再决定是否适合接进真实团队流程。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你判断，Agent 的竞争点是不是已经从“会调用工具”升级到了“会持续成长”。 第一次打开建议先看学习闭环、技能沉淀方式，以及 CLI / 消息网关两条使用路径，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">318</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">4.1k</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">1.4k</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">2.5k</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold"><a href="https://hermes-agent.nousresearch.com" target="_blank" rel="noreferrer">https://hermes-agent.nousresearch.com</a></div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank4" aria-expanded="false">
+          <span class="rank-chip me-3">04</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">TapXWorld/ChinaTextbook</span>
+            <span class="text-secondary small">所有小初高、大学PDF教材。</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 69k</span>
+              <span>🍴 15.4k</span>
+              <span>● Roff</span>
+              <span>+703</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank4" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">ChinaTextbook 本质上是一个系统化的学习资料仓库。 它最想解决的是“资料太散，入门路线不清晰，新人不知道先看什么”这件事。 从公开资料看，当前最明确的能力集中在学习资料、知识导航、PDF 资源。 如果你是想快速建立某个领域基础认知的学生、老师和自学者，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>更像资料聚合和路线整理，不是软件产品本身。</li><li>适合做学习起点、备课材料或快速搭建知识地图。</li><li>如果你想先建立全貌，再决定深入哪一块，它很有用。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">Roff</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">学习资料</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">知识导航</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">PDF 资源</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合想快速建立某个领域基础认知的学生、老师和自学者。 如果你现在正被“资料太散，入门路线不清晰，新人不知道先看什么”卡住，可以优先把它拿来对标、试点或做内部验证。 如果你要的是可直接部署的产品能力，它更适合作为学习材料而不是生产组件。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你快速缩短找资料和排学习顺序的时间。 第一次打开建议先看目录组织、覆盖范围，以及内容是否完整可持续，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank5" aria-expanded="false">
+          <span class="rank-chip me-3">05</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">thedotmack/claude-mem</span>
+            <span class="text-secondary small">A Claude Code plugin that automatically captures everything Claude does during your coding sessions, compresses it with AI (using Claude&#x27;s agent-sdk), and injects relevant context back into future sessions</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 53.7k</span>
+              <span>🍴 4.3k</span>
+              <span>● TypeScript</span>
+              <span>+3.2k</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank5" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-light me-1 mb-1">ai</span><span class="badge rounded-pill text-bg-light me-1 mb-1">sqlite</span><span class="badge rounded-pill text-bg-light me-1 mb-1">embeddings</span><span class="badge rounded-pill text-bg-light me-1 mb-1">artificial-intelligence</span><span class="badge rounded-pill text-bg-light me-1 mb-1">ai-agents</span><span class="badge rounded-pill text-bg-light me-1 mb-1">claude</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">claude-mem 本质上是一个给 AI 编码和助手场景补长期记忆的上下文组件。 它最想解决的是“Agent 跨会话容易失忆，历史决策和操作记录很难复用”这件事。 从README、仓库简介、官网/公开资料看，当前最明确的能力集中在Agent 记忆、上下文回注、长期会话。 如果你是在做 Claude Code、Copilot 或内部 Agent 增强层的开发者，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>核心价值是把“这次会话学到的东西”留住，避免下次重新解释同一套背景。</li><li>对长任务、多人协作或连续几天推进的工作尤其有帮助。</li><li>如果你在评估 Agent 记忆层，这类项目比纯提示词技巧更值得看。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">TypeScript</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">Agent 记忆</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">上下文回注</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">长期会话</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">Agent</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">Claude</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合在做 Claude Code、Copilot 或内部 Agent 增强层的开发者。 如果你现在正被“Agent 跨会话容易失忆，历史决策和操作记录很难复用”卡住，可以优先把它拿来对标、试点或做内部验证。 上线前要重点看数据存储位置、检索质量和误召回带来的副作用。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你判断，给 AI 编码工具补记忆到底是锦上添花，还是会明显改变工作方式。 第一次打开建议先看记忆存储方式、检索触发规则，以及旧上下文是怎样回注进新会话的，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">203</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">1.7k</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">141</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">107</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold"><a href="https://claude-mem.ai" target="_blank" rel="noreferrer">https://claude-mem.ai</a></div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank6" aria-expanded="false">
+          <span class="rank-chip me-3">06</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">virattt/ai-hedge-fund</span>
+            <span class="text-secondary small">An AI Hedge Fund Team</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 53.1k</span>
+              <span>🍴 9.2k</span>
+              <span>● Python</span>
+              <span>+783</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank6" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">ai-hedge-fund 本质上是一个把投研流程交给多智能体协作的实验平台。 它最想解决的是“想验证 AI 能否参与投研和交易分析，但缺少可复现实验框架”这件事。 从公开资料看，当前最明确的能力集中在投研自动化、多智能体、金融实验。 如果你是做量化实验、金融自动化或投研工具的团队，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>适合把投研流程拆开看，而不是把它误解成已经能直接赚钱的黑箱系统。</li><li>如果你在做金融 AI 实验，它提供的是流程框架和验证样板，不是稳赚策略。</li><li>很适合作为内部试验台，先评估 Agent 在金融场景里的上限和边界。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">Python</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">投研自动化</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">多智能体</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">金融实验</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合做量化实验、金融自动化或投研工具的团队。 如果你现在正被“想验证 AI 能否参与投研和交易分析，但缺少可复现实验框架”卡住，可以优先把它拿来对标、试点或做内部验证。 金融场景风险高，别把实验框架直接等同于生产策略。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮助你快速判断，AI 在投研场景里现在更像“研究助手”还是“交易执行者”。 第一次打开建议先看角色分工、风险边界、数据来源，以及结果如何评估，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank7" aria-expanded="false">
+          <span class="rank-chip me-3">07</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">gsd-build/get-shit-done</span>
+            <span class="text-secondary small">A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code by TÂCHES</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 52.2k</span>
+              <span>🍴 4.4k</span>
+              <span>● JavaScript</span>
+              <span>+655</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank7" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">get-shit-done 本质上是一个给 AI 编码和助手场景补长期记忆的上下文组件。 它最想解决的是“Agent 跨会话容易失忆，历史决策和操作记录很难复用”这件事。 从公开资料看，当前最明确的能力集中在Agent 记忆、上下文回注、长期会话。 如果你是在做 Claude Code、Copilot 或内部 Agent 增强层的开发者，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>核心价值是把“这次会话学到的东西”留住，避免下次重新解释同一套背景。</li><li>对长任务、多人协作或连续几天推进的工作尤其有帮助。</li><li>如果你在评估 Agent 记忆层，这类项目比纯提示词技巧更值得看。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">JavaScript</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">Agent 记忆</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">上下文回注</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">长期会话</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合在做 Claude Code、Copilot 或内部 Agent 增强层的开发者。 如果你现在正被“Agent 跨会话容易失忆，历史决策和操作记录很难复用”卡住，可以优先把它拿来对标、试点或做内部验证。 上线前要重点看数据存储位置、检索质量和误召回带来的副作用。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你判断，给 AI 编码工具补记忆到底是锦上添花，还是会明显改变工作方式。 第一次打开建议先看记忆存储方式、检索触发规则，以及旧上下文是怎样回注进新会话的，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank8" aria-expanded="false">
+          <span class="rank-chip me-3">08</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">shanraisshan/claude-code-best-practice</span>
+            <span class="text-secondary small">practice made claude perfect</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 42.1k</span>
+              <span>🍴 4k</span>
+              <span>● HTML</span>
+              <span>+2.5k</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank8" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">claude-code-best-practice 本质上是一份把 AI 编码经验整理成可直接照着改的实战指南。 它最想解决的是“团队知道要用 Claude Code 或 Agent，但不知道怎样分工、怎样避开常见踩坑”这件事。 从公开资料看，当前最明确的能力集中在实战指南、团队规范、工作流方法。 如果你是刚把 AI 编码纳入日常流程，想快速补齐方法论的个人和团队，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>这类项目的价值在于帮你少走弯路，而不是再学一个新框架。</li><li>适合团队先对齐工作方式，再决定是否做更深的工具建设。</li><li>如果你最近在搭 Agent/Skill/Command 体系，它通常很有启发价值。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">HTML</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">实战指南</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">团队规范</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">工作流方法</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合刚把 AI 编码纳入日常流程，想快速补齐方法论的个人和团队。 如果你现在正被“团队知道要用 Claude Code 或 Agent，但不知道怎样分工、怎样避开常见踩坑”卡住，可以优先把它拿来对标、试点或做内部验证。 第一次看别贪多，先挑 1 到 2 条能直接落地的规则试起来更有效。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你快速判断，哪些 AI 编码经验是真能拿进团队里执行的。 第一次打开建议先看目录结构、工作流范式，以及哪些规则最适合先落地，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank9" aria-expanded="false">
+          <span class="rank-chip me-3">09</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">anthropics/claude-cookbooks</span>
+            <span class="text-secondary small">A collection of notebooks/recipes showcasing some fun and effective ways of using Claude</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 39.6k</span>
+              <span>🍴 4.4k</span>
+              <span>● Jupyter Notebook</span>
+              <span>+1k</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank9" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">claude-cookbooks 本质上是一个最近热度很高的开源项目。 它最想解决的是“需要先搞清它到底是工具、平台还是方法库，值不值得继续深挖”这件事。 从公开资料看，当前最明确的能力集中在开源趋势、能力评估。 如果你是想快速判断项目价值和适配度的开发者和团队，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>先看它解决的核心问题，再看能力边界，通常比先研究实现细节更省时间。</li><li>适合把它当成方向样本或对标对象，而不是第一眼就决定重投入。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">Jupyter Notebook</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">开源趋势</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">能力评估</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合想快速判断项目价值和适配度的开发者和团队。 如果你现在正被“需要先搞清它到底是工具、平台还是方法库，值不值得继续深挖”卡住，可以优先把它拿来对标、试点或做内部验证。 如果公开资料还不够清楚，先看示例、FAQ 和 issue 讨论会更有效。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你快速完成一次“值不值得继续跟进”的判断。 第一次打开建议先看README 里最能说明边界的部分、示例和典型使用方式，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank10" aria-expanded="false">
+          <span class="rank-chip me-3">10</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">forrestchang/andrej-karpathy-skills</span>
+            <span class="text-secondary small">A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy&#x27;s observations on LLM coding pitfalls</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 26.3k</span>
+              <span>🍴 2.1k</span>
+              <span>● Unknown</span>
+              <span>+5.7k</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank10" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">andrej-karpathy-skills 本质上是一个把编码 Agent 变成团队协作成员的平台。 它最想解决的是“单个 Agent 能写代码，但任务分配、进度跟踪和复用能力还停留在手工阶段”这件事。 从README、仓库简介看，当前最明确的能力集中在多智能体协作、任务分配、平台治理。 如果你是希望把多个编码 Agent 纳入团队流程的工程负责人和平台团队，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>更像“Agent 管理层”，不是单个模型壳子，关注的是协作与治理。</li><li>如果你的团队已经在并行尝试多个编码 Agent，这类平台会很有参考价值。</li><li>它关注的是组织协同，而不只是把 prompt 贴给一个机器人跑完。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">多智能体协作</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">任务分配</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">平台治理</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合希望把多个编码 Agent 纳入团队流程的工程负责人和平台团队。 如果你现在正被“单个 Agent 能写代码，但任务分配、进度跟踪和复用能力还停留在手工阶段”卡住，可以优先把它拿来对标、试点或做内部验证。 落地前要一起看安全边界、权限控制和状态同步机制。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮助你判断，编码 Agent 什么时候能从个人玩具走向团队基础设施。 第一次打开建议先看任务分配方式、状态回报机制，以及技能如何沉淀复用，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">179</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">22</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">22</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">18</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank11" aria-expanded="false">
+          <span class="rank-chip me-3">11</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">ahujasid/blender-mcp</span>
+            <span class="text-secondary small">暂无清晰简介。</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 19.6k</span>
+              <span>🍴 1.9k</span>
+              <span>● Python</span>
+              <span>+339</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank11" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">blender-mcp 本质上是一个把 Claude 和 Blender 打通的 3D 工作台桥接层。 它最想解决的是“想用自然语言驱动建模和场景编辑，但传统 3D 软件交互门槛很高”这件事。 从公开资料看，当前最明确的能力集中在Blender、MCP、3D 工作流。 如果你是做 3D 原型、设计探索或 AI 辅助建模的创作者与开发者，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>把 Claude 变成 Blender 的自然语言入口，适合快速验证 AI 辅助建模是否真能提效。</li><li>比起单纯聊天，它更看重“能不能把指令落到具体 3D 操作上”。</li><li>适合原型、教学和创意探索场景，先试工作流，再决定是否深度集成。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">Python</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">Blender</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">MCP</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">3D 工作流</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合做 3D 原型、设计探索或 AI 辅助建模的创作者与开发者。 如果你现在正被“想用自然语言驱动建模和场景编辑，但传统 3D 软件交互门槛很高”卡住，可以优先把它拿来对标、试点或做内部验证。 如果你期待的是成熟商用插件，要先看支持的操作范围和社区活跃度。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它非常适合用来判断，AI 驱动 3D 工具到底是概念演示还是已经能帮上忙。 第一次打开建议先看Claude 能控制 Blender 到什么粒度、支持哪些操作，以及教程成熟度，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="accordion-item rank-item shadow-sm border-0">
+      <h3 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#rank12" aria-expanded="false">
+          <span class="rank-chip me-3">12</span>
+          <span class="flex-grow-1 text-start">
+            <span class="d-block fs-5">coleam00/Archon</span>
+            <span class="text-secondary small">The first open-source harness builder for AI coding. Make AI coding deterministic and repeatable</span>
+            <span class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+              <span>⭐ 17.7k</span>
+              <span>🍴 2.8k</span>
+              <span>● TypeScript</span>
+              <span>+677</span>
+            </span>
+          </span>
+        </button>
+      </h3>
+      <div id="rank12" class="accordion-collapse collapse " data-bs-parent="#rankingAccordion">
+        <div class="accordion-body">
+          <div class="mb-3"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">暂无标签</span></div>
+          <div class="row g-3">
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">项目摘要</h4><p class="mb-0">Archon 本质上是一个让 AI 编码流程可复现、可校验的工作流引擎。 它最想解决的是“同一句提示词每次跑出来都不一样，团队很难把 AI 编码变成稳定流程”这件事。 从公开资料看，当前最明确的能力集中在AI 编码流程、可复现、验证关卡。 如果你是想把 AI 编码从个人技巧升级成团队能力的工程团队，这类项目值得重点看。</p></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">核心特性</h4><ul class="mb-0"><li>重点不是模型多聪明，而是把开发步骤和质量门槛固化下来。</li><li>很适合平台团队评估“AI 编码流程标准化”到底能做到什么程度。</li><li>如果你已经被 AI 产出不稳定折腾过，这类项目的价值会很直观。</li></ul></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">技术标签</h4><span class="badge rounded-pill text-bg-primary me-1 mb-1">TypeScript</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">AI 编码流程</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">可复现</span><span class="badge rounded-pill text-bg-primary me-1 mb-1">验证关卡</span></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card h-100 border-0 bg-body-tertiary rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">适用场景</h4><p class="mb-0">适合想把 AI 编码从个人技巧升级成团队能力的工程团队。 如果你现在正被“同一句提示词每次跑出来都不一样，团队很难把 AI 编码变成稳定流程”卡住，可以优先把它拿来对标、试点或做内部验证。 别只看工作流定义本身，也要看失败处理和团队接入成本。</p></div></div></div>
+            <div class="col-12"><div class="card border-primary-subtle rounded-4"><div class="card-body"><h4 class="h6 text-secondary text-uppercase">一句话推荐</h4><p class="mb-0">今天值得看，因为它能帮你判断，AI 编码能不能像 CI/CD 一样被流程化和标准化。 第一次打开建议先看YAML 工作流、验证关卡，以及失败时怎样回滚和重试，5 分钟内通常就能判断它和你的场景是否匹配。</p></div></div></div>
+            <div class="col-12"><div class="card border-0 rounded-4"><div class="card-body px-0 pb-0"><h4 class="h6 text-secondary text-uppercase px-1">项目信息</h4><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2"><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Watchers</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Commits</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open Issues</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Open PRs</div><div class="fw-semibold">-</div></div></div><div class="col"><div class="border rounded-4 p-3 h-100 bg-body-tertiary"><div class="text-secondary small mb-1">Homepage</div><div class="fw-semibold">-</div></div></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div></section>
+    <section class="card surface-card mb-4"><div class="card-body p-4"><h2 class="h3 section-title mb-3">🧪 编程语言分布</h2><div class="d-flex align-items-center gap-3 mb-3"><div class="fw-medium language-label">Python</div><div class="progress flex-grow-1"><div class="progress-bar" style="width:37.5%; background:#3572A5">37.5%</div></div><div class="text-secondary small text-nowrap">6 个项目</div></div><div class="d-flex align-items-center gap-3 mb-3"><div class="fw-medium language-label">TypeScript</div><div class="progress flex-grow-1"><div class="progress-bar" style="width:31.2%; background:#3178C6">31.2%</div></div><div class="text-secondary small text-nowrap">5 个项目</div></div><div class="d-flex align-items-center gap-3 mb-3"><div class="fw-medium language-label">Unknown</div><div class="progress flex-grow-1"><div class="progress-bar" style="width:6.2%; background:#8B949E">6.2%</div></div><div class="text-secondary small text-nowrap">1 个项目</div></div><div class="d-flex align-items-center gap-3 mb-3"><div class="fw-medium language-label">Jupyter Notebook</div><div class="progress flex-grow-1"><div class="progress-bar" style="width:6.2%; background:#8B949E">6.2%</div></div><div class="text-secondary small text-nowrap">1 个项目</div></div><div class="d-flex align-items-center gap-3 mb-3"><div class="fw-medium language-label">HTML</div><div class="progress flex-grow-1"><div class="progress-bar" style="width:6.2%; background:#E34C26">6.2%</div></div><div class="text-secondary small text-nowrap">1 个项目</div></div><div class="d-flex align-items-center gap-3 mb-3"><div class="fw-medium language-label">JavaScript</div><div class="progress flex-grow-1"><div class="progress-bar" style="width:6.2%; background:#F1E05A">6.2%</div></div><div class="text-secondary small text-nowrap">1 个项目</div></div><div class="d-flex align-items-center gap-3 mb-3"><div class="fw-medium language-label">Roff</div><div class="progress flex-grow-1"><div class="progress-bar" style="width:6.2%; background:#ECDEBE">6.2%</div></div><div class="text-secondary small text-nowrap">1 个项目</div></div></div></section>
+    <section class="card surface-card mb-4"><div class="card-body p-4"><div class="d-flex justify-content-between align-items-end gap-3 mb-3"><div><h2 class="h3 section-title mb-1">🌍 GitHub Explore 精选</h2><p class="text-secondary mb-0">沿用字符图里的紧凑列表结构，补充 Trending 之外值得顺手点开的仓库和主题。</p></div></div><ol class="list-group list-group-numbered"><li class="list-group-item d-flex justify-content-between align-items-start py-3"><div class="ms-2 me-auto"><div class="fw-semibold"><a href="https://github.com/topics/chrome" target="_blank" rel="noreferrer" class="text-decoration-none">Chrome</a></div><div class="text-secondary small mt-1">Chrome is a web browser from the tech company Google</div><div class="mt-2"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Explore 热门主题</span></div></div><div class="text-end small text-secondary"><div>Popular topic</div></div></li><li class="list-group-item d-flex justify-content-between align-items-start py-3"><div class="ms-2 me-auto"><div class="fw-semibold"><a href="https://github.com/forrestchang/andrej-karpathy-skills" target="_blank" rel="noreferrer" class="text-decoration-none">forrestchang/andrej-karpathy-skills</a></div><div class="text-secondary small mt-1">A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy&#x27;s observations on LLM coding pitfalls</div><div class="mt-2"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Explore 推荐仓库</span></div></div><div class="text-end small text-secondary"><div>⭐ 26.3k</div><div>Apr 13, 2026 · Explore 同步推荐</div></div></li><li class="list-group-item d-flex justify-content-between align-items-start py-3"><div class="ms-2 me-auto"><div class="fw-semibold"><a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noreferrer" class="text-decoration-none">NousResearch/hermes-agent</a></div><div class="text-secondary small mt-1">The agent that grows with you</div><div class="mt-2"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Explore 推荐仓库</span></div></div><div class="text-end small text-secondary"><div>⭐ 78.8k</div><div>Apr 14, 2026 · Explore 同步推荐</div></div></li><li class="list-group-item d-flex justify-content-between align-items-start py-3"><div class="ms-2 me-auto"><div class="fw-semibold"><a href="https://github.com/shiyu-coder/Kronos" target="_blank" rel="noreferrer" class="text-decoration-none">shiyu-coder/Kronos</a></div><div class="text-secondary small mt-1">Kronos: A Foundation Model for the Language of Financial Markets</div><div class="mt-2"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Explore 推荐仓库</span></div></div><div class="text-end small text-secondary"><div>⭐ 17.2k</div><div>Apr 13, 2026 · Explore 同步推荐</div></div></li><li class="list-group-item d-flex justify-content-between align-items-start py-3"><div class="ms-2 me-auto"><div class="fw-semibold"><a href="https://github.com/thedotmack/claude-mem" target="_blank" rel="noreferrer" class="text-decoration-none">thedotmack/claude-mem</a></div><div class="text-secondary small mt-1">A Claude Code plugin that automatically captures everything Claude does during your coding sessions, compresses it with AI (using Claude&#x27;s agent-sdk), and injects relevant context back into future sessions</div><div class="mt-2"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Explore 推荐仓库</span></div></div><div class="text-end small text-secondary"><div>⭐ 53.7k</div><div>Apr 12, 2026 · Explore 同步推荐</div></div></li><li class="list-group-item d-flex justify-content-between align-items-start py-3"><div class="ms-2 me-auto"><div class="fw-semibold"><a href="https://github.com/microsoft/markitdown" target="_blank" rel="noreferrer" class="text-decoration-none">microsoft/markitdown</a></div><div class="text-secondary small mt-1">Python tool for converting files and office documents to Markdown</div><div class="mt-2"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Explore 推荐仓库</span></div></div><div class="text-end small text-secondary"><div>⭐ 107.2k</div><div>Mar 30, 2026 · Explore 同步推荐</div></div></li><li class="list-group-item d-flex justify-content-between align-items-start py-3"><div class="ms-2 me-auto"><div class="fw-semibold"><a href="https://github.com/multica-ai/multica" target="_blank" rel="noreferrer" class="text-decoration-none">multica-ai/multica</a></div><div class="text-secondary small mt-1">The open-source managed agents platform. Turn coding agents into real teammates — assign tasks, track progress, compound skills</div><div class="mt-2"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Explore 推荐仓库</span></div></div><div class="text-end small text-secondary"><div>⭐ 11.4k</div><div>Apr 14, 2026 · Explore 同步推荐</div></div></li><li class="list-group-item d-flex justify-content-between align-items-start py-3"><div class="ms-2 me-auto"><div class="fw-semibold"><a href="https://github.com/coleam00/Archon" target="_blank" rel="noreferrer" class="text-decoration-none">coleam00/Archon</a></div><div class="text-secondary small mt-1">The first open-source harness builder for AI coding. Make AI coding deterministic and repeatable</div><div class="mt-2"><span class="badge rounded-pill text-bg-secondary-subtle text-secondary-emphasis">Explore 推荐仓库</span></div></div><div class="text-end small text-secondary"><div>⭐ 17.7k</div><div>Apr 13, 2026 · Explore 同步推荐</div></div></li></ol></div></section>
+    <footer class="border-top pt-3 text-center text-secondary small">报告生成时间：2026-04-14 11:51:20 · 数据来源：GitHub Trending + Explore · 排版参考：reference/htmlTemplate.md · 实现方式：Bootstrap 5</footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script>
+    const root = document.documentElement;
+    const saved = localStorage.getItem("github-trending-theme");
+    if (saved) root.setAttribute("data-bs-theme", saved);
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      const next = root.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-bs-theme", next);
+      localStorage.setItem("github-trending-theme", next);
+    });
+  </script>
+</body>
+</html>

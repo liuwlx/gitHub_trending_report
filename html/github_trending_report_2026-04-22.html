@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-04-22</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .new-badge { display: inline-block; background: #1a3a1a; border: 1px solid var(--green); color: var(--green); border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 600; margin-left: 8px; vertical-align: middle; }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px rgba(88,166,255,0.13); }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-card.new-card { border-left: 3px solid var(--green); }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .lang-count { width: 120px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">Agent Skills 生态成熟宣言：VoltAgent × FastMCP × 安全工具同日涌现</div>
+    <div class="date-badge">📅 2026-04-22 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">3</div><div class="stat-label">今日新上榜</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">5</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">10</div><div class="stat-label">AI 相关项目</div></div>
+  </div>
+
+  <!-- 今日洞察 -->
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🎯 Agent Skills 生态"成熟度宣言"——VoltAgent/awesome-agent-skills 上 Trending</div>
+        <p>VoltAgent/awesome-agent-skills 今日进入全语言 Trending，这份合集汇聚了 Anthropic、Google Labs、Vercel、Stripe、Cloudflare、Netlify、Trail of Bits、OpenAI、HuggingFace 等 50+ 知名团队官方发布的生产级 Agent Skills（1000+ 个），并非批量 AI 生成的低质合集。它兼容 Claude Code、Codex、Gemini CLI、Cursor、GitHub Copilot、Windsurf 等几乎所有主流 AI 编程工具。Agent Skills 生态从"各自为战"走向"统一入口"，标志着整个生态进入成熟期。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🏆 FastMCP 统治 MCP 基础设施——标准之战已结束</div>
+        <p>PrefectHQ/fastmcp 进入 Python Trending，但这不是一个普通框架。其 v1.0 已于 2024 年被合并进 MCP Python SDK 官方库，当前独立版每日下载量超 100 万次，<strong>全语言 70% 的 MCP Server 背后都是某版本的 FastMCP</strong>。对于想要构建 MCP 工具的开发者，技术选型调研可以省去了——直接用 FastMCP，它已经是事实标准。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🔐 安全技能正式进入 AI Agent 生态</div>
+        <p>今日两个安全相关信号同时出现：一是 awesome-agent-skills 中收录了 Trail of Bits 团队专为 AI 编程 Agent 发布的安全审计技能；二是安全领域标杆 PayloadsAllTheThings（77.1k stars）进入 Python Trending。安全工程师们开始把渗透测试知识体系和 AI Agent 工具链结合，AI 驱动的安全研究浪潮正在形成。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📌 "持续 Trending"现象：AI 基础设施项目群正在形成稳定矩阵</div>
+        <p>今日 Top 12 中有 9 个与 4 月 21 日完全重合，这不是数据更新缓慢，而是市场共识形成的信号。openai-agents-python、claude-context、fastmcp、kimi-cli 这批 AI 编程基础设施项目正在成为开发者生态的"标准配置"。技术选型建议：这批项目已经具备规模化生产部署的成熟度。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 12 -->
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（全语言 Trending + Python Trending 综合）</div>
+
+    <!-- #1 VoltAgent/awesome-agent-skills NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/VoltAgent/awesome-agent-skills" target="_blank">VoltAgent / awesome-agent-skills</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">A curated collection of 1000+ agent skills from official dev teams and the community. 汇聚 Anthropic/Google/Vercel/Stripe 等 50+ 团队官方技能的 Agent Skills 精选合集。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">16,800</span></span>
+            <span class="meta-item"><span>🍴</span>1,832</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#e34c26"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">agent-skills</span><span class="topic-badge">claude-code</span><span class="topic-badge">codex-skills</span><span class="topic-badge">gemini-skills</span><span class="topic-badge">cursor-skills</span><span class="topic-badge">awesome-list</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>awesome-agent-skills 是目前 GitHub 上贡献数量最多的 Agent Skills 精选合集，收录超过 1000 个来自官方工程团队的生产级技能。不同于批量 AI 生成的低质合集，所有技能均来自 Anthropic、Google Labs、Vercel、Stripe、Cloudflare、Netlify、Trail of Bits、Sentry、OpenAI、Figma、HuggingFace 等 50+ 团队的真实工程师实际使用。支持 Claude Code、Codex、Antigravity、Gemini CLI、Cursor、GitHub Copilot、OpenCode、Windsurf 等所有主流 AI 编程工具。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>50+ 知名团队官方背书：Anthropic、Google、Vercel、Stripe、Cloudflare 等顶尖团队亲自贡献生产级技能</li><li>分类完整丰富：官方技能 / 语言技能（Python/TypeScript/.NET/Java/Rust）/ 领域技能（营销/产品/安全/DevOps/n8n 自动化）多维分类</li><li>全工具链覆盖：一个仓库适配所有主流 AI 编程工具，附带各工具安装路径说明</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">Agent Skills 规范</span><span class="tech-tag">Claude Code</span><span class="tech-tag">Windsurf</span><span class="tech-tag">Cursor</span><span class="tech-tag">Gemini CLI</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 编程工具用户想扩展 Agent 能力；企业想标准化 AI 辅助开发工作流；开发者想向社区贡献自定义 Agent 技能。</p></div>
+        <div class="recommend-quote">💬 "Agent Skills 生态的 awesome list，Anthropic/Google/Vercel 等 50+ 团队官方背书，扩展你 AI 编程工具能力的第一站。"</div>
+      </div>
+    </div>
+
+    <!-- #2 PrefectHQ/fastmcp NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/PrefectHQ/fastmcp" target="_blank">PrefectHQ / fastmcp</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">🚀 The fast, Pythonic way to build MCP servers and clients. 1M 下载/天，70% MCP Server 背后都是它，MCP 开发事实标准。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">24,700</span></span>
+            <span class="meta-item"><span>🍴</span>1,900</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">mcp</span><span class="topic-badge">python</span><span class="topic-badge">mcp-servers</span><span class="topic-badge">mcp-clients</span><span class="topic-badge">agents</span><span class="topic-badge">llms</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>FastMCP 是构建 MCP Server 和 Client 的最快 Python 框架。用 Python 装饰器声明工具，Schema 验证和文档由框架自动生成，不需要手写复杂协议代码。v1.0 版本已于 2024 年被合并进 MCP Python SDK 官方库，当前独立版每日下载量超 100 万次，全语言 70% 的 MCP Server 背后都是某版本的 FastMCP。框架三支柱：Server（将 Python 函数包装为 MCP 工具）、App（为工具生成可在对话中渲染的交互 UI）、Client（全协议支持连接任意 MCP Server）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>装饰器极简 API：@mcp.tool 装饰 Python 函数，Schema/验证/文档全部自动生成，5 行代码起步</li><li>Server + App + Client 三支柱：不只是 Server 框架，同时提供 Client 和带交互 UI 的 App 能力</li><li>官方背书 + 极高普及率：1M 下载/天，70% MCP Server 使用，MCP Python SDK 官方代码来自此项目</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">MCP</span><span class="tech-tag">uv</span><span class="tech-tag">Apache-2.0</span><span class="tech-tag">Prefect Horizon（免费托管）</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>给 Claude Code/Cursor 等 AI 编程工具添加自定义工具；快速构建并部署企业级 MCP Server；让 AI 工具访问内部 API 或数据库。</p></div>
+        <div class="recommend-quote">💬 "MCP Server 开发的事实标准，1M 下载/天、70% 市占，不需要再做选型调研，直接用就好。"</div>
+      </div>
+    </div>
+
+    <!-- #3 swisskyrepo/PayloadsAllTheThings NEW -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank">swisskyrepo / PayloadsAllTheThings</a><span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">A list of useful payloads and bypasses for Web Application Security and Pentest/CTF. 渗透测试 Payload 百科全书，77k stars 安全领域标杆，今日因 AI 安全 Agent 浪潮重回热榜。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">77,100</span></span>
+            <span class="meta-item"><span>🍴</span>16,900</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python / Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">security</span><span class="topic-badge">pentest</span><span class="topic-badge">bugbounty</span><span class="topic-badge">payload</span><span class="topic-badge">redteam</span><span class="topic-badge">web-application</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>PayloadsAllTheThings 是 Web 应用安全领域最权威的渗透测试 Payload 百科全书，涵盖 SQLi、XSS、SSTI、SSRF、XXE、路径穿越、命令注入、权限提升等 40+ 漏洞类型的攻击 Payload 和绕过技巧，附带 CTF 场景说明。今日进入 Python Trending 的背景是：awesome-agent-skills 中收录了 Trail of Bits 团队为 AI 编程 Agent 开发的安全审计技能，安全工程师开始用 AI Agent 工具链做自动化渗透测试，PayloadsAllTheThings 作为知识库进入 AI 工具链参考资料而重获热度。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>40+ 漏洞类型覆盖：SQLi/XSS/SSTI/SSRF/XXE/命令注入/IDOR/JWT 攻击全覆盖</li><li>可读性强：每种漏洞附带原理说明、Payload 示例、实际利用案例</li><li>在线可视化版本：swisskyrepo.github.io/PayloadsAllTheThings/ 提供更好浏览体验</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Markdown</span><span class="tech-tag">MIT</span><span class="tech-tag">Web Security</span><span class="tech-tag">CTF</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>渗透测试工程师快速查找特定漏洞 Payload；Bug Bounty 猎人系统化测试 Web 应用；结合 AI Agent 做自动化安全扫描的工程师。</p></div>
+        <div class="recommend-quote">💬 "Web 安全渗透测试的 Payload 字典，77k stars 说明一切，现在也成了 AI 安全 Agent 的知识库。"</div>
+      </div>
+    </div>
+
+    <!-- #4 FinceptTerminal -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Fincept-Corporation/FinceptTerminal" target="_blank">Fincept-Corporation / FinceptTerminal</a></div>
+          <div class="project-desc">State-of-the-art financial intelligence platform with CFA-level analytics. 开源 Bloomberg Terminal 替代，C++20 原生 + Qt6 + 嵌入 Python，连续两日全语言 Trending 第一。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">10,735</span></span>
+            <span class="meta-item"><span>🍴</span>1,430</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#f34b7d"></span> C++ / Python</span>
+            <span class="meta-item">📄 AGPL-3.0 / 商业双授权</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">finance</span><span class="topic-badge">bloomberg-terminal</span><span class="topic-badge">quantitative-finance</span><span class="topic-badge">machine-learning</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>FinceptTerminal 是 C++20 原生桌面应用，Qt6 做 UI 渲染、嵌入 Python 做数据分析，把 Bloomberg Terminal 的"CFA 级量化分析 + 宏观经济数据 + 投资研究"能力做成可免费下载安装的开源产品。v4 版本单一原生二进制，性能接近商业终端，支持 Docker 和多平台安装包。已连续两日位居全语言 Trending 首位。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>CFA 级市场分析：股票/债券/衍生品/宏观经济数据全覆盖，内置量化分析工具</li><li>AI 自动化投资研究：集成 AI 助手辅助分析，支持自定义数据源接入</li><li>双授权：个人/教育 AGPL-3.0 免费，企业购买商业授权去传染性条款</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C++20</span><span class="tech-tag">Qt6</span><span class="tech-tag">Python（嵌入）</span><span class="tech-tag">Docker</span><span class="tech-tag">AGPL-3.0</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>量化研究员低成本替代 Bloomberg；学生/教育机构教学金融分析；个人投资者自建数据仪表盘。</p></div>
+        <div class="recommend-quote">💬 "连续两日全语言 Trending 第一，开源圈最接近 Bloomberg Terminal 的替代方案。"</div>
+      </div>
+    </div>
+
+    <!-- #5 RuView -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ruvnet/RuView" target="_blank">ruvnet / RuView</a></div>
+          <div class="project-desc">WiFi DensePose — real-time human pose estimation without cameras. 用 WiFi 信号做无摄像头人体感知，48.6k stars 病毒式传播，⚠️ Beta 版本请谨慎评估。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">48,607</span></span>
+            <span class="meta-item"><span>🍴</span>6,487</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT ⚠️ Beta</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">esp32</span><span class="topic-badge">wifi</span><span class="topic-badge">pose-estimation</span><span class="topic-badge">monitoring</span><span class="topic-badge">densepose</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>用普通 WiFi 路由器/ESP32 设备采集 CSI（信道状态信息）信号，通过深度学习做人体姿态估计、生命体征监测和存在感知，全程无需摄像头。涵盖跌倒检测、睡眠监测等 17 种感知场景。⚠️ Beta 阶段，精度依赖多节点部署。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>无摄像头感知：WiFi 信号做人体姿态识别，隐私敏感场所友好</li><li>边缘部署：ESP32 低功耗设备本地运行，无需高性能服务器</li><li>17 种感知应用：姿态估计/存在检测/跌倒识别等预训练模型覆盖</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">ESP32</span><span class="tech-tag">DensePose</span><span class="tech-tag">WiFi CSI</span><span class="tech-tag">REST API</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>老人独居安全监护（跌倒检测）；隐私要求高的空间使用监控；智能家居存在感知。</p></div>
+        <div class="recommend-quote">💬 "无摄像头室内感知最系统的开源方案，但仍是 Beta 版，生产前请充分测试精度。"</div>
+      </div>
+    </div>
+
+    <!-- #6 microsoft/ai-agents-for-beginners -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/microsoft/ai-agents-for-beginners" target="_blank">microsoft / ai-agents-for-beginners</a></div>
+          <div class="project-desc">12 Lessons to Get Started Building AI Agents. 微软官方 AI Agent 入门课，57.2k stars，AutoGen + Semantic Kernel 双框架，50+ 语言版本。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">57,170</span></span>
+            <span class="meta-item"><span>🍴</span>19,819</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#DA5B0B"></span> Jupyter Notebook</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-agents</span><span class="topic-badge">autogen</span><span class="topic-badge">semantic-kernel</span><span class="topic-badge">generative-ai</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>微软推出的 AI Agents 开发入门课，12 节课从 Agent 基础概念到多 Agent 协作、RAG 检索增强、工具使用全覆盖。全部以 Jupyter Notebook 形式提供，本地可直接运行，50+ 语言自动翻译同步更新。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>12 节完整课程：零基础到多 Agent 协作系统全覆盖</li><li>双框架：AutoGen 和 Semantic Kernel 两套主流框架并行讲解</li><li>50+ 语言版本：GitHub Action 自动翻译，中文同步更新</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Jupyter Notebook</span><span class="tech-tag">AutoGen</span><span class="tech-tag">Semantic Kernel</span><span class="tech-tag">Azure AI</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>刚开始学习 AI Agent 开发的工程师；需要向团队普及 Agent 概念的技术 Lead。</p></div>
+        <div class="recommend-quote">💬 "微软官方出品，AutoGen + Semantic Kernel 双框架覆盖，最权威的 AI Agent 免费入门路径。"</div>
+      </div>
+    </div>
+
+    <!-- #7 sansan0/TrendRadar -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/sansan0/TrendRadar" target="_blank">sansan0 / TrendRadar</a></div>
+          <div class="project-desc">AI-driven public opinion &amp; trend monitor. 多平台热点聚合 + AI 过滤分析 + 手机直推，53.2k stars 国内开发者最实用工具。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">53,200</span></span>
+            <span class="meta-item"><span>🍴</span>23,491</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 GPL-3.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">rss</span><span class="topic-badge">ai</span><span class="topic-badge">mcp</span><span class="topic-badge">llm</span><span class="topic-badge">docker</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>把多平台热点（微博、抖音、知乎、B 站、GitHub 等）聚合起来，通过 AI 过滤 + 翻译 + 分析推送到手机。支持 Docker 部署，推送渠道覆盖微信/飞书/钉钉/Telegram/Slack/邮件等。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多平台聚合：覆盖国内外主流平台 + RSS 订阅源</li><li>AI 三级处理：过滤→翻译→分析简报自动流水线</li><li>MCP 架构支持：可接入 AI 对话系统做情感分析和趋势预测</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Docker</span><span class="tech-tag">MCP</span><span class="tech-tag">LLM</span><span class="tech-tag">多渠道推送</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>研究员追踪特定话题舆情；个人用户不刷手机但想掌握每日热点。</p></div>
+        <div class="recommend-quote">💬 "信息过载时代的 AI 过滤器，多平台热点 + AI 分析 + 手机直推，部署一次告别碎片化刷热点。"</div>
+      </div>
+    </div>
+
+    <!-- #8 zilliztech/claude-context -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/zilliztech/claude-context" target="_blank">zilliztech / claude-context</a></div>
+          <div class="project-desc">Code search MCP for Claude Code. 把整个代码库变成 AI 编程 Agent 的上下文，混合语义检索 + 增量索引。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">6,141</span></span>
+            <span class="meta-item"><span>🍴</span>539</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">mcp</span><span class="topic-badge">code-search</span><span class="topic-badge">semantic-search</span><span class="topic-badge">claude-code</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>MCP 插件，把代码库索引到 Milvus 向量数据库，让 Claude Code 等 AI 编程 Agent 通过自然语言语义搜索整个代码库，大幅降低 Token 成本。混合 BM25 + Dense Vector 检索，AST 代码分块，Merkle Tree 增量索引。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>混合检索（BM25 + Dense Vector）：关键词 + 语义双重覆盖</li><li>增量索引：只重建改动文件，大型代码库友好</li><li>AST 代码分块：保证完整语义边界，函数不被切断</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Milvus</span><span class="tech-tag">BM25</span><span class="tech-tag">AST</span><span class="tech-tag">MCP</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>百万行级代码库想让 Claude Code 真正理解项目结构；需要降低不必要 Token 消耗的成本敏感场景。</p></div>
+        <div class="recommend-quote">💬 "Claude Code 必装 MCP 插件，让 AI 真正看懂你整个代码库，而不是瞎摸象。"</div>
+      </div>
+    </div>
+
+    <!-- #9 HKUDS/RAG-Anything -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/HKUDS/RAG-Anything" target="_blank">HKUDS / RAG-Anything</a></div>
+          <div class="project-desc">All-in-One RAG Framework supporting multimodal documents. 香港大学出品，PDF/图片/表格/公式全处理，多模态知识图谱自动构建。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">16,474</span></span>
+            <span class="meta-item"><span>🍴</span>1,976</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">retrieval-augmented-generation</span><span class="topic-badge">multi-modal-rag</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>香港大学数据智能实验室出品的多模态 RAG 框架，从文档解析到最终问答完整 Pipeline。支持 PDF/Office/图片等全格式，专门为图表、表格、数学公式设计独立处理器，自动构建多模态知识图谱。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>全格式支持：PDF/Word/Excel/PPT/图片直接输入，无需预处理</li><li>多模态专项处理：图表/表格/公式各有专用分析器</li><li>多模态知识图谱：跨模态实体关系自动抽取</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">MinerU</span><span class="tech-tag">知识图谱</span><span class="tech-tag">多模态检索</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>企业对含图表公式的技术文档做智能问答；科研人员处理含大量图表的学术论文。</p></div>
+        <div class="recommend-quote">💬 "处理复杂文档 RAG 框架设计最完整的开源选择，学术界出品工程质量扎实。"</div>
+      </div>
+    </div>
+
+    <!-- #10 OthmanAdi/planning-with-files -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/OthmanAdi/planning-with-files" target="_blank">OthmanAdi / planning-with-files</a></div>
+          <div class="project-desc">Manus-style persistent markdown planning for Claude Code. Manus 被 Meta 20 亿美元收购背后的 Agent 规划方法论，开源实现。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">19,232</span></span>
+            <span class="meta-item"><span>🍴</span>1,720</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python / Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">manus</span><span class="topic-badge">agent-skills</span><span class="topic-badge">cursor</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>把 Manus AI 的核心工作方式（用 Markdown 文件做持久化规划）移植为 Claude Code 技能，通过 task_plan.md / findings.md / progress.md 三个文件解决 AI Agent 在长任务中目标漂移、记忆丢失、重复出错三大问题。支持 40+ AI 编程工具。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>3 文件规划模式：防止 Agent 在长任务中失忆和目标漂移</li><li>40+ 工具兼容：Claude Code/Cursor/Codex/Gemini CLI 等全覆盖</li><li>多语言版本：中文/英文/德语等，npx 一键安装</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Agent Skills 规范</span><span class="tech-tag">Markdown</span><span class="tech-tag">Claude Code</span><span class="tech-tag">npx</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>用 Claude Code 做 50+ 步骤的复杂长任务；Agent 经常在长会话中忘记最初目标的场景。</p></div>
+        <div class="recommend-quote">💬 "Manus $20 亿收购背后的方法论免费开放，让你的 AI 在长任务中不再失忆。"</div>
+      </div>
+    </div>
+
+    <!-- #11 openai/openai-agents-python -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/openai/openai-agents-python" target="_blank">openai / openai-agents-python</a></div>
+          <div class="project-desc">A lightweight, powerful framework for multi-agent workflows. OpenAI 官方轻量级 Agent 框架，9 个核心抽象覆盖 Agent 开发全场景。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">24,245</span></span>
+            <span class="meta-item"><span>🍴</span>3,721</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">openai</span><span class="topic-badge">agents</span><span class="topic-badge">python</span><span class="topic-badge">llm</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>OpenAI 官方轻量级 Agent 框架，9 个核心抽象：Agent、Sandbox Agents、Handoffs、Tools、Guardrails、Human in the Loop、Sessions、Tracing、Realtime Agents，覆盖单 Agent 到多 Agent 协作所有开发场景。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>完整 9 大抽象：单 Agent 到多 Agent 协作全覆盖</li><li>内置 Human in the Loop：人工审核节点原生支持</li><li>Realtime 语音 Agent：gpt-realtime-1.5 实时对话支持</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">OpenAI API</span><span class="tech-tag">MCP</span><span class="tech-tag">gpt-realtime-1.5</span><span class="tech-tag">MIT</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>用 OpenAI 模型构建 Multi-Agent 系统；需要内置追踪能力调试 Agent 行为。</p></div>
+        <div class="recommend-quote">💬 "OpenAI 官方 Agent SDK，9 个核心抽象干净清晰，用 OpenAI 模型做 Agent 开发的首选框架。"</div>
+      </div>
+    </div>
+
+    <!-- #12 MoonshotAI/kimi-cli -->
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/MoonshotAI/kimi-cli" target="_blank">MoonshotAI / kimi-cli</a></div>
+          <div class="project-desc">Kimi Code CLI is your next CLI agent. 月之暗面官方终端 AI 编程助手，Agent-Shell 双模式 + 原生 MCP 工具管理 + ACP 协议。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span>⭐</span><span class="stars">7,987</span></span>
+            <span class="meta-item"><span>🍴</span>895</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 见仓库</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">cli</span><span class="topic-badge">ai-agent</span><span class="topic-badge">mcp</span><span class="topic-badge">coding-agent</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>月之暗面官方终端 AI 编程助手，可在终端里读写代码、执行 Shell 命令、搜索网页。Ctrl-X 切换 AI Agent 和 Shell 命令模式，支持 ACP 协议接入 JetBrains/Zed IDE，完整 MCP 工具管理子命令。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>Agent-Shell 双模式：Ctrl-X 无缝切换 AI Agent 和普通 Shell</li><li>ACP 协议：兼容 Zed、JetBrains 等 ACP 兼容 IDE</li><li>完整 MCP 管理：内置 MCP 服务器管理子命令</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">MCP</span><span class="tech-tag">ACP 协议</span><span class="tech-tag">Zsh 插件</span><span class="tech-tag">VS Code 扩展</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>想在终端里用 Kimi 模型完成编程任务；已有 MCP 工具链想接入 Kimi 模型的团队。</p></div>
+        <div class="recommend-quote">💬 "月之暗面官方 Coding Agent CLI，Agent-Shell 双模式设计独特，国产 CLI Agent 里首选试用。"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language Distribution -->
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <span class="lang-name">Python</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:58.3%;background:#3572A5"></div></div>
+        <span class="lang-count">7 项目 (58.3%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">TypeScript</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:16.7%;background:#3178C6"></div></div>
+        <span class="lang-count">2 项目 (16.7%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Markdown</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#e34c26"></div></div>
+        <span class="lang-count">1 项目 (8.3%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">C++ / Python</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#f34b7d"></div></div>
+        <span class="lang-count">1 项目 (8.3%)</span>
+      </div>
+      <div class="lang-bar-row">
+        <span class="lang-name">Jupyter NB</span>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#DA5B0B"></div></div>
+        <span class="lang-count">1 项目 (8.3%)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub Explore 精选 -->
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">今日 Explore 亮点与 Trending 形成良好互补，以下为额外推荐：</p>
+      <div>
+        <div class="trending-item">
+          <span class="trending-num">01</span>
+          <div>
+            <a href="https://github.com/VoltAgent/awesome-agent-skills" target="_blank" style="font-weight:600">VoltAgent/awesome-agent-skills</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">今日 Trending 新晋 #1 · 1000+ Agent Skills 精选合集 · ⭐16.8k</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">02</span>
+          <div>
+            <a href="https://github.com/PrefectHQ/fastmcp" target="_blank" style="font-weight:600">PrefectHQ/fastmcp</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">MCP Server 事实标准 · 1M 下载/天 · 70% MCP Server 背后都是它 · ⭐24.7k</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">03</span>
+          <div>
+            <a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" style="font-weight:600">swisskyrepo/PayloadsAllTheThings</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">Web 安全渗透测试 Payload 百科全书 · ⭐77.1k · AI 安全 Agent 浪潮带动重上热榜</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">04</span>
+          <div>
+            <a href="https://github.com/huggingface/skills" target="_blank" style="font-weight:600">huggingface/skills</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">HuggingFace 官方 AI/ML 技能包 · ⭐10.3k · 已被 awesome-agent-skills 收录</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">05</span>
+          <div>
+            <a href="https://github.com/thunderbird/thunderbolt" target="_blank" style="font-weight:600">thunderbird/thunderbolt</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">开源跨平台 AI 客户端 · ⭐3.1k · 全平台 + 自托管后端，仍在安全审计中</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">06</span>
+          <div>
+            <span style="font-size:12px; color:var(--text-muted);">🔒 安全技能新趋势：</span>
+            <a href="https://github.com/VoltAgent/awesome-agent-skills" target="_blank" style="font-weight:600">Trail of Bits 安全审计技能</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">收录于 awesome-agent-skills，AI 编程 Agent 安全审计方向值得关注</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">07</span>
+          <div>
+            <span style="font-size:12px; color:var(--text-muted);">📌 热门 Topic：</span>
+            <a href="https://github.com/topics/model-context-protocol" target="_blank" style="font-weight:600">model-context-protocol</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">今日 MCP 相关项目持续活跃，fastmcp 领跑</span>
+          </div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">08</span>
+          <div>
+            <span style="font-size:12px; color:var(--text-muted);">🎮 精选活动：</span>
+            <a href="https://gamedevjs.com/jam/2026/" target="_blank" style="font-weight:600">GameDevJS Jam 2026</a>
+            <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">GitHub 本月 Web 游戏开发活动，4 月持续进行中</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>📅 报告生成时间：2026-04-22 &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">本报告由 <strong>skill-github-trending-report</strong> 自动生成 &nbsp;|&nbsp; 所有数据来自 GitHub 公开页面，无需 API Token</p>
+  </div>
+
+</div>
+
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>

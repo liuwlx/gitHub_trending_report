@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending Daily Report - 2026-04-12</title>
+<style>
+:root{--bg:#0D1117;--card:#161B22;--card2:#1C2128;--text:#C9D1D9;--text2:#8B949E;--blue:#58A6FF;--green:#3FB950;--orange:#F0883E;--purple:#BC8CFF;--red:#FF7B72;--border:#30363D;--hover:#21262D}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+body.light{--bg:#F6F8FA;--card:#FFFFFF;--card2:#F0F2F5;--text:#24292F;--text2:#57606A;--blue:#0969DA;--green:#1A7F37;--orange:#BC4C00;--purple:#6E40C9;--red:#CF222E;--border:#D0D7DE;--hover:#F3F4F6}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:1200px;margin:0 auto;padding:20px 16px}
+.theme-btn{position:fixed;top:16px;right:16px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:20px;cursor:pointer;z-index:999;font-size:13px;transition:all .2s}
+.theme-btn:hover{border-color:var(--blue)}
+header{text-align:center;padding:48px 20px 36px;background:linear-gradient(180deg,rgba(88,166,255,.08) 0%,transparent 100%);border-bottom:1px solid var(--border);margin-bottom:28px}
+header .badge{display:inline-block;background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;letter-spacing:.5px;margin-bottom:14px}
+header h1{font-size:2.1em;font-weight:700;margin-bottom:8px;background:linear-gradient(135deg,var(--text) 0%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header p{color:var(--text2);font-size:1em}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;transition:border-color .2s}
+.stat-card:hover{border-color:var(--blue)}
+.stat-card .num{font-size:1.9em;font-weight:700;color:var(--blue);line-height:1}
+.stat-card .lbl{color:var(--text2);font-size:.82em;margin-top:6px}
+.section-title{font-size:1.25em;font-weight:700;margin:28px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.new-tag{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3);padding:2px 8px;border-radius:10px;font-size:.7em;font-weight:700}
+.project-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px;transition:border-color .2s,box-shadow .2s}
+.project-card:hover{border-color:var(--blue);box-shadow:0 0 0 1px rgba(88,166,255,.15)}
+.pc-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.pc-left{display:flex;align-items:center;gap:10px}
+.rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78em;font-weight:700;flex-shrink:0}
+.r1{background:#FFD700;color:#000}.r2{background:#C0C0C0;color:#000}.r3{background:#CD7F32;color:#fff}.rn{background:var(--border);color:var(--text2)}
+.pc-name{font-size:1.1em;font-weight:600}
+.pc-badges{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:16px;font-size:.78em;font-weight:500;border:1px solid var(--border)}
+.b-star{color:#E3B341;border-color:rgba(227,179,65,.4)}
+.b-fork{color:var(--text2)}
+.b-lang{font-size:.73em;padding:2px 8px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+.b-hot{color:var(--red);border-color:rgba(255,123,114,.4);font-weight:700}
+.b-new{color:var(--green);border-color:rgba(63,185,80,.4);font-weight:700}
+.b-back{color:var(--orange);border-color:rgba(240,136,62,.4)}
+.pc-desc{color:var(--text2);font-size:.92em;margin:6px 0 10px}
+.detail-btn{background:none;border:1px solid var(--border);color:var(--blue);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:.82em;transition:all .2s}
+.detail-btn:hover{background:rgba(88,166,255,.1);border-color:var(--blue)}
+.detail-body{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.detail-body.open{display:block}
+.dl-section{margin-bottom:14px}
+.dl-section h4{font-size:.88em;font-weight:600;color:var(--blue);margin-bottom:6px}
+.dl-section p,.dl-section li{font-size:.88em;color:var(--text2);line-height:1.65}
+.dl-section ul{padding-left:18px}
+.dl-section li{margin-bottom:2px}
+.topics{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.topic{background:rgba(88,166,255,.12);color:var(--blue);padding:2px 9px;border-radius:12px;font-size:.73em}
+.insight-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:20px;margin-bottom:28px}
+.insight-box h3{font-size:1em;color:var(--blue);margin-bottom:10px}
+.insight-item{margin:10px 0;font-size:.9em;color:var(--text2);line-height:1.7;padding-left:14px;position:relative}
+.insight-item::before{content:'';position:absolute;left:0;top:.65em;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.lang-chart{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:28px}
+.bar-row{display:flex;align-items:center;margin:8px 0}
+.bar-lbl{width:110px;font-size:.83em;text-align:right;padding-right:12px;color:var(--text2);flex-shrink:0}
+.bar-track{flex:1;background:var(--border);border-radius:4px;height:22px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:.72em;color:#fff;font-weight:700;min-width:28px}
+.bar-cnt{margin-left:10px;font-size:.8em;color:var(--text2);flex-shrink:0}
+.group-sec{margin-bottom:16px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.group-hd{cursor:pointer;background:var(--card2);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.92em;transition:background .2s}
+.group-hd:hover{background:var(--hover)}
+.group-hd .arrow{transition:transform .2s;font-size:.8em;color:var(--text2)}
+.group-bd{display:none;padding:12px}
+.group-bd.open{display:block}
+.mini-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.mini-card:last-child{margin-bottom:0}
+.mini-card .mc-name{font-size:.9em;font-weight:600}
+.mini-card .mc-desc{font-size:.82em;color:var(--text2);margin-top:2px}
+.compare-box{background:var(--card);border:1px solid var(--orange);border-radius:10px;padding:16px 20px;margin-bottom:28px}
+.compare-box h3{font-size:.95em;color:var(--orange);margin-bottom:10px}
+.compare-table{width:100%;border-collapse:collapse;font-size:.83em}
+.compare-table th{color:var(--text2);padding:6px 10px;border-bottom:1px solid var(--border);text-align:left}
+.compare-table td{padding:6px 10px;border-bottom:1px solid rgba(48,54,61,.5)}
+.compare-table tr:last-child td{border-bottom:none}
+.up{color:var(--green)}.down{color:var(--red)}.same{color:var(--text2)}
+footer{text-align:center;padding:28px;margin-top:20px;border-top:1px solid var(--border);color:var(--text2);font-size:.83em;line-height:1.8}
+@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}.pc-header{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" onclick="document.body.classList.toggle('light');this.textContent=document.body.classList.contains('light')?'🌙 暗色':'☀️ 亮色'">☀️ 亮色</button>
+<div class="container">
+<header>
+<div class="badge">DAILY REPORT</div>
+<h1>🔥 GitHub Trending Report</h1>
+<p>2026-04-12 · 今日 GitHub 热门项目速览 · Claude 生态 × AI 存储 × TTS 新里程碑</p>
+</header>
+
+<div class="stats">
+<div class="stat-card"><div class="num">14</div><div class="lbl">�� 今日 Trending 项目</div></div>
+<div class="stat-card"><div class="num">5</div><div class="lbl">💻 编程语言</div></div>
+<div class="stat-card"><div class="num">103,785</div><div class="lbl">⭐ 最高 Star 数</div></div>
+<div class="stat-card"><div class="num">7</div><div class="lbl">🆕 较昨日新增项目</div></div>
+</div>
+<div class="section-title">🔥 今日最热 Top 14（按 Star 总数排序）</div>
+
+<!-- #1 microsoft/markitdown -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank r1">1</span>
+<span class="pc-name"><a href="https://github.com/microsoft/markitdown" target="_blank">microsoft / markitdown</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-lang"><span class="dot" style="background:#3572A5"></span> Python</span>
+<span class="badge b-star">⭐ 103,785</span>
+<span class="badge b-fork">🍴 6,453</span>
+<span class="badge b-back">🔁 连续上榜</span>
+</div>
+</div>
+<p class="pc-desc">Python tool for converting files and office documents to Markdown — for LLMs and text analysis pipelines.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>📖 README 摘要</h4><p>MarkItDown 是微软开源的轻量级 Python 工具，将各类文件转换为 Markdown 格式，专为 LLM 和文本分析管道设计。支持 PDF、Word、PowerPoint、Excel、图片（EXIF+OCR）、音频（语音转写）、HTML、CSV/JSON/XML、YouTube URL、EPubs、ZIP 等格式，并提供 MCP 服务器可集成 Claude Desktop 等 LLM 应用。</p></div>
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>支持 PDF / Word / PowerPoint / Excel / 图片 / 音频等 10+ 格式转 Markdown</li>
+<li>MCP 服务器集成，可接入 Claude Desktop 等 LLM 应用</li>
+<li>命令行 + Python API + Docker 三种使用方式</li>
+<li>pip install markitdown[all] 一键安装所有可选依赖</li>
+</ul></div>
+<div class="dl-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic">python</span><span class="topic">markdown</span><span class="topic">llm</span><span class="topic">document-conversion</span><span class="topic">mcp</span><span class="topic">microsoft</span></div></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>微软出品 10 万⭐ 文档转换利器——AI 数据管道的必备工具，今日再度领跑 Trending 榜首。</p></div>
+</div></div>
+
+<!-- #2 TapXWorld/ChinaTextbook -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank r2">2</span>
+<span class="pc-name"><a href="https://github.com/TapXWorld/ChinaTextbook" target="_blank">TapXWorld / ChinaTextbook</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-star">⭐ 68,108</span>
+<span class="badge b-fork">🍴 15,201</span>
+<span class="badge b-hot">🔥 今日爆款</span>
+</div>
+</div>
+<p class="pc-desc">所有小初高、大学 PDF 教材——开源中国义务教育教材，消除教育资源不平等。</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>📖 README 摘要</h4><p>这个仓库旨在将中国义务教育阶段的所有官方 PDF 教材集中开源，覆盖小学、初中（含五四学制）、高中和大学。项目的由来：虽然国内教育网站已提供免费资源，但获取途径受限，有人借此在平台上贩卖带水印资源牟利。本仓库希望打破信息壁垒，消除地区间教育贫困，同时让海外华人子女也能接触国内正规教材。配套提供初中数学练习题（含答案）等学习辅助资料。</p></div>
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>覆盖小学、初中、高中、大学全阶段 PDF 教材，含五四学制版本</li>
+<li>配套数学各学段练习题（含答案），强调"刷题"是学数学最重要的事</li>
+<li>提供大文件合并脚本（解决 GitHub 文件大小限制的拆分问题）</li>
+<li>支持多种下载方式，教材可捐献贡献</li>
+<li>纯粹公益，无商业化，开放社区贡献</li>
+</ul></div>
+<div class="dl-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic">education</span><span class="topic">textbook</span><span class="topic">china</span><span class="topic">pdf</span><span class="topic">open-source</span></div></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>68k⭐ 今日黑马——把中国所有义务教育阶段的官方 PDF 教材集中开源，打破资源壁垒的公益仓库。</p></div>
+</div></div>
+
+<!-- #3 NousResearch/hermes-agent -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank r3">3</span>
+<span class="pc-name"><a href="https://github.com/NousResearch/hermes-agent" target="_blank">NousResearch / hermes-agent</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-lang"><span class="dot" style="background:#3572A5"></span> Python</span>
+<span class="badge b-star">⭐ 64,001</span>
+<span class="badge b-fork">🍴 8,565</span>
+<span class="badge b-back">🔁 连续上榜</span>
+</div>
+</div>
+<p class="pc-desc">The self-improving AI agent — with built-in learning loop, cross-session memory, runs anywhere.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>📖 README 摘要</h4><p>Hermes Agent 是 Nous Research 打造的自进化 AI 代理，业界唯一内置"学习循环"的代理系统：从每次对话中创建 Skills、使用期间持续改进这些 Skills、跨 Session 搜索历史对话，并构建对你的深度理解。可运行在 5 美元的 VPS、GPU 集群或 Serverless 上；通过 Telegram、Discord、Slack 等网关与其交互，不依赖本地电脑。支持 200+ 模型后端（OpenRouter），hermes model 一键切换，零锁定。24 小时内 Star 从 52,773 增至 64,001，净增超 11k⭐。</p></div>
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>内置学习循环：从经验创建 Skills，使用中自动改进，跨会话记忆积累</li>
+<li>多平台部署：VPS / GPU 集群 / Serverless，不绑定本地环境</li>
+<li>消息网关：支持 Telegram、Discord、Slack、WhatsApp、Signal、Email</li>
+<li>支持 200+ 模型后端（OpenRouter），hermes model 一键切换</li>
+<li>MCP 集成、Cron 调度、Context Files 等高级功能</li>
+</ul></div>
+<div class="dl-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic">agent</span><span class="topic">self-improving</span><span class="topic">memory</span><span class="topic">skills</span><span class="topic">nous-research</span><span class="topic">telegram</span><span class="topic">mcp</span></div></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>24h 净增 11k⭐——全球首个真正"越用越聪明"的 AI 代理，Nous Research 出品，不在本地跑也能随时召唤。</p></div>
+</div></div>
+
+<!-- #4 virattt/ai-hedge-fund -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank rn">4</span>
+<span class="pc-name"><a href="https://github.com/virattt/ai-hedge-fund" target="_blank">virattt / ai-hedge-fund</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-lang"><span class="dot" style="background:#3572A5"></span> Python</span>
+<span class="badge b-star">⭐ 51,963</span>
+<span class="badge b-fork">🍴 9,018</span>
+<span class="badge b-new">🆕 新上榜</span>
+</div>
+</div>
+<p class="pc-desc">An AI Hedge Fund Team — 19 AI agents modeled after world's greatest investors, for educational purposes.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>📖 README 摘要</h4><p>AI Hedge Fund 是一个 AI 驱动的对冲基金模拟系统（仅用于教育目的，不构成投资建议）。系统由 19 个 AI 代理协同工作，每个代理模拟一位顶级投资大师的投资哲学：Warren Buffett（价值投资）、Ben Graham（安全边际）、Cathie Wood（颠覆式创新）、Michael Burry（逆向投资）、Nassim Taleb（黑天鹅风险）等 13 位传奇投资人，加上估值、情绪、基本面、技术分析四大信号代理，以及风险管理和投资组合经理，形成完整的决策链路。</p></div>
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>13 位传奇投资人 AI Agent：Buffett、Munger、Druckenmiller、Lynch、Burry 等</li>
+<li>4 大分析信号 Agent：估值、情绪、基本面、技术指标</li>
+<li>风险管理 + 投资组合经理统筹决策，形成完整交易信号链路</li>
+<li>支持命令行 CLI 和 Web 界面两种使用方式</li>
+<li>纯教育研究用途，系统不实际执行任何交易</li>
+</ul></div>
+<div class="dl-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic">ai</span><span class="topic">hedge-fund</span><span class="topic">investing</span><span class="topic">agents</span><span class="topic">finance</span><span class="topic">python</span></div></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>把 Buffett、Munger、Cathie Wood 全部做成 AI Agent 让他们一起管你的投资组合——教育向，但灵感十足。</p></div>
+</div></div>
+
+<!-- #5 thedotmack/claude-mem -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank rn">5</span>
+<span class="pc-name"><a href="https://github.com/thedotmack/claude-mem" target="_blank">thedotmack / claude-mem</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-lang"><span class="dot" style="background:#3178C6"></span> TypeScript</span>
+<span class="badge b-star">⭐ 48,712</span>
+<span class="badge b-fork">🍴 3,811</span>
+<span class="badge b-hot">🔥 今日热推</span>
+<span class="badge b-new">🆕 新上榜</span>
+</div>
+</div>
+<p class="pc-desc">Persistent memory compression system for Claude Code — auto-captures sessions, compresses with AI, injects context back.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>📖 README 摘要</h4><p>Claude-Mem 是专为 Claude Code 打造的持久记忆压缩系统：通过 5 个生命周期 Hook（SessionStart / UserPromptSubmit / PostToolUse / Stop / SessionEnd）自动捕获每次编码会话中的 Tool 使用观察记录，用 AI 生成语义摘要并存储到 SQLite + Chroma 向量数据库，在未来会话开始时自动注入相关上下文，让 Claude 在项目上的知识实现跨 Session 持续积累。支持 MCP 搜索工具，提供 token 高效的 3 层查询工作流（search → timeline → get_observations，节省约 10x token）。</p></div>
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>5 个生命周期 Hook 全程自动捕获，零人工干预</li>
+<li>SQLite + Chroma 向量数据库，支持混合语义+关键词检索</li>
+<li>3 层 MCP 搜索工作流，约 10x token 节省</li>
+<li>Web 查看器 UI（localhost:37777），可视化查看记忆和搜索端点</li>
+<li>一键安装：npx claude-mem install，支持 Claude Code 和 Gemini CLI</li>
+</ul></div>
+<div class="dl-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic">claude-code</span><span class="topic">memory</span><span class="topic">plugin</span><span class="topic">mcp</span><span class="topic">sqlite</span><span class="topic">vector-search</span></div></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>Claude Code 用户的记忆外挂——让 Claude 记住你项目里每一次 debug、每一个决策，不再从零开始解释上下文。</p></div>
+</div></div>
+<!-- #6 shanraisshan/claude-code-best-practice -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank rn">6</span>
+<span class="pc-name"><a href="https://github.com/shanraisshan/claude-code-best-practice" target="_blank">shanraisshan / claude-code-best-practice</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-star">⭐ 38,259</span>
+<span class="badge b-fork">🍴 3,612</span>
+<span class="badge b-back">🔁 连续上榜</span>
+</div>
+</div>
+<p class="pc-desc">From vibe coding to agentic engineering — practice made claude perfect. 69 Tips + full Claude Code feature reference.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>覆盖 Claude Code 全部特性：Subagents、Commands、Skills、Hooks、MCP、Memory、Checkpointing</li>
+<li>69 条 Tips &amp; Tricks 持续更新，追踪 Claude Code 生态最新动态</li>
+<li>多种开发工作流模板与 🔥 Hot 标签区（实时追踪最新动态）</li>
+<li>聚合优质视频、播客、相关开源仓库、行业报告</li>
+</ul></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>Claude Code 用户必收藏——三天连续上榜，从入门 Vibe Coding 到进阶 Agentic Engineering 的最完整路线图。</p></div>
+</div></div>
+
+<!-- #7 rustfs/rustfs -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank rn">7</span>
+<span class="pc-name"><a href="https://github.com/rustfs/rustfs" target="_blank">rustfs / rustfs</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-lang"><span class="dot" style="background:#CE422B"></span> Rust</span>
+<span class="badge b-star">⭐ 24,989</span>
+<span class="badge b-fork">🍴 1,067</span>
+<span class="badge b-new">🆕 新上榜</span>
+</div>
+</div>
+<p class="pc-desc">🚀 2.3x faster than MinIO for 4KB payloads — S3-compatible high-performance object storage in Rust, Apache 2.0.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>📖 README 摘要</h4><p>RustFS 是用 Rust 构建的高性能分布式对象存储系统，将 MinIO 的简洁性与 Rust 的内存安全和极致性能相结合。提供完整 S3 兼容性，支持与 MinIO / Ceph 等 S3 兼容平台的迁移与共存。性能测试显示：4KB 对象 Payload 场景下比 MinIO 快 2.3 倍。采用 Apache 2.0 许可证（而非 MinIO 的 AGPL），避免了 AGPL 的商业限制，对 AI 数据湖、大数据工作负载做了专项优化。</p></div>
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>4KB Payload 场景比 MinIO 快 2.3x，Rust 保证内存安全与性能</li>
+<li>完整 S3 API 兼容，支持 OpenStack Swift API 和 Keystone 认证</li>
+<li>Apache 2.0 许可（无 AGPL 商业限制），适合企业商用</li>
+<li>面向 AI 数据湖、大数据高吞吐工作负载专项优化</li>
+<li>6 种安装方式：一键脚本 / Docker / 源码 / Helm / Nix / X-CMD</li>
+</ul></div>
+<div class="dl-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic">rust</span><span class="topic">s3</span><span class="topic">object-storage</span><span class="topic">minio</span><span class="topic">distributed</span><span class="topic">ai-data-lake</span></div></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>Rust 重写 MinIO——2.3x 性能提升 + Apache 2.0 无商业枷锁，AI 时代对象存储的新选择。</p></div>
+</div></div>
+
+<!-- #8 ahujasid/blender-mcp -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank rn">8</span>
+<span class="pc-name"><a href="https://github.com/ahujasid/blender-mcp" target="_blank">ahujasid / blender-mcp</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-lang"><span class="dot" style="background:#3572A5"></span> Python</span>
+<span class="badge b-star">⭐ 19,029</span>
+<span class="badge b-fork">🍴 1,855</span>
+<span class="badge b-new">🆕 新上榜</span>
+</div>
+</div>
+<p class="pc-desc">BlenderMCP — connect Claude AI to Blender via MCP for prompt-assisted 3D modeling &amp; scene creation.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>📖 README 摘要</h4><p>BlenderMCP 通过 Model Context Protocol（MCP）将 Blender 与 Claude AI 连接起来，让 Claude 能够直接与 Blender 交互并控制它，实现"提示词辅助 3D 建模"。系统由两部分组成：Blender 插件（addon.py，在 Blender 内创建 Socket 服务器接收和执行命令）和 MCP 服务器（Python 实现 MCP 协议并连接 Blender 插件）。支持 Claude for Desktop、Cursor、VSCode 等多种 IDE 集成。</p></div>
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>通过 MCP 让 Claude 直接控制 Blender，实现自然语言 3D 建模</li>
+<li>双向通信：Socket 服务器实时传递命令和结果</li>
+<li>对象操控：创建、修改、删除 3D 对象；材质控制；场景检视</li>
+<li>支持在 Blender 内执行任意 Python 代码</li>
+<li>支持 Claude Desktop、Cursor、VSCode、Hyper3D 集成</li>
+</ul></div>
+<div class="dl-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic">blender</span><span class="topic">mcp</span><span class="topic">claude</span><span class="topic">3d-modeling</span><span class="topic">ai</span><span class="topic">python</span></div></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>跟 Claude 说"帮我建一个卡通风格的城市场景"然后看 Blender 自动动起来——MCP 让 AI 真正接管 3D 创作工具。</p></div>
+</div></div>
+
+<!-- #9 coleam00/Archon -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank rn">9</span>
+<span class="pc-name"><a href="https://github.com/coleam00/Archon" target="_blank">coleam00 / Archon</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-lang"><span class="dot" style="background:#3572A5"></span> Python</span>
+<span class="badge b-star">⭐ 16,794</span>
+<span class="badge b-fork">🍴 2,680</span>
+<span class="badge b-back">🔁 连续上榜</span>
+</div>
+</div>
+<p class="pc-desc">The first open-source harness builder for AI coding — YAML workflows make AI coding deterministic and repeatable.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>YAML 工作流定义：结构确定性 + AI 节点智能化完美结合</li>
+<li>隔离执行：每次运行独立 git worktree，支持 5 个任务并行无冲突</li>
+<li>Fire-and-forget：启动后无需看守，自动产出带 review 意见的 PR</li>
+<li>多入口：CLI、Web UI、Slack、Telegram、GitHub 均可触发</li>
+</ul></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>AI 编码的"GitHub Actions"——把开发流程写成 YAML，结束后自动提 PR，连续上榜验证了真实需求。</p></div>
+</div></div>
+
+<!-- #10 snarktank/ralph -->
+<div class="project-card">
+<div class="pc-header">
+<div class="pc-left">
+<span class="rank rn">10</span>
+<span class="pc-name"><a href="https://github.com/snarktank/ralph" target="_blank">snarktank / ralph</a></span>
+</div>
+<div class="pc-badges">
+<span class="badge b-star">⭐ 15,714</span>
+<span class="badge b-fork">�� 1,577</span>
+<span class="badge b-new">🆕 新上榜</span>
+</div>
+</div>
+<p class="pc-desc">Ralph — autonomous AI agent loop that runs until all PRD items are complete. Each iteration = fresh context.</p>
+<button class="detail-btn" onclick="toggleDetail(this)">📖 展开详情</button>
+<div class="detail-body">
+<div class="dl-section"><h4>📖 README 摘要</h4><p>Ralph 是一个自主 AI 代理循环，驱动 Amp 或 Claude Code 反复运行，直到 PRD（产品需求文档）中所有条目全部完成。每次迭代都是一个全新实例，有干净的上下文；迭代间的"记忆"通过 git 历史、progress.txt 和 prd.json 传递。每完成一次迭代，Ralph 自动更新 AGENTS.md，积累发现的模式和注意事项，让后续迭代（和人类开发者）受益。基于 Geoffrey Huntley 的 Ralph Pattern。</p></div>
+<div class="dl-section"><h4>✨ 核心特性</h4><ul>
+<li>自主循环直到 PRD 全部完成，支持 Amp 和 Claude Code 作为执行引擎</li>
+<li>每次迭代全新实例 + 干净上下文，避免 Context 污染导致代码质量下降</li>
+<li>通过 git 历史 / progress.txt / prd.json 在迭代间持久化记忆</li>
+<li>自动更新 AGENTS.md 积累发现的模式、陷阱和约定</li>
+<li>前端 Story 内置浏览器验证（dev-browser skill），确认 UI 变更生效</li>
+</ul></div>
+<div class="dl-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic">claude-code</span><span class="topic">autonomous-agent</span><span class="topic">prd</span><span class="topic">agentic</span><span class="topic">amp</span><span class="topic">workflow</span></div></div>
+<div class="dl-section"><h4>💬 一句话推荐</h4><p>把 PRD 丢给 Ralph，让它自己跑完——每次迭代全新上下文、自动积累经验，直到所有需求全部打勾。</p></div>
+</div></div>

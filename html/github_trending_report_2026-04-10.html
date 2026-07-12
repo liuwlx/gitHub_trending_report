@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Trending 日报 - 2026-04-10</title>
+  <style>
+    :root {
+      --bg: #f6efe7;
+      --bg-accent: #fff8f1;
+      --card: rgba(255,255,255,0.92);
+      --card-strong: rgba(255,255,255,0.98);
+      --text: #1f2933;
+      --muted: #52606d;
+      --line: rgba(31,41,51,0.1);
+      --brand: #0f766e;
+      --brand-2: #f97316;
+      --green: #1f9d55;
+      --shadow: 0 18px 40px rgba(31,41,51,0.08);
+      --radius: 20px;
+    }
+    [data-theme="dark"] {
+      --bg: #101418;
+      --bg-accent: #172026;
+      --card: rgba(23,32,38,0.92);
+      --card-strong: rgba(27,37,44,0.98);
+      --text: #f2f7fb;
+      --muted: #9fb3c8;
+      --line: rgba(255,255,255,0.08);
+      --brand: #4fd1c5;
+      --brand-2: #fb923c;
+      --green: #5ee58d;
+      --shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(249,115,22,0.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(15,118,110,0.14), transparent 25%),
+        linear-gradient(180deg, var(--bg-accent), var(--bg));
+      min-height: 100vh;
+    }
+    a { color: inherit; }
+    .shell { max-width: 1220px; margin: 0 auto; padding: 28px 20px 56px; }
+    .hero {
+      position: relative; overflow: hidden; border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(15,118,110,0.92), rgba(249,115,22,0.92));
+      color: #fff; border-radius: 32px; padding: 34px 32px 30px; box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.65), transparent);
+      pointer-events: none;
+    }
+    .hero-top { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px; padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,0.22); border-radius: 999px; font-size: 13px;
+      letter-spacing: 0.04em; text-transform: uppercase; background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px);
+    }
+    .hero h1 { position: relative; z-index: 1; margin: 16px 0 10px; font-size: clamp(32px, 5vw, 56px); line-height: 1.05; letter-spacing: -0.03em; }
+    .hero p { position: relative; z-index: 1; max-width: 760px; margin: 0; font-size: 16px; line-height: 1.8; color: rgba(255,255,255,0.88); }
+    .hero-actions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .hero-actions a, .hero-actions button {
+      border: 1px solid rgba(255,255,255,0.24); background: rgba(255,255,255,0.12);
+      color: #fff; border-radius: 999px; padding: 10px 16px; text-decoration: none;
+      cursor: pointer; font: inherit; transition: transform .2s ease, background .2s ease;
+    }
+    .hero-actions a:hover, .hero-actions button:hover { transform: translateY(-1px); background: rgba(255,255,255,0.2); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 22px 0 0; position: relative; z-index: 1; }
+    .stat {
+      background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px; padding: 18px; backdrop-filter: blur(12px);
+    }
+    .stat strong { display: block; font-size: 28px; line-height: 1.1; margin-bottom: 8px; }
+    .stat span { color: rgba(255,255,255,0.84); font-size: 14px; }
+    .section { margin-top: 28px; }
+    .section-header { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    .section-header h2 { margin: 0; font-size: 28px; letter-spacing: -0.02em; }
+    .section-header p { margin: 4px 0 0; color: var(--muted); }
+    .insight-grid, .explore-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .insight-card, .explore-card, .top-card, .surface {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .insight-card, .explore-card { padding: 20px; }
+    .insight-card h3, .explore-card h3 { margin: 0 0 10px; font-size: 20px; }
+    .insight-card p, .explore-card p { margin: 0; color: var(--muted); line-height: 1.8; }
+    .top-list { display: grid; gap: 18px; }
+    .top-card { padding: 24px; background: var(--card-strong); }
+    .top-head { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: start; }
+    .rank {
+      min-width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center;
+      background: linear-gradient(135deg, rgba(15,118,110,0.14), rgba(249,115,22,0.18));
+      color: var(--brand); font-weight: 800; font-size: 18px;
+    }
+    .title-block h3 { margin: 0 0 8px; font-size: 24px; letter-spacing: -0.02em; }
+    .title-block a { text-decoration: none; }
+    .title-block p { margin: 0; color: var(--muted); line-height: 1.8; }
+    .delta { font-size: 28px; font-weight: 800; color: var(--green); white-space: nowrap; }
+    .meta-row, .mini-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; color: var(--muted); font-size: 14px; margin-top: 14px; }
+    .lang, .mini-meta span { display: inline-flex; align-items: center; gap: 8px; }
+    .dot { width: 10px; height: 10px; border-radius: 999px; display: inline-block; flex: 0 0 auto; }
+    .avatars { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .avatars img {
+      width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--bg-accent);
+      object-fit: cover; box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    }
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 18px; }
+    .detail-grid section, .section-block {
+      border: 1px solid var(--line); border-radius: 18px; padding: 18px; background: rgba(255,255,255,0.36);
+    }
+    [data-theme="dark"] .detail-grid section, [data-theme="dark"] .section-block { background: rgba(255,255,255,0.02); }
+    .detail-grid h4, .section-block h4 { margin: 0 0 10px; font-size: 16px; color: var(--brand); }
+    .detail-grid p, .section-block p { margin: 0; color: var(--muted); line-height: 1.8; }
+    .detail-grid ul { margin: 0; padding-left: 18px; color: var(--muted); line-height: 1.8; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .stack-row { margin-top: 10px; }
+    .tag, .stack {
+      border-radius: 999px; padding: 6px 12px; font-size: 13px; border: 1px solid var(--line);
+      background: rgba(15,118,110,0.08); color: var(--brand);
+    }
+    .stack { background: rgba(249,115,22,0.08); color: var(--brand-2); }
+    .tag.muted { background: transparent; color: var(--muted); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+    .info-item { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: rgba(255,255,255,0.4); }
+    [data-theme="dark"] .info-item { background: rgba(255,255,255,0.02); }
+    .info-item .label {
+      display: block; font-size: 12px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.04em; margin-bottom: 6px;
+    }
+    .info-item strong { display: block; font-size: 15px; word-break: break-word; }
+    .recommendation { border-style: dashed; }
+    .recommendation strong { display: block; margin-bottom: 6px; }
+    .surface { padding: 22px; }
+    .bar-list { display: grid; gap: 12px; }
+    .bar-row { display: grid; grid-template-columns: 150px 1fr 48px; gap: 12px; align-items: center; }
+    .bar-bg { height: 16px; border-radius: 999px; background: rgba(82,96,109,0.12); overflow: hidden; }
+    .bar { height: 100%; border-radius: 999px; }
+    .group {
+      background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+      box-shadow: var(--shadow); margin-bottom: 14px; overflow: hidden;
+    }
+    .group summary {
+      list-style: none; cursor: pointer; padding: 18px 20px; font-size: 18px;
+      font-weight: 700; display: flex; justify-content: space-between; gap: 12px;
+    }
+    .group summary::-webkit-details-marker { display: none; }
+    .mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; padding: 0 20px 20px; }
+    .mini-card { border: 1px solid var(--line); border-radius: 18px; padding: 16px; background: rgba(255,255,255,0.4); }
+    [data-theme="dark"] .mini-card { background: rgba(255,255,255,0.02); }
+    .mini-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+    .mini-card p { margin: 0; color: var(--muted); line-height: 1.7; }
+    .muted-line { color: var(--muted); }
+    footer { margin-top: 28px; color: var(--muted); text-align: center; line-height: 1.8; }
+    @media (max-width: 820px) {
+      .hero { padding: 26px 22px 22px; }
+      .hero-top { flex-direction: column; }
+      .top-head { grid-template-columns: 1fr; }
+      .delta { font-size: 24px; }
+      .bar-row { grid-template-columns: 90px 1fr 40px; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">GitHub Trending Daily Snapshot · 2026-04-10</div>
+          <h1>GitHub Trending 日报</h1>
+          <p>基于 GitHub Trending 与 Explore 的今日公开快照生成，聚焦今天最热的开源仓库、语言分布，以及 Top 项目的 README 摘要与亮点信息。</p>
+        </div>
+        <div class="hero-actions">
+          <a href="https://github.com/trending" target="_blank" rel="noreferrer">打开 Trending</a>
+          <a href="https://github.com/explore" target="_blank" rel="noreferrer">打开 Explore</a>
+          <button type="button" id="theme-toggle">切换主题</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>12</strong><span>Trending 项目</span></div>
+        <div class="stat"><strong>0</strong><span>Explore 推荐</span></div>
+        <div class="stat"><strong>7</strong><span>涉及语言数量</span></div>
+        <div class="stat"><strong>19.5k</strong><span>今日总 Star 增量</span></div>
+        <div class="stat"><strong>144.8k</strong><span>最高总 Stars</span></div>
+      </div>
+    </section>
+
+    <section class="section"><div class="section-header"><div><h2>今日洞察</h2><p>根据今天抓到的 Trending 数据自动生成的简要观察。</p></div></div><div class="insight-grid"><article class="insight-card"><h3>Python 是今天最集中的技术方向</h3><p>在 12 个 Trending 项目里，Python 占了 4 个，约 33%，说明今天的关注度明显向这个生态集中。</p></article><article class="insight-card"><h3>AI / Agent 方向依然占据高热度</h3><p>根据仓库名、描述和 README 关键词粗略统计，今天约有 11 个项目和 AI、Agent 或 LLM 相关，热度仍然很强。</p></article><article class="insight-card"><h3>NousResearch/hermes-agent 是今天增速最快的仓库</h3><p>它今天新增约 6,485 Stars，适合作为今天最值得优先打开的样本仓库。</p></article></div></section>
+    <section class="section"><div class="section-header"><div><h2>语言分布</h2><p>按今天 Trending 列表的语言标签聚合。</p></div></div><div class="surface"><div class="bar-list">
+            <div class="bar-row">
+              <span>Python</span>
+              <div class="bar-bg"><div class="bar" style="width:100%; background:#3572A5"></div></div>
+              <strong>4</strong>
+            </div>
+            
+            <div class="bar-row">
+              <span>TypeScript</span>
+              <div class="bar-bg"><div class="bar" style="width:75%; background:#3178C6"></div></div>
+              <strong>3</strong>
+            </div>
+            
+            <div class="bar-row">
+              <span>Unknown</span>
+              <div class="bar-bg"><div class="bar" style="width:25%; background:#8B949E"></div></div>
+              <strong>1</strong>
+            </div>
+            
+            <div class="bar-row">
+              <span>Java</span>
+              <div class="bar-bg"><div class="bar" style="width:25%; background:#B07219"></div></div>
+              <strong>1</strong>
+            </div>
+            
+            <div class="bar-row">
+              <span>Shell</span>
+              <div class="bar-bg"><div class="bar" style="width:25%; background:#89E051"></div></div>
+              <strong>1</strong>
+            </div>
+            
+            <div class="bar-row">
+              <span>C</span>
+              <div class="bar-bg"><div class="bar" style="width:25%; background:#555555"></div></div>
+              <strong>1</strong>
+            </div>
+            
+            <div class="bar-row">
+              <span>HTML</span>
+              <div class="bar-bg"><div class="bar" style="width:25%; background:#8B949E"></div></div>
+              <strong>1</strong>
+            </div>
+            </div></div></section>
+    <section class="section"><div class="section-header"><div><h2>今日最热 Top 10</h2><p>按今天 Star 增量排序，同时补充 Top 项目的 README 摘要、技术栈和仓库信息。</p></div></div><div class="top-list">
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#3</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noreferrer">NousResearch/hermes-agent</a></h3>
+          <p>Star
+NousResearch /
+hermes-agent
+The agent that grows with you</p>
+        </div>
+        <div class="delta">+6,485</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#3572A5"></span>Python</span>
+        <span>Stars 48,740</span>
+        <span>Forks 6,269</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/127238744?s=40&amp;amp;v=4" alt="@teknium1" title="@teknium1" /><img src="https://avatars.githubusercontent.com/u/35742124?s=40&amp;amp;v=4" alt="@0xbyt4" title="@0xbyt4" /><img src="https://avatars.githubusercontent.com/u/82637225?s=40&amp;amp;v=4" alt="@kshitijk4poor" title="@kshitijk4poor" /><img src="https://avatars.githubusercontent.com/u/81847?s=40&amp;amp;v=4" alt="@claude" title="@claude" /><img src="https://avatars.githubusercontent.com/u/56565191?s=40&amp;amp;v=4" alt="@erosika" title="@erosika" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star NousResearch / hermes-agent The agent that grows with you 从 Topics、README 结构和仓库组织看，它更像一个 agent workflow / developer productivity toolkit。 今天的增长非常陡，说明它正快速进入开发者视野。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前已经进入生产候选观察区间。更适合研究团队、算法工程师或需要实验环境的人。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>SOUL.md — persona file</li><li>Memories — MEMORY.md and USER.md entries</li><li>Skills — user-created skills → ~/.hermes/skills/openclaw-imports/</li><li>Command allowlist — approval patterns</li><li>Messaging settings — platform configs, allowed users, working directory</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag">ai</span><span class="tag">openai</span><span class="tag">hermes</span><span class="tag">codex</span><span class="tag">ai-agents</span><span class="tag">claude</span><span class="tag">ai-agent</span><span class="tag">llm</span><span class="tag">chatgpt</span><span class="tag">anthropic</span><span class="tag">claude-code</span><span class="tag">clawdbot</span><span class="tag">moltbot</span><span class="tag">openclaw</span><span class="tag">hermes-agent</span><span class="tag">nous-research</span></div>
+        <div class="badge-row stack-row"><span class="stack">ai</span><span class="stack">openai</span><span class="stack">hermes</span><span class="stack">codex</span><span class="stack">ai-agents</span><span class="stack">claude</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>The self-improving AI agent built by Nous Research .</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>48,740</strong></div><div class="info-item"><span class="label">Forks</span><strong>6,269</strong></div><div class="info-item"><span class="label">Watchers</span><strong>194</strong></div><div class="info-item"><span class="label">Commits</span><strong>3,697</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>970</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>1,658</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Production Candidate</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Evaluate</strong></div><div class="info-item"><span class="label">Confidence</span><strong>high</strong></div><div class="info-item"><span class="label">License</span><strong>MIT — see LICENSE .</strong></div><div class="info-item"><span class="label">Homepage</span><strong><a href="https://hermes-agent.nousresearch.com" target="_blank" rel="noreferrer">https://hermes-agent.nousresearch.com</a></strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>Topics 聚焦于 ai, openai, hermes, codex，说明项目定位较明确。</li><li>README headings 包含 Hermes Agent ☤, Quick Install, Getting Started，暴露了主要能力与交付路径。</li><li>顶层目录包含 .github, .plans, acp_adapter, acp_registry, agent，可以看到实际交付和组织形态。</li><li>仓库存在 docs, examples, cli, sdk 等交付线索，不只是概念描述。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>今天值得优先点开，因为它同时具备趋势热度和较完整的交付信号，适合进入 agent workflow / developer productivity toolkit 方向的正式选型评估。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#1</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/microsoft/markitdown" target="_blank" rel="noreferrer">microsoft/markitdown</a></h3>
+          <p>Star
+microsoft /
+markitdown
+Python tool for converting files and office documents to Markdown.</p>
+        </div>
+        <div class="delta">+2,353</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#3572A5"></span>Python</span>
+        <span>Stars 97,692</span>
+        <span>Forks 5,967</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/4017093?s=40&amp;amp;v=4" alt="@afourney" title="@afourney" /><img src="https://avatars.githubusercontent.com/u/13227607?s=40&amp;amp;v=4" alt="@gagb" title="@gagb" /><img src="https://avatars.githubusercontent.com/u/10201242?s=40&amp;amp;v=4" alt="@sugatoray" title="@sugatoray" /><img src="https://avatars.githubusercontent.com/u/173082609?s=40&amp;amp;v=4" alt="@PetrAPConsulting" title="@PetrAPConsulting" /><img src="https://avatars.githubusercontent.com/u/71011125?s=40&amp;amp;v=4" alt="@l-lumin" title="@l-lumin" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star microsoft / markitdown Python tool for converting files and office documents to Markdown. 从 Topics、README 结构和仓库组织看，它更像一个 developer SDK / framework。 今天的增长非常陡，说明它正快速进入开发者视野。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前已具备试点候选信号。更适合需要把能力接入现有系统的开发团队。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>Dependencies are now organized into optional feature-groups (further details below). Use pip install &#x27;marki...</li><li>Images (EXIF metadata and OCR)</li><li>Audio (EXIF metadata and speech transcription)</li><li>Text-based formats (CSV, JSON, XML)</li><li>ZIP files (iterates over contents)</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag">markdown</span><span class="tag">pdf</span><span class="tag">openai</span><span class="tag">microsoft-office</span><span class="tag">autogen</span><span class="tag">langchain</span><span class="tag">autogen-extension</span></div>
+        <div class="badge-row stack-row"><span class="stack">markdown</span><span class="stack">pdf</span><span class="stack">openai</span><span class="stack">microsoft-office</span><span class="stack">autogen</span><span class="stack">langchain</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>MarkItDown now offers an MCP (Model Context Protocol) server for integration with LLM applications like Claude Desktop.</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>97,692</strong></div><div class="info-item"><span class="label">Forks</span><strong>5,967</strong></div><div class="info-item"><span class="label">Watchers</span><strong>349</strong></div><div class="info-item"><span class="label">Commits</span><strong>305</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>320</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>200</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Pilot Candidate</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Pilot</strong></div><div class="info-item"><span class="label">Confidence</span><strong>high</strong></div><div class="info-item"><span class="label">License</span><strong>-</strong></div><div class="info-item"><span class="label">Homepage</span><strong>-</strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>Topics 聚焦于 markdown, pdf, openai, microsoft-office，说明项目定位较明确。</li><li>README headings 包含 MarkItDown, Why Markdown?, Prerequisites，暴露了主要能力与交付路径。</li><li>顶层目录包含 .devcontainer, .github, packages, .dockerignore, .gitattributes，可以看到实际交付和组织形态。</li><li>仓库存在 sdk, integrations 等交付线索，不只是概念描述。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>它已经不只是概念样本，更适合拿来做 developer SDK / framework 方向的小范围试点接入，先验证边界与成本。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#10</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/obra/superpowers" target="_blank" rel="noreferrer">obra/superpowers</a></h3>
+          <p>Sponsor
+Star
+obra /
+superpowers
+An agentic skills framework &amp; software development methodology that works.</p>
+        </div>
+        <div class="delta">+2,299</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#89e051"></span>Shell</span>
+        <span>Stars 144,805</span>
+        <span>Forks 12,401</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/45416?s=40&amp;amp;v=4" alt="@obra" title="@obra" /><img src="https://avatars.githubusercontent.com/u/81847?s=40&amp;amp;v=4" alt="@claude" title="@claude" /><img src="https://avatars.githubusercontent.com/u/5742859?s=40&amp;amp;v=4" alt="@arittr" title="@arittr" /><img src="https://avatars.githubusercontent.com/u/69736?s=40&amp;amp;v=4" alt="@clkao" title="@clkao" /><img src="https://avatars.githubusercontent.com/u/62661?s=40&amp;amp;v=4" alt="@jjshanks" title="@jjshanks" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Sponsor Star obra / superpowers An agentic skills framework &amp; software development methodology that works. 从 Topics、README 结构和仓库组织看，它更像一个 agent workflow / developer productivity toolkit。 今天的增长非常陡，说明它正快速进入开发者视野。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前已经进入生产候选观察区间。更适合需要把能力接入现有系统的开发团队。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>Brainstorming - Activates before writing code. Refines rough ideas through questions, explores alternatives...</li><li>Using-git-worktrees - Activates after design approval. Creates isolated workspace on new branch, runs proje...</li><li>Writing-plans - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every...</li><li>Requesting-code-review - Activates between tasks. Reviews against plan, reports issues by severity. Critica...</li><li>Finishing-a-development-branch - Activates when tasks complete. Verifies tests, presents options (merge/PR/...</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag muted">None</span></div>
+        <div class="badge-row stack-row"><span class="stack">Agent</span><span class="stack">Claude</span><span class="stack">Copilot</span><span class="stack">AI</span><span class="stack">CLI</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>It starts from the moment you fire up your coding agent.</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>144,805</strong></div><div class="info-item"><span class="label">Forks</span><strong>12,401</strong></div><div class="info-item"><span class="label">Watchers</span><strong>612</strong></div><div class="info-item"><span class="label">Commits</span><strong>421</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>129</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>132</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Production Candidate</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Evaluate</strong></div><div class="info-item"><span class="label">Confidence</span><strong>high</strong></div><div class="info-item"><span class="label">License</span><strong>-</strong></div><div class="info-item"><span class="label">Homepage</span><strong>-</strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>README headings 包含 Superpowers, How it works, Sponsorship，暴露了主要能力与交付路径。</li><li>顶层目录包含 .claude-plugin, .codex, .cursor-plugin, .github, .opencode，可以看到实际交付和组织形态。</li><li>仓库存在 docs, cli, sdk, integrations 等交付线索，不只是概念描述。</li><li>热度与维护信号显示为 2,299 stars in period / 12,401 forks / 421 commits。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>今天值得优先点开，因为它同时具备趋势热度和较完整的交付信号，适合进入 agent workflow / developer productivity toolkit 方向的正式选型评估。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#5</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/multica-ai/multica" target="_blank" rel="noreferrer">multica-ai/multica</a></h3>
+          <p>Star
+multica-ai /
+multica
+The open-source managed agents platform. Turn coding agents into real teammates — assign tasks, track progress, compound skills.</p>
+        </div>
+        <div class="delta">+1,680</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#3178c6"></span>TypeScript</span>
+        <span>Stars 4,997</span>
+        <span>Forks 620</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/81847?s=40&amp;amp;v=4" alt="@claude" title="@claude" /><img src="https://avatars.githubusercontent.com/u/7857126?s=40&amp;amp;v=4" alt="@forrestchang" title="@forrestchang" /><img src="https://avatars.githubusercontent.com/u/145280634?s=40&amp;amp;v=4" alt="@NevilleQingNY" title="@NevilleQingNY" /><img src="https://avatars.githubusercontent.com/u/3798479?s=40&amp;amp;v=4" alt="@ldnvnbl" title="@ldnvnbl" /><img src="https://avatars.githubusercontent.com/u/52446949?s=40&amp;amp;v=4" alt="@Bohan-J" title="@Bohan-J" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star multica-ai / multica The open-source managed agents platform. Turn coding agents into real teammates — assign tasks, track progress, compound skills. 从 Topics、README 结构和仓库组织看，它更像一个 agent workflow / developer productivity toolkit。 今天的增长非常陡，说明它正快速进入开发者视野。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前已经进入生产候选观察区间。更适合需要把能力接入现有系统的开发团队。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>Agents as Teammates — assign to an agent like you&#x27;d assign to a colleague. They have profiles, show up on t...</li><li>Autonomous Execution — set it and forget it. Full task lifecycle management (enqueue, claim, start, complet...</li><li>Reusable Skills — every solution becomes a reusable skill for the whole team. Deployments, migrations, code...</li><li>Unified Runtimes — one dashboard for all your compute. Local daemons and cloud runtimes, auto-detection of...</li><li>Multi-Workspace — organize work across teams with workspace-level isolation. Each workspace has its own age...</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag muted">None</span></div>
+        <div class="badge-row stack-row"><span class="stack">Agent</span><span class="stack">Claude</span><span class="stack">AI</span><span class="stack">ML</span><span class="stack">Vector Search</span><span class="stack">CLI</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>The open-source managed agents platform.</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>4,997</strong></div><div class="info-item"><span class="label">Forks</span><strong>620</strong></div><div class="info-item"><span class="label">Watchers</span><strong>13</strong></div><div class="info-item"><span class="label">Commits</span><strong>2,070</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>50</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>39</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Production Candidate</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Evaluate</strong></div><div class="info-item"><span class="label">Confidence</span><strong>high</strong></div><div class="info-item"><span class="label">License</span><strong>-</strong></div><div class="info-item"><span class="label">Homepage</span><strong><a href="https://multica.ai" target="_blank" rel="noreferrer">https://multica.ai</a></strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>README headings 包含 Multica, What is Multica?, Features，暴露了主要能力与交付路径。</li><li>顶层目录包含 .github, apps, docker, docs, e2e，可以看到实际交付和组织形态。</li><li>仓库存在 docs, examples, cli, sdk 等交付线索，不只是概念描述。</li><li>热度与维护信号显示为 1,680 stars in period / 620 forks / 2,070 commits。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>今天值得优先点开，因为它同时具备趋势热度和较完整的交付信号，适合进入 agent workflow / developer productivity toolkit 方向的正式选型评估。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#6</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/forrestchang/andrej-karpathy-skills" target="_blank" rel="noreferrer">forrestchang/andrej-karpathy-skills</a></h3>
+          <p>Star
+forrestchang /
+andrej-karpathy-skills
+A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy&#x27;s observations on LLM coding pitfalls.</p>
+        </div>
+        <div class="delta">+1,364</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#8B949E"></span>Unknown</span>
+        <span>Stars 11,177</span>
+        <span>Forks 739</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/7857126?s=40&amp;amp;v=4" alt="@forrestchang" title="@forrestchang" /><img src="https://avatars.githubusercontent.com/u/81847?s=40&amp;amp;v=4" alt="@claude" title="@claude" /><img src="https://avatars.githubusercontent.com/u/45536170?s=40&amp;amp;v=4" alt="@back1ply" title="@back1ply" /><img src="https://avatars.githubusercontent.com/u/478549?s=40&amp;amp;v=4" alt="@szkocot" title="@szkocot" /><img src="https://avatars.githubusercontent.com/u/49151155?s=40&amp;amp;v=4" alt="@TomBener" title="@TomBener" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star forrestchang / andrej-karpathy-skills A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy&#x27;s observations on LLM coding pitfalls. 从 Topics、README 结构和仓库组织看，它更像一个 agent workflow / developer productivity toolkit。 今天有明显增量，说明它处在被快速传播的阶段。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前更像参考实现。更适合关注 AI Agent 工作流和开发效率体系的团队。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>State assumptions explicitly — If uncertain, ask rather than guess</li><li>Present multiple interpretations — Don&#x27;t pick silently when ambiguity exists</li><li>Push back when warranted — If a simpler approach exists, say so</li><li>Stop when confused — Name what&#x27;s unclear and ask for clarification</li><li>No features beyond what was asked</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag muted">None</span></div>
+        <div class="badge-row stack-row"><span class="stack">LLM</span><span class="stack">Claude</span><span class="stack">AI</span><span class="stack">RAG</span><span class="stack">API</span><span class="stack">TypeScript</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy&#x27;s observations on LLM coding pitfalls.</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>11,177</strong></div><div class="info-item"><span class="label">Forks</span><strong>739</strong></div><div class="info-item"><span class="label">Watchers</span><strong>87</strong></div><div class="info-item"><span class="label">Commits</span><strong>21</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>15</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>10</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Reference Impl</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Benchmark</strong></div><div class="info-item"><span class="label">Confidence</span><strong>medium</strong></div><div class="info-item"><span class="label">License</span><strong>MIT</strong></div><div class="info-item"><span class="label">Homepage</span><strong>-</strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>README headings 包含 Karpathy-Inspired Claude Code Guidelines, The Problems, The Solution，暴露了主要能力与交付路径。</li><li>顶层目录包含 .claude-plugin, skills/karpathy-guidelines, CLAUDE.md, EXAMPLES.md, README.md，可以看到实际交付和组织形态。</li><li>仓库存在 docs, examples, integrations 等交付线索，不只是概念描述。</li><li>热度与维护信号显示为 1,364 stars in period / 739 forks / 21 commits。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>更适合把它当成 agent workflow / developer productivity toolkit 赛道里的对标对象，优先看它的能力边界、集成面和工程取舍。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#8</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/HKUDS/DeepTutor" target="_blank" rel="noreferrer">HKUDS/DeepTutor</a></h3>
+          <p>Star
+HKUDS /
+DeepTutor
+&quot;DeepTutor: Agent-Native Personalized Learning Assistant&quot;</p>
+        </div>
+        <div class="delta">+1,310</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#3572A5"></span>Python</span>
+        <span>Stars 15,502</span>
+        <span>Forks 2,054</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/150592536?s=40&amp;amp;v=4" alt="@pancacake" title="@pancacake" /><img src="https://avatars.githubusercontent.com/in/15368?s=40&amp;amp;v=4" alt="@github-actions" title="@github-actions" /><img src="https://avatars.githubusercontent.com/u/64004539?s=40&amp;amp;v=4" alt="@tusharkhatriofficial" title="@tusharkhatriofficial" /><img src="https://avatars.githubusercontent.com/u/235653744?s=40&amp;amp;v=4" alt="@scrrlt" title="@scrrlt" /><img src="https://avatars.githubusercontent.com/u/222222878?s=40&amp;amp;v=4" alt="@RinZ27" title="@RinZ27" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star HKUDS / DeepTutor &quot;DeepTutor: Agent-Native Personalized Learning Assistant&quot; 从 Topics、README 结构和仓库组织看，它更像一个 agent workflow / developer productivity toolkit。 今天有明显增量，说明它处在被快速传播的阶段。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前已具备试点候选信号。更适合研究团队、算法工程师或需要实验环境的人。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>CLI mode — A fully interactive terminal flow: choose a dependency profile, install dependencies, configure...</li><li>Design a learning plan — Identify 3–5 progressive knowledge points from your materials</li><li>Generate interactive pages — Each point becomes a rich visual HTML page with explanations, diagrams, and ex...</li><li>Enable contextual Q&amp;A — Chat alongside each step for deeper exploration</li><li>Summarize your progress — Upon completion, receive a learning summary of everything you&#x27;ve covered</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag">interactive-learning</span><span class="tag">multi-agent-systems</span><span class="tag">ai-agents</span><span class="tag">cli-tool</span><span class="tag">rag</span><span class="tag">large-language-models</span><span class="tag">ai-tutor</span><span class="tag">deepresearch</span><span class="tag">clawdbot</span></div>
+        <div class="badge-row stack-row"><span class="stack">interactive-learning</span><span class="stack">multi-agent-systems</span><span class="stack">ai-agents</span><span class="stack">cli-tool</span><span class="stack">rag</span><span class="stack">large-language-models</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>A huge thank you to our incredible community for the su...</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>15,502</strong></div><div class="info-item"><span class="label">Forks</span><strong>2,054</strong></div><div class="info-item"><span class="label">Watchers</span><strong>114</strong></div><div class="info-item"><span class="label">Commits</span><strong>482</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>14</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>3</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Pilot Candidate</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Pilot</strong></div><div class="info-item"><span class="label">Confidence</span><strong>high</strong></div><div class="info-item"><span class="label">License</span><strong>-</strong></div><div class="info-item"><span class="label">Homepage</span><strong>-</strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>Topics 聚焦于 interactive-learning, multi-agent-systems, ai-agents, cli-tool，说明项目定位较明确。</li><li>README headings 包含 DeepTutor: Agent-Native Personalized Tutoring, 📰 News, 📦 Releases，暴露了主要能力与交付路径。</li><li>顶层目录包含 .github, assets, deeptutor, deeptutor_cli, docs，可以看到实际交付和组织形态。</li><li>仓库存在 docs, cli 等交付线索，不只是概念描述。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>它已经不只是概念样本，更适合拿来做 agent workflow / developer productivity toolkit 方向的小范围试点接入，先验证边界与成本。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#12</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/shanraisshan/claude-code-best-practice" target="_blank" rel="noreferrer">shanraisshan/claude-code-best-practice</a></h3>
+          <p>Star
+shanraisshan /
+claude-code-best-practice
+practice made claude perfect</p>
+        </div>
+        <div class="delta">+1,248</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#e34c26"></span>HTML</span>
+        <span>Stars 34,902</span>
+        <span>Forks 3,294</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/11731897?s=40&amp;amp;v=4" alt="@shanraisshan" title="@shanraisshan" /><img src="https://avatars.githubusercontent.com/u/81847?s=40&amp;amp;v=4" alt="@claude" title="@claude" /><img src="https://avatars.githubusercontent.com/u/1303131?s=40&amp;amp;v=4" alt="@neutmute" title="@neutmute" /><img src="https://avatars.githubusercontent.com/u/192189596?s=40&amp;amp;v=4" alt="@shayangd" title="@shayangd" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star shanraisshan / claude-code-best-practice practice made claude perfect 从 Topics、README 结构和仓库组织看，它更像一个 HTML project。 今天有明显增量，说明它处在被快速传播的阶段。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前更像参考实现。更适合关注 AI Agent 工作流和开发效率体系的团队。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>从 README 结构、Topics 和仓库组织看，它更像一个 HTML project，而不是单纯演示仓库。</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag muted">None</span></div>
+        <div class="badge-row stack-row"><span class="stack">HTML</span><span class="stack">Claude</span><span class="stack">AI</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>Star
+shanraisshan /
+claude-code-best-practice
+practice made claude perfect</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>34,902</strong></div><div class="info-item"><span class="label">Forks</span><strong>3,294</strong></div><div class="info-item"><span class="label">Watchers</span><strong>-</strong></div><div class="info-item"><span class="label">Commits</span><strong>-</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>-</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>-</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Reference Impl</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Benchmark</strong></div><div class="info-item"><span class="label">Confidence</span><strong>low</strong></div><div class="info-item"><span class="label">License</span><strong>-</strong></div><div class="info-item"><span class="label">Homepage</span><strong>-</strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>热度与维护信号显示为 1,248 stars in period / 3,294 forks / 0 commits。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>更适合把它当成 HTML project 赛道里的对标对象，优先看它的能力边界、集成面和工程取舍。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#4</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/rowboatlabs/rowboat" target="_blank" rel="noreferrer">rowboatlabs/rowboat</a></h3>
+          <p>Star
+rowboatlabs /
+rowboat
+Open-source AI coworker, with memory</p>
+        </div>
+        <div class="delta">+1,187</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#3178c6"></span>TypeScript</span>
+        <span>Stars 11,362</span>
+        <span>Forks 1,068</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/30795890?s=40&amp;amp;v=4" alt="@ramnique" title="@ramnique" /><img src="https://avatars.githubusercontent.com/u/6592213?s=40&amp;amp;v=4" alt="@arkml" title="@arkml" /><img src="https://avatars.githubusercontent.com/u/55130408?s=40&amp;amp;v=4" alt="@akhisud3195" title="@akhisud3195" /><img src="https://avatars.githubusercontent.com/u/47842976?s=40&amp;amp;v=4" alt="@tusharmagar" title="@tusharmagar" /><img src="https://avatars.githubusercontent.com/in/15368?s=40&amp;amp;v=4" alt="@github-actions" title="@github-actions" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star rowboatlabs / rowboat Open-source AI coworker, with memory 从 Topics、README 结构和仓库组织看，它更像一个 agent workflow / developer productivity toolkit。 今天有明显增量，说明它处在被快速传播的阶段。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前已经进入生产候选观察区间。更适合需要把能力接入现有系统的开发团队。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>Build me a deck about our next quarter roadmap → generates a PDF using context from your knowledge graph</li><li>Prep me for my meeting with Alex → pulls past decisions, open questions, and relevant threads into a crisp...</li><li>Track a person, company or topic through live notes</li><li>Visualize, edit, and update your knowledge graph anytime (it’s just Markdown)</li><li>Record voice memos that automatically capture and update key takeaways in the graph</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag">productivity</span><span class="tag">open-source</span><span class="tag">ai</span><span class="tag">orchestration</span><span class="tag">multiagent</span><span class="tag">agents</span><span class="tag">ai-agents</span><span class="tag">llm</span><span class="tag">generative-ai</span><span class="tag">chatgpt</span><span class="tag">opeani</span><span class="tag">ai-agents-automation</span><span class="tag">claude-code</span><span class="tag">agents-sdk</span><span class="tag">claude-cowork</span></div>
+        <div class="badge-row stack-row"><span class="stack">productivity</span><span class="stack">open-source</span><span class="stack">ai</span><span class="stack">orchestration</span><span class="stack">multiagent</span><span class="stack">agents</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>Download latest for Mac/Windows/Linux: Download ⭐ If you find Rowboat useful, please star the repo.</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>11,362</strong></div><div class="info-item"><span class="label">Forks</span><strong>1,068</strong></div><div class="info-item"><span class="label">Watchers</span><strong>63</strong></div><div class="info-item"><span class="label">Commits</span><strong>1,496</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>35</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>42</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Production Candidate</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Evaluate</strong></div><div class="info-item"><span class="label">Confidence</span><strong>high</strong></div><div class="info-item"><span class="label">License</span><strong>-</strong></div><div class="info-item"><span class="label">Homepage</span><strong><a href="https://www.rowboatlabs.com" target="_blank" rel="noreferrer">https://www.rowboatlabs.com</a></strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>Topics 聚焦于 productivity, open-source, ai, orchestration，说明项目定位较明确。</li><li>README headings 包含 Rowboat, Demo, Installation，暴露了主要能力与交付路径。</li><li>顶层目录包含 .github/workflows, apps, assets, .env.example, .gitattributes，可以看到实际交付和组织形态。</li><li>仓库存在 demo, sdk, integrations 等交付线索，不只是概念描述。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>今天值得优先点开，因为它同时具备趋势热度和较完整的交付信号，适合进入 agent workflow / developer productivity toolkit 方向的正式选型评估。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#9</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/opendataloader-project/opendataloader-pdf" target="_blank" rel="noreferrer">opendataloader-project/opendataloader-pdf</a></h3>
+          <p>Star
+opendataloader-project /
+opendataloader-pdf
+PDF Parser for AI-ready data. Automate PDF accessibility. Open-source.</p>
+        </div>
+        <div class="delta">+1,124</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#b07219"></span>Java</span>
+        <span>Stars 14,360</span>
+        <span>Forks 1,220</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/81847?s=40&amp;amp;v=4" alt="@claude" title="@claude" /><img src="https://avatars.githubusercontent.com/u/9129435?s=40&amp;amp;v=4" alt="@bundolee" title="@bundolee" /><img src="https://avatars.githubusercontent.com/u/36183885?s=40&amp;amp;v=4" alt="@MaximPlusov" title="@MaximPlusov" /><img src="https://avatars.githubusercontent.com/u/59254003?s=40&amp;amp;v=4" alt="@LonelyMidoriya" title="@LonelyMidoriya" /><img src="https://avatars.githubusercontent.com/u/211624272?s=40&amp;amp;v=4" alt="@suji-cho" title="@suji-cho" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star opendataloader-project / opendataloader-pdf PDF Parser for AI-ready data. Automate PDF accessibility. Open-source. 从 Topics、README 结构和仓库组织看，它更像一个 agent workflow / developer productivity toolkit。 今天有明显增量，说明它处在被快速传播的阶段。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前已经进入生产候选观察区间。更适合需要把能力接入现有系统的开发团队。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>Scanned PDFs and OCR? — Yes. Built-in OCR (80+ languages) in hybrid mode. Works with poor-quality scans at...</li><li>Tables, formulas, images, charts? — Yes. Complex/borderless tables, LaTeX formulas, and AI-generated pictur...</li><li>What&#x27;s the problem? — Accessibility regulations are now enforced worldwide. Manual PDF remediation costs $5...</li><li>What&#x27;s free? — Layout analysis + auto-tagging (Q2 2026, Apache 2.0). Untagged PDF in → Tagged PDF out. No p...</li><li>Hidden text (transparent, zero-size fonts)</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag">html</span><span class="tag">markdown</span><span class="tag">pdf</span><span class="tag">json</span><span class="tag">ocr</span><span class="tag">ai</span><span class="tag">accessibility</span><span class="tag">a11y</span><span class="tag">pdf-converter</span><span class="tag">tables</span><span class="tag">ocr-recognition</span><span class="tag">pdf-parser</span><span class="tag">rag</span><span class="tag">bounding-box</span><span class="tag">eaa</span><span class="tag">pdf-extraction</span><span class="tag">tagged-pdf</span><span class="tag">document-parsing</span><span class="tag">pdf-accessibility</span><span class="tag">pdf-ua</span></div>
+        <div class="badge-row stack-row"><span class="stack">html</span><span class="stack">markdown</span><span class="stack">pdf</span><span class="stack">json</span><span class="stack">ocr</span><span class="stack">ai</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>PDF Parser for AI-ready data.</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>14,360</strong></div><div class="info-item"><span class="label">Forks</span><strong>1,220</strong></div><div class="info-item"><span class="label">Watchers</span><strong>60</strong></div><div class="info-item"><span class="label">Commits</span><strong>571</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>24</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>9</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Production Candidate</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Evaluate</strong></div><div class="info-item"><span class="label">Confidence</span><strong>high</strong></div><div class="info-item"><span class="label">License</span><strong>Apache License 2.0</strong></div><div class="info-item"><span class="label">Homepage</span><strong><a href="https://opendataloader.org" target="_blank" rel="noreferrer">https://opendataloader.org</a></strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>Topics 聚焦于 html, markdown, pdf, json，说明项目定位较明确。</li><li>README headings 包含 OpenDataLoader PDF, Get Started in 30 Seconds, What Problems Does This Solve?，暴露了主要能力与交付路径。</li><li>顶层目录包含 .github, LICENSE_TEMPLATE, THIRD_PARTY, build-scripts, content/docs，可以看到实际交付和组织形态。</li><li>仓库存在 docs, examples, sdk, integrations 等交付线索，不只是概念描述。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>今天值得优先点开，因为它同时具备趋势热度和较完整的交付信号，适合进入 agent workflow / developer productivity toolkit 方向的正式选型评估。</p>
+      </section>
+    </article>
+    
+    <article class="top-card">
+      <div class="top-head">
+        <div class="rank">#7</div>
+        <div class="title-block">
+          <h3><a href="https://github.com/shiyu-coder/Kronos" target="_blank" rel="noreferrer">shiyu-coder/Kronos</a></h3>
+          <p>Star
+shiyu-coder /
+Kronos
+Kronos: A Foundation Model for the Language of Financial Markets</p>
+        </div>
+        <div class="delta">+245</div>
+      </div>
+      <div class="meta-row">
+        <span class="lang"><span class="dot" style="background:#3572A5"></span>Python</span>
+        <span>Stars 12,455</span>
+        <span>Forks 2,525</span>
+      </div>
+      <div class="avatars"><img src="https://avatars.githubusercontent.com/u/65760973?s=40&amp;amp;v=4" alt="@shiyu-coder" title="@shiyu-coder" /><img src="https://avatars.githubusercontent.com/u/54936491?s=40&amp;amp;v=4" alt="@Luciferbobo" title="@Luciferbobo" /><img src="https://avatars.githubusercontent.com/u/18326516?s=40&amp;amp;v=4" alt="@CharlesJ-ABu" title="@CharlesJ-ABu" /><img src="https://avatars.githubusercontent.com/u/1777564?s=40&amp;amp;v=4" alt="@AnMakc" title="@AnMakc" /><img src="https://avatars.githubusercontent.com/u/1936983?s=40&amp;amp;v=4" alt="@ehan1990" title="@ehan1990" /></div>
+      <div class="detail-grid">
+        <section>
+          <h4>README 摘要</h4>
+          <p>Star shiyu-coder / Kronos Kronos: A Foundation Model for the Language of Financial Markets 从 Topics、README 结构和仓库组织看，它更像一个 web application or product surface。 今天有一定增量，说明它已经获得可见关注。同时它还具备一定的社区协作和持续维护信号，不只是短期热门仓库。当前更像参考实现。更适合把它当作入门材料或知识清单来快速建立认知。</p>
+        </section>
+        <section>
+          <h4>核心特性</h4>
+          <ul><li>🚩 [2025.11.10] Kronos has been accpeted by AAAI 2026</li><li>🚩 [2025.08.17] We have released the scripts for fine-tuning! Check them out to adapt Kronos to your own tasks</li><li>🚩 [2025.08.02] Our paper is now available on arXiv !</li><li>A specialized tokenizer first quantizes continuous, multi-dimensional K-line data (OHLCV) into hierarchical...</li><li>A large, autoregressive Transformer is then pre-trained on these tokens, enabling it to serve as a unified...</li></ul>
+        </section>
+      </div>
+      <section class="section-block">
+        <h4>Topics / Tech Stack</h4>
+        <div class="badge-row"><span class="tag muted">None</span></div>
+        <div class="badge-row stack-row"><span class="stack">AI</span><span class="stack">ML</span><span class="stack">Transformer</span><span class="stack">RAG</span><span class="stack">Benchmark</span><span class="stack">Web</span></div>
+      </section>
+      <section class="section-block">
+        <h4>适用场景</h4>
+        <p>Kronos is the first open-source foundation model for financial candlesticks (K-lines), trained on data from over 45 global exchanges .</p>
+      </section>
+      <section class="section-block">
+        <h4>仓库信息</h4>
+        <div class="info-grid"><div class="info-item"><span class="label">Stars</span><strong>12,455</strong></div><div class="info-item"><span class="label">Forks</span><strong>2,525</strong></div><div class="info-item"><span class="label">Watchers</span><strong>136</strong></div><div class="info-item"><span class="label">Commits</span><strong>65</strong></div><div class="info-item"><span class="label">Open Issues</span><strong>135</strong></div><div class="info-item"><span class="label">Open PRs</span><strong>6</strong></div><div class="info-item"><span class="label">Maturity</span><strong>Reference Impl</strong></div><div class="info-item"><span class="label">Recommendation Type</span><strong>Benchmark</strong></div><div class="info-item"><span class="label">Confidence</span><strong>medium</strong></div><div class="info-item"><span class="label">License</span><strong>-</strong></div><div class="info-item"><span class="label">Homepage</span><strong>-</strong></div></div>
+      </section>
+      <section class="section-block">
+        <h4>判断证据</h4>
+        <ul><li>README headings 包含 Kronos: A Foundation Model for the Language of Financial Markets , 📰 News, 📜 Introduction，暴露了主要能力与交付路径。</li><li>顶层目录包含 examples, figures, finetune, finetune_csv, model，可以看到实际交付和组织形态。</li><li>仓库存在 examples, demo 等交付线索，不只是概念描述。</li><li>热度与维护信号显示为 245 stars in period / 2,525 forks / 65 commits。</li></ul>
+      </section>
+      <section class="section-block recommendation">
+        <strong>一句话推荐</strong>
+        <p>更适合把它当成 web application or product surface 赛道里的对标对象，优先看它的能力边界、集成面和工程取舍。</p>
+      </section>
+    </article>
+    </div></section>
+    <section class="section"><div class="section-header"><div><h2>按语言分组</h2><p>方便快速扫一眼不同生态里今天在热什么。</p></div></div>
+            <details class="group" open>
+              <summary>Python <span>4 repositories</span></summary>
+              <div class="mini-grid">
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noreferrer">NousResearch/hermes-agent</a>
+        </div>
+        <p>Star
+NousResearch /
+hermes-agent
+The agent that grows with you</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#3572A5"></span>Python</span>
+          <span>Stars 48,740</span>
+          <span>+6,485</span>
+        </div>
+      </article>
+    
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/microsoft/markitdown" target="_blank" rel="noreferrer">microsoft/markitdown</a>
+        </div>
+        <p>Star
+microsoft /
+markitdown
+Python tool for converting files and office documents to Markdown.</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#3572A5"></span>Python</span>
+          <span>Stars 97,692</span>
+          <span>+2,353</span>
+        </div>
+      </article>
+    
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/HKUDS/DeepTutor" target="_blank" rel="noreferrer">HKUDS/DeepTutor</a>
+        </div>
+        <p>Star
+HKUDS /
+DeepTutor
+&quot;DeepTutor: Agent-Native Personalized Learning Assistant&quot;</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#3572A5"></span>Python</span>
+          <span>Stars 15,502</span>
+          <span>+1,310</span>
+        </div>
+      </article>
+    
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/shiyu-coder/Kronos" target="_blank" rel="noreferrer">shiyu-coder/Kronos</a>
+        </div>
+        <p>Star
+shiyu-coder /
+Kronos
+Kronos: A Foundation Model for the Language of Financial Markets</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#3572A5"></span>Python</span>
+          <span>Stars 12,455</span>
+          <span>+245</span>
+        </div>
+      </article>
+    </div>
+            </details>
+            
+            <details class="group" open>
+              <summary>TypeScript <span>3 repositories</span></summary>
+              <div class="mini-grid">
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/multica-ai/multica" target="_blank" rel="noreferrer">multica-ai/multica</a>
+        </div>
+        <p>Star
+multica-ai /
+multica
+The open-source managed agents platform. Turn coding agents into real teammates — assign tasks, track progress, compound skills.</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#3178c6"></span>TypeScript</span>
+          <span>Stars 4,997</span>
+          <span>+1,680</span>
+        </div>
+      </article>
+    
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/rowboatlabs/rowboat" target="_blank" rel="noreferrer">rowboatlabs/rowboat</a>
+        </div>
+        <p>Star
+rowboatlabs /
+rowboat
+Open-source AI coworker, with memory</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#3178c6"></span>TypeScript</span>
+          <span>Stars 11,362</span>
+          <span>+1,187</span>
+        </div>
+      </article>
+    
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/coleam00/Archon" target="_blank" rel="noreferrer">coleam00/Archon</a>
+        </div>
+        <p>Star
+coleam00 /
+Archon
+The first open-source harness builder for AI coding. Make AI coding deterministic and repeatable.</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#3178c6"></span>TypeScript</span>
+          <span>Stars 14,703</span>
+          <span>+185</span>
+        </div>
+      </article>
+    </div>
+            </details>
+            
+            <details class="group" open>
+              <summary>C <span>1 repositories</span></summary>
+              <div class="mini-grid">
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/jqlang/jq" target="_blank" rel="noreferrer">jqlang/jq</a>
+        </div>
+        <p>Star
+jqlang /
+jq
+Command-line JSON processor</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#555555"></span>C</span>
+          <span>Stars 34,120</span>
+          <span>+48</span>
+        </div>
+      </article>
+    </div>
+            </details>
+            
+            <details class="group" open>
+              <summary>HTML <span>1 repositories</span></summary>
+              <div class="mini-grid">
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/shanraisshan/claude-code-best-practice" target="_blank" rel="noreferrer">shanraisshan/claude-code-best-practice</a>
+        </div>
+        <p>Star
+shanraisshan /
+claude-code-best-practice
+practice made claude perfect</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#e34c26"></span>HTML</span>
+          <span>Stars 34,902</span>
+          <span>+1,248</span>
+        </div>
+      </article>
+    </div>
+            </details>
+            
+            <details class="group" open>
+              <summary>Java <span>1 repositories</span></summary>
+              <div class="mini-grid">
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/opendataloader-project/opendataloader-pdf" target="_blank" rel="noreferrer">opendataloader-project/opendataloader-pdf</a>
+        </div>
+        <p>Star
+opendataloader-project /
+opendataloader-pdf
+PDF Parser for AI-ready data. Automate PDF accessibility. Open-source.</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#b07219"></span>Java</span>
+          <span>Stars 14,360</span>
+          <span>+1,124</span>
+        </div>
+      </article>
+    </div>
+            </details>
+            
+            <details class="group" open>
+              <summary>Shell <span>1 repositories</span></summary>
+              <div class="mini-grid">
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/obra/superpowers" target="_blank" rel="noreferrer">obra/superpowers</a>
+        </div>
+        <p>Sponsor
+Star
+obra /
+superpowers
+An agentic skills framework &amp; software development methodology that works.</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#89e051"></span>Shell</span>
+          <span>Stars 144,805</span>
+          <span>+2,299</span>
+        </div>
+      </article>
+    </div>
+            </details>
+            
+            <details class="group" open>
+              <summary>Unknown <span>1 repositories</span></summary>
+              <div class="mini-grid">
+      <article class="mini-card">
+        <div class="mini-title">
+          <a href="https://github.com/forrestchang/andrej-karpathy-skills" target="_blank" rel="noreferrer">forrestchang/andrej-karpathy-skills</a>
+        </div>
+        <p>Star
+forrestchang /
+andrej-karpathy-skills
+A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy&#x27;s observations on LLM coding pitfalls.</p>
+        <div class="mini-meta">
+          <span><span class="dot" style="background:#8B949E"></span>Unknown</span>
+          <span>Stars 11,177</span>
+          <span>+1,364</span>
+        </div>
+      </article>
+    </div>
+            </details>
+            </section>
+    <section class="section"><div class="section-header"><div><h2>GitHub Explore 精选</h2><p>来自 GitHub Explore 页面的仓库推荐，已尽量去重并保留主题标签。</p></div></div><div class="explore-grid"><div class="surface">Explore 页面今天没有成功解析到可用仓库卡片。</div></div></section>
+    <footer>
+      <div>报告生成时间：2026-04-10 18:53:46</div>
+      <div>输出文件：E:\workerspace\daily\task\github\github_trending_report_2026-04-10.html</div>
+      <div>数据来源：<a href="https://github.com/trending" target="_blank" rel="noreferrer">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank" rel="noreferrer">GitHub Explore</a></div>
+    </footer>
+  </div>
+  <script>
+    const body = document.body;
+    const toggle = document.getElementById("theme-toggle");
+    toggle.addEventListener("click", () => {
+      body.dataset.theme = body.dataset.theme === "dark" ? "light" : "dark";
+    });
+  </script>
+</body>
+</html>

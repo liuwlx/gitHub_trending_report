@@ -1,0 +1,89 @@
+cases:
+  - name: user_rules_required
+    prompt: |
+      帮我生成今日日报，先读 user-rules，再按 2026-03-16 成品模板生成 html。
+    expect:
+      - 先读取 `reference/user-rules.md`
+      - 将 `reference/user-rules.md` 作为最高优先级约束
+      - 验收时明确检查是否遵循 user-rules
+
+  - name: fixed_base_template_required
+    prompt: |
+      不要重做 UI，只改 03-16 模板里的内容和数据。
+    expect:
+      - 先读取 `reference/fixedBaseTemplate_2026-03-16.html`
+      - 将 `reference/fixedBaseTemplate_2026-03-16.html` 视为固定 HTML 底板
+      - 最终 HTML 明显继承 03-16 成品页，而不是另起一套页面
+
+  - name: markdown_first_required
+    prompt: |
+      先生成本地 md 文档，再生成 GitHub Trending html。
+    expect:
+      - 在生成 HTML 前先生成本地 Markdown 底稿
+      - Markdown 底稿遵循 `reference/reportMarkdownTemplate.md`
+      - Markdown 与 HTML 位于同一输出目录或存在清晰映射关系
+
+  - name: markdown_agent_required
+    prompt: |
+      获取到 GitHub 数据后，先启动一个适合写 md 报告的 agent。
+    expect:
+      - 存在 `agents/markdown-report-writer-agent.md`
+      - 先使用 markdown-report-writer agent 生成本地 Markdown 底稿
+      - HTML 阶段以该 Markdown 底稿为内容事实基线
+
+  - name: ui_guardrail_required
+    prompt: |
+      UI 不要自由发挥，保持 03-16 的主题、样式和展开布局。
+    expect:
+      - `agents/ui-ux-designer-agent.md` 的职责是固定模板守门，而不是重新设计
+      - 页面继续保留 `03-16` 的主题、样式和阅读节奏
+      - Top 12 仍然是先扫读、再展开深读
+
+  - name: frontend_fidelity_required
+    prompt: |
+      用前端 agent 基于固定模板生成 html，不要换命名，不要换交互。
+    expect:
+      - `agents/frontend-engineer-agent.md` 明确要求保留固定模板的类名与交互
+      - 保留 `toggleDetail` 和 `toggleTheme`
+      - 不替换关键 class 命名
+
+  - name: detail_structure_preserved
+    prompt: |
+      03-16.html 的展开详情排版布局命名已经很好了，后面都沿用它。
+    expect:
+      - 展开详情继续保留 `项目摘要 / 核心特性 / 技术栈 / 适用场景 / 一句话推荐`
+      - 不改变详情区顺序
+      - 不把详情区改成别的组件形态
+
+  - name: no_script_renderer
+    prompt: |
+      禁止使用脚本生成固定模板，最终 html 必须由 AI 直接写。
+    expect:
+      - 不调用 Python 或本地渲染脚本生成最终 HTML
+      - 最终 HTML 由当前任务直接写出或改写
+      - 脚本最多只用于抓数或整理中间数据
+
+  - name: human_readable_project_copy
+    prompt: |
+      项目摘要、核心特性、适用场景、一句话推荐必须认真解读，说人话。
+    expect:
+      - 项目摘要回答“它是什么、解决什么问题、谁该关注”
+      - 核心特性写成用户能感知的收益或能力边界
+      - 适用场景帮助读者判断“什么时候该看、什么时候不适合”
+      - 一句话推荐帮助读者判断为什么今天值得点开
+
+  - name: web_search_fallback
+    prompt: |
+      如果项目解读不出来，就继续查官网和公开资料，不要糊弄。
+    expect:
+      - 当 README 或 GitHub 描述不足时，继续查官网、文档页或公开搜索结果
+      - 如果证据仍不足，明确写诚实降级说明
+      - 不编造项目能力
+
+  - name: legacy_reference_removed
+    prompt: |
+      去掉 reference 里没用的旧文档和旧设计。
+    expect:
+      - 不再依赖 `reference/htmlTemplate.md`
+      - 不再依赖 `reference/bootstrapLayoutExample.html`
+      - 当前主流程围绕 user-rules、固定模板、uiEngineeringSpec、Markdown 模板展开

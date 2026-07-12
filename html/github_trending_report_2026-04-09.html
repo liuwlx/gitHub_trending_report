@@ -1,0 +1,357 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending Daily Report - 2026-04-09</title>
+<style>
+:root{--bg:#0D1117;--card:#161B22;--text:#C9D1D9;--text2:#8B949E;--blue:#58A6FF;--green:#3FB950;--border:#30363D;--hover:#1F2937}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+body.light{--bg:#F6F8FA;--card:#FFFFFF;--text:#24292F;--text2:#57606A;--blue:#0969DA;--green:#1A7F37;--border:#D0D7DE;--hover:#F3F4F6}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+header{text-align:center;padding:40px 20px;border-bottom:1px solid var(--border)}
+header h1{font-size:2em;margin-bottom:8px}
+header p{color:var(--text2);font-size:1.1em}
+.theme-toggle{position:fixed;top:20px;right:20px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:20px;cursor:pointer;z-index:100;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:30px 0}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
+.stat-card .num{font-size:2em;font-weight:700;color:var(--blue)}
+.stat-card .label{color:var(--text2);font-size:0.9em;margin-top:4px}
+h2{font-size:1.5em;margin:30px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.project-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px;transition:border-color .2s}
+.project-card:hover{border-color:var(--blue)}
+.project-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
+.project-name{font-size:1.2em;font-weight:600}
+.project-name a{color:var(--blue);text-decoration:none}
+.project-name a:hover{text-decoration:underline}
+.project-badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:0.8em;font-weight:500;border:1px solid var(--border)}
+.badge-star{color:#E3B341;border-color:#E3B341}
+.badge-fork{color:var(--text2)}
+.badge-hot{color:var(--green);border-color:var(--green);font-weight:700}
+.badge-lang{font-size:0.75em;padding:3px 8px}
+.lang-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.project-desc{color:var(--text2);margin:10px 0;font-size:0.95em}
+.project-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.detail-toggle{background:none;border:1px solid var(--border);color:var(--blue);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px}
+.detail-content{display:none;margin-top:12px}
+.detail-content.open{display:block}
+.detail-section{margin-bottom:14px}
+.detail-section h4{font-size:0.95em;margin-bottom:6px;color:var(--blue)}
+.detail-section p,.detail-section li{font-size:0.9em;color:var(--text2)}
+.detail-section ul{padding-left:20px}
+.topics{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.topic-tag{background:rgba(56,139,253,0.15);color:var(--blue);padding:3px 10px;border-radius:20px;font-size:0.75em}
+.lang-chart{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin:20px 0}
+.bar-row{display:flex;align-items:center;margin:8px 0}
+.bar-label{width:120px;font-size:0.85em;text-align:right;padding-right:12px;color:var(--text2)}
+.bar-track{flex:1;background:var(--border);border-radius:4px;height:22px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:0.75em;color:#fff;font-weight:600;min-width:30px}
+.bar-count{margin-left:8px;font-size:0.8em;color:var(--text2)}
+.insight-box{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--blue);border-radius:8px;padding:20px;margin:20px 0}
+.insight-box p{margin:8px 0;color:var(--text2);font-size:0.95em}
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:700;font-size:0.8em;margin-right:10px;flex-shrink:0}
+.rank-1{background:#FFD700;color:#000}.rank-2{background:#C0C0C0;color:#000}.rank-3{background:#CD7F32;color:#fff}
+.rank-other{background:var(--border);color:var(--text)}
+footer{text-align:center;padding:30px;margin-top:30px;border-top:1px solid var(--border);color:var(--text2);font-size:0.85em}
+.group-section{margin-bottom:20px}
+.group-header{cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.group-header:hover{border-color:var(--blue)}
+.group-body{display:none;padding:10px 0}
+.group-body.open{display:block}
+@media(max-width:768px){.container{padding:10px}.stats{grid-template-columns:1fr 1fr}.project-header{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="document.body.classList.toggle('light');this.textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light'">☀️ Light</button>
+<div class="container">
+<header>
+<h1>🔥 GitHub Trending Daily Report</h1>
+<p>2026-04-09 · 今日 GitHub 热门项目一览</p>
+</header>
+
+<div class="stats">
+<div class="stat-card"><div class="num">11</div><div class="label">📊 Trending 项目</div></div>
+<div class="stat-card"><div class="num">11</div><div class="label">🌟 Explore 推荐</div></div>
+<div class="stat-card"><div class="num">8</div><div class="label">�� 编程语言</div></div>
+<div class="stat-card"><div class="num">141,891</div><div class="label">⭐ 最高 Star 数</div></div>
+</div>
+
+<h2>🔥 今日最热 Top 11（按 Star 总数排序）</h2>
+
+<!-- Project 1: obra/superpowers -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-1">1</span><span class="project-name"><a href="https://github.com/obra/superpowers" target="_blank">obra / superpowers</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#89E051"></span> Shell</span>
+<span class="badge badge-star">⭐ 141,891</span>
+<span class="badge badge-fork">🍴 12,096</span>
+</div>
+</div>
+<p class="project-desc">An agentic skills framework & software development methodology that works.</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'📖 收起详情':'📖 展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>📖 README 摘要</h4><p>Superpowers 是一个完整的软件开发工作流框架，为你的编程代理（coding agents）构建，基于一组可组合的"技能"和初始指令。当代理启动时，它不会直接写代码，而是先退后一步问你真正想要做什么。在你签署设计方案后，代理会制定清晰的实施计划，然后启动子代理驱动的开发流程。Claude 通常可以自主工作数小时而不偏离计划。</p></div>
+<div class="detail-section"><h4>✨ 核心特性</h4>
+<ul><li>自动触发的 agentic skills 框架</li><li>子代理驱动的开发流程，支持数小时自主工作</li><li>强调 TDD、YAGNI、DRY 开发原则</li><li>支持 Claude Code、Cursor、Codex、OpenCode、Gemini CLI 等多平台</li><li>可组合的技能系统，自动识别并应用</li></ul></div>
+<div class="detail-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic-tag">agentic</span><span class="topic-tag">skills</span><span class="topic-tag">claude-code</span><span class="topic-tag">cursor</span><span class="topic-tag">codex</span><span class="topic-tag">software-development</span></div></div>
+<div class="detail-section"><h4>📋 项目信息</h4><p>License: MIT · Watchers: 609 · Forks: 12.1k · Releases: 4</p></div>
+<div class="detail-section"><h4>🎯 适用场景</h4><p>希望用 AI 代理自动化软件开发流程的开发者和团队，尤其适合 Claude Code 和 Cursor 用户</p></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>让你的 AI 编程助手拥有超能力——自动规划、自主执行、持续迭代的完整开发工作流</p></div>
+</div></div></div>
+
+<!-- Project 2: virattt/ai-hedge-fund -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-2">2</span><span class="project-name"><a href="https://github.com/virattt/ai-hedge-fund" target="_blank">virattt / ai-hedge-fund</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+<span class="badge badge-star">⭐ 50,769</span>
+<span class="badge badge-fork">🍴 8,810</span>
+</div>
+</div>
+<p class="project-desc">An AI Hedge Fund Team — 用 AI 多代理系统模拟对冲基金团队的投资决策</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'📖 收起详情':'📖 展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>📖 README 摘要</h4><p>这是一个 AI 驱动的对冲基金概念验证项目，探索使用 AI 进行交易决策。系统采用 19 个代理协作：包括模拟 Warren Buffett、Charlie Munger、Cathie Wood、Michael Burry 等著名投资者风格的投资代理，以及估值代理、情绪代理、基本面代理、技术分析代理、风险经理和投资组合经理。仅用于教育目的，不进行实际交易。</p></div>
+<div class="detail-section"><h4>✨ 核心特性</h4>
+<ul><li>19 个专业投资代理协作（模拟 13 位著名投资者风格）</li><li>支持 CLI 和 Web 应用两种运行方式</li><li>估值、情绪、基本面、技术分析多维度分析</li><li>风险管理和投资组合管理自动化</li><li>开源教育项目，MIT License</li></ul></div>
+<div class="detail-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic-tag">ai</span><span class="topic-tag">hedge-fund</span><span class="topic-tag">multi-agent</span><span class="topic-tag">trading</span><span class="topic-tag">python</span></div></div>
+<div class="detail-section"><h4>📋 项目信息</h4><p>License: MIT · Forks: 8,810</p></div>
+<div class="detail-section"><h4>🎯 适用场景</h4><p>对 AI 量化交易感兴趣的开发者和投资者，可用于学习多代理系统和金融分析</p></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>站在巨人肩上——用 AI 复刻 Buffett、Munger、Burry 等投资大师的决策风格</p></div>
+</div></div></div>
+
+<!-- Project 3: goharbor/harbor -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-3">3</span><span class="project-name"><a href="https://github.com/goharbor/harbor" target="_blank">goharbor / harbor</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#00ADD8"></span> Go</span>
+<span class="badge badge-star">⭐ 28,153</span>
+<span class="badge badge-fork">🍴 5,178</span>
+</div>
+</div>
+<p class="project-desc">An open source trusted cloud native registry project that stores, signs, and scans content.</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'📖 收起详情':'📖 展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>📖 README 摘要</h4><p>Harbor 是一个开源的可信云原生镜像仓库项目，用于存储、签名和扫描容器镜像内容。作为 CNCF 毕业项目，它为 Docker 和 Kubernetes 环境提供企业级的容器镜像管理方案。</p></div>
+<div class="detail-section"><h4>✨ 核心特性</h4>
+<ul><li>云原生容器镜像注册和管理</li><li>镜像签名和漏洞扫描</li><li>CNCF 毕业项目，企业级可靠性</li><li>支持 Docker 和 Kubernetes 生态</li><li>Helm Chart 部署支持</li></ul></div>
+<div class="detail-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic-tag">docker</span><span class="topic-tag">kubernetes</span><span class="topic-tag">registry</span><span class="topic-tag">containers</span><span class="topic-tag">helm</span><span class="topic-tag">cncf</span><span class="topic-tag">cloud-native</span><span class="topic-tag">hacktoberfest</span></div></div>
+<div class="detail-section"><h4>🎯 适用场景</h4><p>需要私有容器镜像仓库的企业和团队，尤其适合 Kubernetes 用户</p></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>企业级云原生镜像管理的黄金标准——CNCF 毕业的容器注册中心</p></div>
+</div></div></div>
+<!-- Project 4: abhigyanpatwari/GitNexus -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-other">4</span><span class="project-name"><a href="https://github.com/abhigyanpatwari/GitNexus" target="_blank">abhigyanpatwari / GitNexus</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+<span class="badge badge-star">⭐ 25,418</span>
+<span class="badge badge-fork">🍴 2,822</span>
+</div>
+</div>
+<p class="project-desc">GitNexus: The Zero-Server Code Intelligence Engine — 浏览器端代码知识图谱创建器，内置 Graph RAG Agent，适合代码探索。</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'收起':'展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>✨ 核心特性</h4><ul><li>完全在浏览器端运行，零服务器依赖</li><li>CLI + MCP 模式让 AI Agent 获得深度代码架构感知</li><li>支持 GitHub 仓库或 ZIP 文件输入</li><li>内置 Graph RAG Agent 进行代码智能问答</li><li>企业版支持 PR Review、自动文档生成</li></ul></div>
+<div class="detail-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic-tag">knowledge-graph</span><span class="topic-tag">code-intelligence</span><span class="topic-tag">mcp</span><span class="topic-tag">rag</span></div></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>让 AI 编程助手真正理解你的代码架构——零服务器的代码知识图谱引擎</p></div>
+</div></div></div>
+<!-- Project 5: google-ai-edge/gallery -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-other">5</span><span class="project-name"><a href="https://github.com/google-ai-edge/gallery" target="_blank">google-ai-edge / gallery</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#A97BFF"></span> Kotlin</span>
+<span class="badge badge-star">⭐ 19,601</span>
+<span class="badge badge-fork">🍴 1,832</span>
+</div>
+</div>
+<p class="project-desc">A gallery that showcases on-device ML/GenAI use cases and allows people to try and use models locally.</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'收起':'展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>✨ 核心特性</h4><ul><li>支持 Gemma 4 等最新开源 LLM 在移动端运行</li><li>Agent Skills：将 LLM 变为主动助手，支持维基百科、地图等工具</li><li>AI Chat 思考模式：可视化模型推理过程</li><li>多模态：图像识别、语音转文字</li><li>100% 端侧隐私，完全离线运行</li></ul></div>
+<div class="detail-section"><h4>📋 项目信息</h4><p>License: Apache-2.0 · 支持 Android 12+ / iOS 17+ · Releases: 19</p></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>Google 官方端侧 AI 展示应用——在手机上离线运行 Gemma 4 等顶级开源模型</p></div>
+</div></div></div>
+
+<!-- Project 6: elebumm/RedditVideoMakerBot -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-other">6</span><span class="project-name"><a href="https://github.com/elebumm/RedditVideoMakerBot" target="_blank">elebumm / RedditVideoMakerBot</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+<span class="badge badge-star">⭐ 10,564</span>
+<span class="badge badge-fork">🍴 2,588</span>
+</div>
+</div>
+<p class="project-desc">Create Reddit Videos with just ✨ one command ✨</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'收起':'展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>一条命令自动生成 Reddit 风格短视频——内容创作者的效率神器</p></div>
+</div></div></div>
+<!-- Project 7: forrestchang/andrej-karpathy-skills -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-other">7</span><span class="project-name"><a href="https://github.com/forrestchang/andrej-karpathy-skills" target="_blank">forrestchang / andrej-karpathy-skills</a></span></div>
+<div class="project-badges">
+<span class="badge badge-star">⭐ 9,215</span>
+<span class="badge badge-fork">🍴 637</span>
+</div>
+</div>
+<p class="project-desc">Karpathy-Inspired Claude Code Guidelines — 基于 Andrej Karpathy 对 LLM 编码缺陷观察的 CLAUDE.md 指南文件</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'收起':'展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>✨ 核心特性</h4><ul><li>四大原则：Think Before Coding、Simplicity First、Surgical Changes、Goal-Driven Execution</li><li>解决 LLM 编码的常见问题：过度工程、随意删改代码、不确认就执行</li><li>单文件 CLAUDE.md 即可生效</li></ul></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>用 Karpathy 的智慧驯服 AI 编程助手——四项原则让 Claude Code 变得更靠谱</p></div>
+</div></div></div>
+
+<!-- Project 8: NVIDIA/personaplex -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-other">8</span><span class="project-name"><a href="https://github.com/NVIDIA/personaplex" target="_blank">NVIDIA / personaplex</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+<span class="badge badge-star">⭐ 8,513</span>
+<span class="badge badge-fork">🍴 1,213</span>
+</div>
+</div>
+<p class="project-desc">PersonaPlex: Voice and Role Control for Full Duplex Conversational Speech Models</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'收起':'展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>✨ 核心特性</h4><ul><li>实时全双工语音对话模型</li><li>通过文本角色提示和音频语音条件控制人设</li><li>基于 Moshi 架构，低延迟自然对话</li><li>支持多种场景：助手、客服、休闲对话</li></ul></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>NVIDIA 出品的语音人设控制引擎——让 AI 拥有独特的声音和角色个性</p></div>
+</div></div></div>
+<!-- Project 9: TheCraigHewitt/seomachine -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-other">9</span><span class="project-name"><a href="https://github.com/TheCraigHewitt/seomachine" target="_blank">TheCraigHewitt / seomachine</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+<span class="badge badge-star">⭐ 4,705</span>
+<span class="badge badge-fork">🍴 715</span>
+</div>
+</div>
+<p class="project-desc">A specialized Claude Code workspace for creating long-form, SEO-optimized blog content for any business.</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'收起':'展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>✨ 核心特性</h4><ul><li>自定义命令：/research、/write、/rewrite、/optimize 等</li><li>10+ 专业 Agent：内容分析、SEO 优化、元素创建、内链、关键词映射</li><li>26 项营销技能：文案、CRO、A/B 测试、邮件序列等</li><li>高级 SEO 分析：搜索意图检测、关键词密度、可读性评分</li><li>支持 GA4、Google Search Console、DataForSEO 数据集成</li></ul></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>Claude Code 驱动的 SEO 内容工厂——从研究到发布一站式搞定长文 SEO 优化</p></div>
+</div></div></div>
+
+<!-- Project 10: newton-physics/newton -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-other">10</span><span class="project-name"><a href="https://github.com/newton-physics/newton" target="_blank">newton-physics / newton</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+<span class="badge badge-star">⭐ 4,135</span>
+<span class="badge badge-fork">🍴 425</span>
+</div>
+</div>
+<p class="project-desc">An open-source, GPU-accelerated physics simulation engine built upon NVIDIA Warp, targeting roboticists and simulation researchers.</p>
+<div class="project-detail">
+<button class="detail-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'收起':'展开详情'">📖 展开详情</button>
+<div class="detail-content">
+<div class="detail-section"><h4>✨ 核心特性</h4><ul><li>基于 NVIDIA Warp 的 GPU 加速物理模拟</li><li>支持机器人、布料、软体、电缆等多种物理仿真</li><li>OpenUSD 支持和可微分模拟</li><li>由 Disney Research、Google DeepMind 和 NVIDIA 发起</li><li>Linux Foundation 项目，Apache-2.0 开源</li></ul></div>
+<div class="detail-section"><h4>🏷️ Topics</h4><div class="topics"><span class="topic-tag">robotics</span><span class="topic-tag">physics-simulation</span><span class="topic-tag">nvidia-warp</span><span class="topic-tag">newton-physics</span></div></div>
+<div class="detail-section"><h4>💬 一句话推荐</h4><p>Disney+DeepMind+NVIDIA 联合打造——机器人和物理仿真研究者的 GPU 加速利器</p></div>
+</div></div></div>
+
+<!-- Project 11: google-ai-edge/LiteRT-LM -->
+<div class="project-card">
+<div class="project-header">
+<div style="display:flex;align-items:center"><span class="rank-badge rank-other">11</span><span class="project-name"><a href="https://github.com/google-ai-edge/LiteRT-LM" target="_blank">google-ai-edge / LiteRT-LM</a></span></div>
+<div class="project-badges">
+<span class="badge badge-lang"><span class="lang-dot" style="background:#F34B7D"></span> C++</span>
+<span class="badge badge-star">⭐ 3,036</span>
+<span class="badge badge-fork">🍴 285</span>
+</div>
+</div>
+<p class="project-desc">Google AI Edge 的轻量级端侧 LLM 运行时，为移动和边缘设备优化的 LLM 推理框架。</p>
+</div>
+
+<h2>💡 今日洞察</h2>
+<div class="insight-box">
+<p><strong>🤖 AI Agent 生态爆发：</strong>今日 Trending 中超过一半的项目与 AI Agent 相关。<strong>obra/superpowers</strong>（142k⭐）以 agentic skills 框架席卷榜首，<strong>andrej-karpathy-skills</strong> 提供 AI 编码行为规范，<strong>seomachine</strong> 将 Claude Code 应用于 SEO 内容生产，<strong>GitNexus</strong> 用知识图谱增强 AI 的代码理解能力。这标志着 AI 编程从"代码补全"走向"自主工作流"的新阶段。</p>
+<p><strong>📱 端侧 AI 成为焦点：</strong>Google 连续两个项目上榜——<strong>AI Edge Gallery</strong>（19.6k⭐）和 <strong>LiteRT-LM</strong>（3k⭐），分别提供端侧 AI 应用展示和轻量级 LLM 运行时。Gemma 4 的发布推动了端侧 AI 的热度。</p>
+<p><strong>🎙️ 语音 AI 突破：</strong>NVIDIA 的 <strong>PersonaPlex</strong>（8.5k⭐）展示了全双工语音对话和角色控制的前沿技术，将语音 AI 从简单的 TTS 推向了有个性的实时对话。</p>
+<p><strong>🏗️ 基础设施持续强劲：</strong><strong>Harbor</strong>（28k⭐）作为 CNCF 毕业项目依然活跃，<strong>Newton</strong>（4.1k⭐）由 Disney Research + DeepMind + NVIDIA 联合打造，瞄准机器人物理仿真。</p>
+<p><strong>💰 AI+金融：</strong><strong>ai-hedge-fund</strong>（50.8k⭐）用 19 个投资代理模拟对冲基金决策，反映了 AI 在金融领域的应用热潮。</p>
+</div>
+
+<h2>📈 语言分布</h2>
+<div class="lang-chart">
+<div class="bar-row"><div class="bar-label">Python</div><div class="bar-track"><div class="bar-fill" style="width:45%;background:#3572A5">5</div></div><div class="bar-count">5 个项目</div></div>
+<div class="bar-row"><div class="bar-label">Shell</div><div class="bar-track"><div class="bar-fill" style="width:9%;background:#89E051">1</div></div><div class="bar-count">1 个项目</div></div>
+<div class="bar-row"><div class="bar-label">TypeScript</div><div class="bar-track"><div class="bar-fill" style="width:9%;background:#3178C6">1</div></div><div class="bar-count">1 个项目</div></div>
+<div class="bar-row"><div class="bar-label">Go</div><div class="bar-track"><div class="bar-fill" style="width:9%;background:#00ADD8">1</div></div><div class="bar-count">1 个项目</div></div>
+<div class="bar-row"><div class="bar-label">Kotlin</div><div class="bar-track"><div class="bar-fill" style="width:9%;background:#A97BFF">1</div></div><div class="bar-count">1 个项目</div></div>
+<div class="bar-row"><div class="bar-label">C++</div><div class="bar-track"><div class="bar-fill" style="width:9%;background:#F34B7D">1</div></div><div class="bar-count">1 个项目</div></div>
+</div>
+
+<h2>🗂️ 按语言分组</h2>
+<div class="group-section">
+<div class="group-header" onclick="this.nextElementSibling.classList.toggle('open')"><span><span class="lang-dot" style="background:#3572A5"></span> Python（5 个项目）</span><span>▼</span></div>
+<div class="group-body">
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/virattt/ai-hedge-fund" target="_blank">virattt/ai-hedge-fund</a></span><span class="badge badge-star">⭐ 50,769</span></div><p class="project-desc">An AI Hedge Fund Team</p></div>
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/elebumm/RedditVideoMakerBot" target="_blank">elebumm/RedditVideoMakerBot</a></span><span class="badge badge-star">⭐ 10,564</span></div><p class="project-desc">Create Reddit Videos with just one command</p></div>
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/NVIDIA/personaplex" target="_blank">NVIDIA/personaplex</a></span><span class="badge badge-star">⭐ 8,513</span></div><p class="project-desc">PersonaPlex: Voice and Role Control for Full Duplex Conversational Speech Models</p></div>
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/TheCraigHewitt/seomachine" target="_blank">TheCraigHewitt/seomachine</a></span><span class="badge badge-star">⭐ 4,705</span></div><p class="project-desc">SEO-optimized blog content workspace for Claude Code</p></div>
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/newton-physics/newton" target="_blank">newton-physics/newton</a></span><span class="badge badge-star">⭐ 4,135</span></div><p class="project-desc">GPU-accelerated physics simulation engine</p></div>
+</div></div>
+
+<div class="group-section">
+<div class="group-header" onclick="this.nextElementSibling.classList.toggle('open')"><span><span class="lang-dot" style="background:#89E051"></span> Shell（1 个项目）</span><span>▼</span></div>
+<div class="group-body">
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/obra/superpowers" target="_blank">obra/superpowers</a></span><span class="badge badge-star">⭐ 141,891</span></div><p class="project-desc">An agentic skills framework & software development methodology</p></div>
+</div></div>
+
+<div class="group-section">
+<div class="group-header" onclick="this.nextElementSibling.classList.toggle('open')"><span><span class="lang-dot" style="background:#3178C6"></span> TypeScript（1 个项目）</span><span>▼</span></div>
+<div class="group-body">
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/abhigyanpatwari/GitNexus" target="_blank">abhigyanpatwari/GitNexus</a></span><span class="badge badge-star">⭐ 25,418</span></div><p class="project-desc">Zero-Server Code Intelligence Engine with Graph RAG</p></div>
+</div></div>
+
+<div class="group-section">
+<div class="group-header" onclick="this.nextElementSibling.classList.toggle('open')"><span><span class="lang-dot" style="background:#00ADD8"></span> Go（1 个项目）</span><span>▼</span></div>
+<div class="group-body">
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/goharbor/harbor" target="_blank">goharbor/harbor</a></span><span class="badge badge-star">⭐ 28,153</span></div><p class="project-desc">Cloud native container registry</p></div>
+</div></div>
+
+<div class="group-section">
+<div class="group-header" onclick="this.nextElementSibling.classList.toggle('open')"><span><span class="lang-dot" style="background:#A97BFF"></span> Kotlin（1 个项目）</span><span>▼</span></div>
+<div class="group-body">
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/google-ai-edge/gallery" target="_blank">google-ai-edge/gallery</a></span><span class="badge badge-star">⭐ 19,601</span></div><p class="project-desc">On-device ML/GenAI use cases gallery</p></div>
+</div></div>
+
+<div class="group-section">
+<div class="group-header" onclick="this.nextElementSibling.classList.toggle('open')"><span><span class="lang-dot" style="background:#F34B7D"></span> C++（1 个项目）</span><span>▼</span></div>
+<div class="group-body">
+<div class="project-card"><div class="project-header"><span class="project-name"><a href="https://github.com/google-ai-edge/LiteRT-LM" target="_blank">google-ai-edge/LiteRT-LM</a></span><span class="badge badge-star">⭐ 3,036</span></div><p class="project-desc">Lightweight on-device LLM runtime</p></div>
+</div></div>
+
+<footer>
+<p>📊 Generated on 2026-04-09 | Data from <a href="https://github.com/trending" style="color:var(--blue)">GitHub Trending</a> & <a href="https://github.com/explore" style="color:var(--blue)">GitHub Explore</a></p>
+<p>✅ 11 个 Trending 项目 | 8 种编程语言 | 🔥 今日最热: obra/superpowers (⭐ 141,891)</p>
+</footer>
+
+</div>
+<script>
+document.querySelectorAll('.group-header').forEach(h=>{h.addEventListener('click',()=>{const b=h.nextElementSibling;const arrow=h.querySelector('span:last-child');if(b.classList.contains('open')){arrow.textContent='▼'}else{arrow.textContent='▲'}})});
+</script>
+</body>
+</html>

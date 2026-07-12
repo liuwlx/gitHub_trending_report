@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-12</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --text: #c9d1d9;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+  --accent2: #3fb950;
+  --accent3: #f78166;
+  --gold: #e3b341;
+  --silver: #8b949e;
+  --bronze: #d18016;
+  --new-badge: #238636;
+  --cont-badge: #1f6feb;
+  --python: #3572A5;
+  --typescript: #3178C6;
+  --markdown: #aaaaaa;
+  --javascript: #f1e05a;
+}
+.light {
+  --bg: #f6f8fa;
+  --bg2: #ffffff;
+  --bg3: #f0f2f4;
+  --border: #d0d7de;
+  --text: #24292f;
+  --text2: #57606a;
+  --accent: #0969da;
+  --accent2: #1a7f37;
+  --accent3: #cf222e;
+  --gold: #9a6700;
+  --silver: #57606a;
+  --bronze: #953800;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo { font-size: 20px; }
+.header-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.header-date { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.theme-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.theme-btn:hover { background: var(--border); }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.insight-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  border-left: 3px solid var(--accent);
+}
+.insight-card:nth-child(2) { border-left-color: var(--accent2); }
+.insight-card:nth-child(3) { border-left-color: var(--gold); }
+.insight-card:nth-child(4) { border-left-color: var(--accent3); }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.insight-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.project-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.project-card:hover { border-color: var(--accent); }
+
+.top-card { border-left: 3px solid var(--cont-badge); }
+.new-card { border-left: 3px solid var(--new-badge); }
+.rank-1 { border-left: 3px solid var(--gold); }
+.rank-2 { border-left: 3px solid var(--silver); }
+.rank-3 { border-left: 3px solid var(--bronze); }
+
+.card-header {
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-rank {
+  font-size: 20px;
+  font-weight: 800;
+  min-width: 36px;
+  color: var(--text2);
+}
+.rank-1 .card-rank { color: var(--gold); }
+.rank-2 .card-rank { color: var(--silver); }
+.rank-3 .card-rank { color: var(--bronze); }
+.card-title-area { flex: 1; }
+.card-repo {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.card-desc {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+.card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.new-badge {
+  background: var(--new-badge);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.cont-badge {
+  background: var(--cont-badge);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.lang-badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #fff;
+}
+.lang-python { background: var(--python); }
+.lang-typescript { background: var(--typescript); }
+.lang-markdown { background: #555; color: #ccc; }
+.lang-javascript { background: #555; color: var(--javascript); }
+
+.card-meta {
+  padding: 0 16px 10px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text2);
+}
+.meta-stars { color: var(--gold); }
+.meta-growth { color: var(--accent2); }
+
+.card-detail {
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  display: none;
+}
+.card-detail.open { display: block; }
+.detail-section { margin-bottom: 10px; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+.detail-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.detail-tag {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: var(--text2);
+}
+.toggle-btn {
+  display: block;
+  width: 100%;
+  background: var(--bg3);
+  border: none;
+  border-top: 1px solid var(--border);
+  color: var(--text2);
+  padding: 8px;
+  cursor: pointer;
+  font-size: 11px;
+  text-align: center;
+}
+.toggle-btn:hover { background: var(--border); color: var(--text); }
+
+.lang-dist {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 32px;
+}
+.lang-bar-row { margin-bottom: 10px; }
+.lang-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.lang-bar-track {
+  background: var(--bg3);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+.lang-bar-fill { height: 100%; border-radius: 4px; }
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.explore-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.explore-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text2);
+  min-width: 28px;
+}
+.explore-content { flex: 1; }
+.explore-repo { font-size: 13px; font-weight: 600; color: var(--accent); }
+.explore-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.explore-meta { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text2);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <span class="header-logo">📊</span>
+    <div>
+      <div class="header-title">GitHub Trending 日报</div>
+      <div class="header-date">2026-05-12 · AI Foundations 日 · ByteDance 双层同框 · Skills 双极竞争</div>
+    </div>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()">☀️ 切换主题</button>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value">12</div>
+      <div class="stat-label">今日 Top 项目</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">582k</div>
+      <div class="stat-label">累计 Stars</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color:var(--new-badge)">7</div>
+      <div class="stat-label">今日新上榜</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color:var(--cont-badge)">5</div>
+      <div class="stat-label">持续上榜</div>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="section-title">🔍 今日洞察</div>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-title">🌊 从"Agent Skills 密集周"到"AI Foundations 日"</div>
+      <div class="insight-text">AUTOMATIC1111/stable-diffusion-webui（162.9k）+ rasbt/LLMs-from-scratch（93.2k）今日领衔，标志着前 6 日 Claude Code / Agent Skills 主线的主题转换。大量新进入 AI 圈的开发者从 Agent 工具入手后，开始寻找图像生成基础工具和 LLM 原理学习资源。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">📚 三层 LLM 学习资源今日同框</div>
+      <div class="insight-text">rasbt/LLMs-from-scratch（93.2k，原理层）+ datawhalechina/hello-agents（47.7k，Day 3，Agent 应用层）+ Lordog/dive-into-llms（37.4k，重返，实践层）三者合计 178.3k Stars，覆盖 AI 学习完整路径：原理→实践→Agent 应用。今日是"学习型开发者"主导 Trending 的典型日。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🐉 ByteDance 双项目同框：模型层 + 应用层</div>
+      <div class="insight-text">bytedance/UI-TARS（10.5k，底层多模态模型，今日新）与 bytedance/UI-TARS-desktop（33.2k，应用层，Day 3）同日出现，是本系列日报首次出现的"同公司模型层+应用层"双层架构完整呈现，揭示 2026 年 AI 产品"模型开源→应用封装"双轨并行策略。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🤝 huggingface/skills 今日上榜——Agent Skills 双极竞争格局形成</div>
+      <div class="insight-text">昨日 anthropics/skills（131.9k）上榜，今日 huggingface/skills（10.5k）上榜。两家定位不同：Anthropic 的"平台规范层"vs HuggingFace 的"生态整合层（跨工具兼容，agentskills.io 标准）"。Agent Skills 标准竞争格局今日正式从 Anthropic 独大扩展为双极。</div>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <div class="section-title">🏆 今日 Top 12</div>
+  <div class="projects-grid">
+
+    <!-- #01 AUTOMATIC1111/stable-diffusion-webui -->
+    <div class="project-card rank-1 new-card">
+      <div class="card-header">
+        <div class="card-rank">#01</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/AUTOMATIC1111/stable-diffusion-webui" target="_blank">AUTOMATIC1111/stable-diffusion-webui</a>
+          <div class="card-desc">Stable Diffusion web UI — 图像生成领域元老级开源工具，今日领衔主题转换</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 162,938</span>
+        <span class="meta-item">🍴 30,339</span>
+        <span class="meta-item">📄 AGPL-3.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">162.9k Stars + 30k+ forks，图像生成领域最著名的开源 Web UI。今日回归 Trending 标志着"AI 基础工具层复苏"——前 6 日 Agent Skills 密集爆发后，图像生成方向的用户潮今日集中涌现。支持 SD1.5 / SDXL / SD3 / Flux 等全系列模型。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">核心功能</div>
+          <div class="detail-tags">
+            <span class="detail-tag">txt2img / img2img</span>
+            <span class="detail-tag">Inpainting / Outpainting</span>
+            <span class="detail-tag">ControlNet 支持</span>
+            <span class="detail-tag">X/Y/Z 网格批量对比</span>
+            <span class="detail-tag">扩展插件生态</span>
+            <span class="detail-tag">REST API</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">技术栈</div>
+          <div class="detail-tags">
+            <span class="detail-tag">Python</span>
+            <span class="detail-tag">Gradio</span>
+            <span class="detail-tag">PyTorch</span>
+            <span class="detail-tag">ONNX</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">162.9k Stars 今日第一——SD-webui 今日回归是"AI 基础工具层复苏"的最强信号。前 6 日 Agent Skills 工具密集爆发后，今日用户潮开始寻找"AI 图像生成"入口，SD-webui 作为图像生成领域的元老自然首先浮出水面。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #02 NousResearch/hermes-agent -->
+    <div class="project-card rank-2 top-card">
+      <div class="card-header">
+        <div class="card-rank">#02</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/NousResearch/hermes-agent" target="_blank">NousResearch/hermes-agent</a>
+          <div class="card-desc">The agent that grows with you — 唯一内置学习循环的自进化 AI Agent</div>
+          <div class="card-badges">
+            <span class="cont-badge">持续 Day 2</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 145,333</span>
+        <span class="meta-item">🍴 22,735</span>
+        <span class="meta-item meta-growth">↑ +2,064</span>
+        <span class="meta-item">📄 Apache-2.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">连续第 2 日上榜，Stars 从 05-11 的 143,269 增至今日 145,333（+2,064 日增）。今日在"AI Foundations"为主的 Trending 中，hermes-agent 作为唯一纯 Agent 系大体量项目保持 Top 3，说明 ECC v2.0 + Hermes operator 生态的联动引流仍在持续。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">核心特性</div>
+          <div class="detail-tags">
+            <span class="detail-tag">自进化学习循环</span>
+            <span class="detail-tag">ECC v2.0 Operator</span>
+            <span class="detail-tag">200+ 模型支持</span>
+            <span class="detail-tag">$5 VPS 可运行</span>
+            <span class="detail-tag">Nous Research 出品</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Day 2，+2,064 Stars/日增速保持。今日与 SD-webui 同框——两者代表 AI 生态两条主线：Agent 自进化（新工具层）vs 图像生成（成熟基础层）。hermes-agent 在今日"AI Foundations 主题"下仍维持 Top 3，Agent 赛道热度可见一斑。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #03 rasbt/LLMs-from-scratch -->
+    <div class="project-card rank-3 new-card">
+      <div class="card-header">
+        <div class="card-rank">#03</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/rasbt/LLMs-from-scratch" target="_blank">rasbt/LLMs-from-scratch</a>
+          <div class="card-desc">Implement a ChatGPT-like LLM in PyTorch from scratch, step by step — 三层学习资源之"原理层"</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 93,160</span>
+        <span class="meta-item">🍴 14,353</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">93.2k Stars + 14.4k forks，"从 PyTorch 逐步手写 ChatGPT-like LLM"的权威教程。今日三层学习资源中的"原理层"，配套 Manning 出版《Build a Large Language Model (From Scratch)》书籍，纯 PyTorch 实现，不依赖 HuggingFace 等高层框架。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">覆盖内容</div>
+          <div class="detail-tags">
+            <span class="detail-tag">注意力机制手写</span>
+            <span class="detail-tag">Transformer 完整实现</span>
+            <span class="detail-tag">GPT-2 预训练</span>
+            <span class="detail-tag">指令微调（SFT）</span>
+            <span class="detail-tag">RLHF 基础</span>
+            <span class="detail-tag">章节式 Jupyter Notebook</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日与 dive-into-llms + hello-agents 构成三层学习资源同框。如果 dive-into-llms 是"会用大模型"，hello-agents 是"能构建 Agent"，那么 LLMs-from-scratch 是"明白大模型怎么工作的"。三层今日同框，覆盖了 AI 学习者完整的知识进阶路径。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #04 datawhalechina/hello-agents -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#04</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/datawhalechina/hello-agents" target="_blank">datawhalechina/hello-agents</a>
+          <div class="card-desc">📚《从零开始构建智能体》——从零开始的智能体原理与实践教程</div>
+          <div class="card-badges">
+            <span class="cont-badge">持续 Day 3</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 47,720</span>
+        <span class="meta-item">🍴 5,746</span>
+        <span class="meta-item meta-growth">↑ +622</span>
+        <span class="meta-item">📄 CC-BY-4.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">连续第 3 日上榜，Stars 从 05-11 的 47,098 增至今日 47,720（+622）。3 日总增 +1,744 Stars（05-10: 45,976）。今日三层学习资源中的"Agent 应用层"——适合已了解 LLM 基础、想进一步构建 Agent 应用的开发者。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">连续 Day 3，今日三层学习资源同框中的 Agent 应用入口。LLMs-from-scratch（原理）→ dive-into-llms（实践）→ hello-agents（Agent 应用），恰好是一个完整的 AI 学习路径，今日三者同框是本系列日报最完整的一次"学习路径呈现"。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #05 Lordog/dive-into-llms -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#05</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/Lordog/dive-into-llms" target="_blank">Lordog/dive-into-llms</a>
+          <div class="card-desc">《动手学大模型 Dive into LLMs》系列编程实践教程 — 三层学习资源之"实践层"，重返 Top 12</div>
+          <div class="card-badges">
+            <span class="new-badge">重返 Top 12</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 37,429</span>
+        <span class="meta-item">🍴 4,587</span>
+        <span class="meta-item">📄 CC-BY-4.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">重返 Top 12（曾于 05-10 上榜，Stars 37,429 vs 05-10 的 36,657，+772）。在 05-11 退出后今日再次回归，说明《动手学大模型》系列教程在今日"学习资源大爆发"背景下持续被新用户发现和分享，热度稳定。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">重返 Top 12，今日三层学习资源中的"实践层"。《动手学大模型》已成为国内 LLM 编程实践领域的标杆教程，今日与 LLMs-from-scratch（原理）+ hello-agents（Agent）同框，构成了今日最完整的中文 AI 学习路径。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #06 bytedance/UI-TARS-desktop -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#06</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/bytedance/UI-TARS-desktop" target="_blank">bytedance/UI-TARS-desktop</a>
+          <div class="card-desc">The Open-Source Multimodal AI Agent Stack — 今日与 UI-TARS（#12）同框，ByteDance 双层架构</div>
+          <div class="card-badges">
+            <span class="cont-badge">持续 Day 3</span>
+            <span class="lang-badge lang-typescript">TypeScript</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 33,188</span>
+        <span class="meta-item">🍴 3,290</span>
+        <span class="meta-item meta-growth">↑ +659</span>
+        <span class="meta-item">📄 Apache-2.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">连续第 3 日上榜，Stars 从 05-11 的 32,529 增至今日 33,188（+659）。今日与 bytedance/UI-TARS（#12，10.5k，模型层）同框，构成"ByteDance AI Agent 双层架构"完整呈现：UI-TARS 底层多模态模型 + UI-TARS-desktop 桌面应用封装，是本系列日报首次出现的"同公司模型层+应用层双框"现象。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Day 3 持续，今日与 UI-TARS（模型层）同框形成 ByteDance AI Agent 完整双层架构——这是本周 Trending 中最典型的"AI 产品模型→应用双层开源策略"案例，也是理解 ByteDance AI Agent 产品路线图的最佳视角。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #07 anthropics/financial-services -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#07</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/anthropics/financial-services" target="_blank">anthropics/financial-services</a>
+          <div class="card-desc">Anthropic 官方金融服务示例库 — 今日 Day 5 🏆 并列最长上榜纪录，突破 20k</div>
+          <div class="card-badges">
+            <span class="cont-badge">持续 Day 5 🏆</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 20,631</span>
+        <span class="meta-item">🍴 2,721</span>
+        <span class="meta-item meta-growth">↑ +1,129</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">5 日轨迹</div>
+          <div class="detail-text">05-07 Explore（9.4k）→ 05-08（12.9k）→ 05-10（17.9k）→ 05-11（19.5k）→ 05-12（20.6k）。5 日累计 +11.2k Stars！今日突破 20k 大关，每日增量持续保持 1k+ 级别。与 agent-skills（05-11 Day 5）并列本系列最长上榜纪录。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">连续 Day 5，并列本系列最长上榜纪录！5 日累计 +11.2k Stars，今日突破 20k 大关。今日仍与 HKUDS/AI-Trader（#8，Day 3）同框，金融 AI 双项目连续多日共同出现，说明金融 AI 赛道的热度具有持续性。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #08 HKUDS/AI-Trader -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#08</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/HKUDS/AI-Trader" target="_blank">HKUDS/AI-Trader</a>
+          <div class="card-desc">"AI-Trader: 100% Fully-Automated Agent-Native Trading" — 港大 HKUDS 实验室</div>
+          <div class="card-badges">
+            <span class="cont-badge">持续 Day 3</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 16,185</span>
+        <span class="meta-item">🍴 2,587</span>
+        <span class="meta-item meta-growth">↑ +298</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">连续第 3 日上榜，Stars 从 05-11 的 15,887 增至今日 16,185（+298）。今日 +298 日增明显低于昨日的 +760，AI-Trader 的热度峰值可能已过，开始进入自然衰减阶段。与 financial-services（Day 5，仍保持 +1,129 日增）对比，两者开始分化。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Day 3，今日增速 +298（vs 昨日 +760）——金融 AI 项目的 Trending 衰减曲线开始显现。与 financial-services（#7，Day 5，仍保持 +1k 级增速）对比，Anthropic 官方项目维持高增速，港大 AI-Trader 开始进入常规热度，两者正式开始分化。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #09 jundot/omlx -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#09</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/jundot/omlx" target="_blank">jundot/omlx</a>
+          <div class="card-desc">LLM inference server with continuous batching &amp; SSD caching for Apple Silicon — macOS menu bar 管理</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 13,682</span>
+        <span class="meta-item">🍴 1,162</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">从昨日（05-11）Explore 晋升今日 Top 12！Apple Silicon 专属优化的 LLM 推理服务器，充分利用 M 系芯片统一内存架构，支持持续批处理（continuous batching）提升推理吞吐量，SSD 缓存超大模型 KV Cache，macOS 菜单栏管理——零命令行即用。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">核心特性</div>
+          <div class="detail-tags">
+            <span class="detail-tag">Apple Silicon 专属优化</span>
+            <span class="detail-tag">Continuous Batching</span>
+            <span class="detail-tag">SSD KV Cache 持久化</span>
+            <span class="detail-tag">macOS 菜单栏 GUI 管理</span>
+            <span class="detail-tag">开箱即用本地推理</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">从昨日 Explore 晋升今日 Top 12，omlx 代表"Mac 本地 LLM"专属方向。今日与 SD-webui（本地图像生成）+ LLMs-from-scratch（本地训练理解）同框，三者共同构建了"AI 本地化运行"今日最完整的场景覆盖：推理服务器（omlx）+ 图像生成 UI（SD-webui）+ 原理学习（LLMs-from-scratch）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #10 yikart/AiToEarn -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#10</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/yikart/AiToEarn" target="_blank">yikart/AiToEarn</a>
+          <div class="card-desc">Let's use AI to Earn! — OPC（一人公司）的 AI 内容营销智能体，Monetize · Publish · Engage · Create</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-typescript">TypeScript</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 11,086</span>
+        <span class="meta-item">🍴 2,029</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">11,086 ⭐ + 2,029 forks，今日 Top 12 唯一的"AI + 变现"方向项目。"OPC（一人公司）+ AI"是 2026 年国内开发者最感兴趣的组合，提供从创作到发布到变现的完整 AI 工作流。v2.1 新增 MCP 协议支持，可在 Claude / Cursor 任意 AI Agent 中使用。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">四大 Agent 能力</div>
+          <div class="detail-tags">
+            <span class="detail-tag">💰 Monetize 内容变现</span>
+            <span class="detail-tag">📢 Publish 多平台发布</span>
+            <span class="detail-tag">💬 Engage 自动互动</span>
+            <span class="detail-tag">🎨 Create AI 创作</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">平台支持</div>
+          <div class="detail-tags">
+            <span class="detail-tag">小红书 / 抖音 / 快手</span>
+            <span class="detail-tag">YouTube / TikTok</span>
+            <span class="detail-tag">Facebook / Instagram</span>
+            <span class="detail-tag">MCP 协议 v2.1</span>
+            <span class="detail-tag">OpenClaw（龙虾）</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日 Top 12 唯一的"AI 变现"方向。"成本↓"（9router：免费 AI coding）与"收益↑"（AiToEarn：AI 帮你赚钱）同日出现在 Trending，共同构成了今日"AI 经济学"的两个方向。AiToEarn 今日上榜说明内容创作变现需求在 AI 社区已形成足够大的共鸣。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #11 huggingface/skills -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#11</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/huggingface/skills" target="_blank">huggingface/skills</a>
+          <div class="card-desc">Give your agents the power of the Hugging Face ecosystem — 官方 Skills，跨工具兼容，agentskills.io 标准</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 10,465</span>
+        <span class="meta-item">🍴 661</span>
+        <span class="meta-item">📄 Apache-2.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">HuggingFace 官方 Agent Skills 仓库，提供 dataset creation / model training / evaluation 等 AI/ML 任务的标准化 Skills 定义。跨工具兼容：OpenAI Codex / Anthropic Claude Code / Google Gemini CLI / Cursor 全覆盖，遵循 agentskills.io 标准。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">兼容工具</div>
+          <div class="detail-tags">
+            <span class="detail-tag">Anthropic Claude Code</span>
+            <span class="detail-tag">OpenAI Codex</span>
+            <span class="detail-tag">Google Gemini CLI</span>
+            <span class="detail-tag">Cursor</span>
+            <span class="detail-tag">agentskills.io 标准</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">昨日 anthropics/skills（131.9k），今日 huggingface/skills（10.5k）——两家官方 Skills 连续两日上 Trending。Anthropic 的"平台规范层"vs HuggingFace 的"生态整合中立层"，Agent Skills 标准双极竞争格局今日正式呈现。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #12 bytedance/UI-TARS -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#12</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/bytedance/UI-TARS" target="_blank">bytedance/UI-TARS</a>
+          <div class="card-desc">Pioneering Automated GUI Interaction with Native Agents — UI-TARS-desktop（#6）的底层核心模型</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 10,450</span>
+        <span class="meta-item">🍴 773</span>
+        <span class="meta-item">📄 Apache-2.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">10,450 ⭐ + 773 forks，UI-TARS-desktop（#6，Day 3，33.2k）的底层核心多模态模型和算法。"Pioneering Automated GUI Interaction with Native Agents"——专门设计用于自动化 GUI 操作的 Native Agent 模型，视觉理解 + 操作规划 + 执行验证的端到端 Agent 流水线。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">核心能力</div>
+          <div class="detail-tags">
+            <span class="detail-tag">Native Agent GUI 交互</span>
+            <span class="detail-tag">多模态截图理解</span>
+            <span class="detail-tag">元素定位 + 操作生成</span>
+            <span class="detail-tag">UI-TARS-desktop 底层</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日与 UI-TARS-desktop（#6，Day 3）同框，构成 ByteDance"GUI Agent 双层开源"完整图景：模型层（UI-TARS）+ 应用层（UI-TARS-desktop）双项目同日 Trending，是理解 ByteDance AI Agent 产品策略的最佳视角，也是本系列日报首次出现的同公司双层架构完整呈现。</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Language Distribution -->
+  <div class="section-title">🌐 语言分布</div>
+  <div class="lang-dist">
+    <div class="lang-bar-row">
+      <div class="lang-bar-label">
+        <span>🐍 Python</span>
+        <span>10 项目（83%）</span>
+      </div>
+      <div class="lang-bar-track">
+        <div class="lang-bar-fill" style="width:83%;background:var(--python)"></div>
+      </div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label">
+        <span>🔷 TypeScript</span>
+        <span>2 项目（17%）</span>
+      </div>
+      <div class="lang-bar-track">
+        <div class="lang-bar-fill" style="width:17%;background:var(--typescript)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explore -->
+  <div class="section-title">🌟 GitHub Explore 精选</div>
+  <div class="explore-grid">
+
+    <div class="explore-card">
+      <div class="explore-num">01</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/datawhalechina/easy-vibe" target="_blank">datawhalechina/easy-vibe</a>
+        <div class="explore-desc">💻 vibe coding 2026 | Your first modern Coding course for beginners to master step by step. 以 100 Stars 之差刚好落出 Top 12（10,104 ⭐）。今日若按 Top 13 算，将有 4 个中文学习资源同时上榜（LLMs-from-scratch + hello-agents + dive-into-llms + easy-vibe），是本系列日报"学习资源密度"最高纪录。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 10,104</span>
+          <span class="meta-item">🍴 960</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">02</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep" target="_blank">wanshuiyin/Auto-claude-code-research-in-sleep</a>
+        <div class="explore-desc">ARIS ⚔️ (Auto-Research-In-Sleep) — Lightweight Markdown-only skills for autonomous ML research: cross-model review loops, idea discovery, and experiment automation. No framework, no lock-in — works with Claude Code, Codex, OpenClaw, or any LLM agent. 今日 Python Trending，轻量级 Markdown-only Skills，在你睡觉时自主完成 ML 研究任务。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 8,898</span>
+          <span class="meta-item">🍴 833</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">03</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/millionco/react-doctor" target="_blank">millionco/react-doctor</a>
+        <div class="explore-desc">Your agent writes bad React. This catches it. Million.js 团队出品，专门检测和修复 AI coding agent 写出的"坏 React 代码"，是对 AI 生成代码质量问题的直接回应。今日全语言 Trending，今日与 AiToEarn 同框展示了 AI 工具的"创造（AiToEarn 多平台发布）vs 质控（react-doctor 代码审查）"两面。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 8,214</span>
+          <span class="meta-item">🍴 267</span>
+          <span class="lang-badge lang-typescript" style="font-size:10px;padding:2px 7px">TypeScript</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">04</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/decolua/9router" target="_blank">decolua/9router</a>
+        <div class="explore-desc">Unlimited FREE AI coding. Connect Claude Code, Codex, Cursor, Cline, Copilot, Antigravity to FREE Claude/GPT/Gemini via 40+ providers. Auto-fallback, RTK -40% tokens, never hit limits. 今日全语言 Trending，连续多日出现。今日与 AiToEarn（#10）同框，共同构成"AI 经济学"今日 Trending 的两个方向：成本↓（9router 免费 AI coding）+ 收益↑（AiToEarn 用 AI 赚钱）。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 8,571</span>
+          <span class="meta-item">🍴 1,353</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">05</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/CloakHQ/CloakBrowser" target="_blank">CloakHQ/CloakBrowser</a>
+        <div class="explore-desc">Stealth Chromium that passes every bot detection test. Drop-in Playwright replacement with source-level fingerprint patches. 30/30 tests passed. 今日全语言 + Python 双榜，连续第 3 日出现（05-10 首次→05-11 Explore→05-12 Trending），今日 Stars +1,322（6,529），增长尤为突出，说明 Stealth 浏览器自动化赛道需求持续旺盛。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 6,529</span>
+          <span class="meta-item">🍴 480</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  GitHub Trending 日报 · 2026-05-12 · 数据来源：GitHub Trending（全语言）+ Python Trending · 生成时间：2026-05-12
+</footer>
+
+<script>
+function toggleDetail(btn) {
+  const detail = btn.previousElementSibling;
+  if (detail.classList.contains('open')) {
+    detail.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    detail.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const btn = document.querySelector('.theme-btn');
+  btn.textContent = document.body.classList.contains('light') ? '🌙 切换主题' : '☀️ 切换主题';
+}
+</script>
+</body>
+</html>

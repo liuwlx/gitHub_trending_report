@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-07</title>
+<style>
+  :root {
+    --bg: #0D1117; --surface: #161B22; --surface2: #21262D; --border: #30363D;
+    --text: #C9D1D9; --text-muted: #8B949E; --blue: #58A6FF; --green: #3FB950;
+    --orange: #D29922; --purple: #BC8CFF; --red: #F85149; --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px #58a6ff22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-card.new-card { border: 1.5px solid var(--green); }
+  .project-header { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .new-badge { background: #0f2d13; border: 1px solid var(--green); color: var(--green); border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; }
+  .lang-count { width: 60px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .project-header { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">开源社区今日最受关注的项目精选</div>
+    <div class="date-badge">📅 2026-05-07 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">~1.0M</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">4</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-num">8</div><div class="stat-label">今日新上榜</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🔁 addyosmani/agent-skills（31k）——昨日"4 条原则"，今日"20 个 Skill"：Karpathy 接力赛</div>
+        <p>昨日 forrestchang/andrej-karpathy-skills（115k）用"4 条哲学原则"引发 Claude Code 用户病毒传播，今日 addyosmani/agent-skills（31k）用"20 个工程生命周期 Skill"接棒。前者是哲学层面的"怎么想"，后者是工程流程层面的"怎么做"。作者 Addy Osmani 是 Google Chrome 团队 Engineering Manager，20 个 Skill 完整覆盖 Define→Plan→Build→Verify→Review→Ship 六阶段，7 个 slash command 自动激活对应 Skill，兼容 Claude Code / Cursor / Windsurf / Gemini CLI / Copilot / OpenCode / Kiro 全主流 AI IDE。两天内同一赛道从原则到工程的两次爆发，AI coding Skill 生态的系统化演进正在加速。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">💹 金融 AI 三连今日同框：TradingAgents-CN（25.8k）+ dexter（24.5k）+ Kronos（23.3k）</div>
+        <p>昨日 TradingAgents（69.8k，多 Agent 决策层）刚从 Top 12 退出，今日金融 AI 以更大规模回归：TradingAgents-CN（中文 A 股增强版）+ virattt/dexter（自主深度金融研究 Agent）+ shiyu-coder/Kronos（AAAI 2026 录用，K 线基础模型）三项同时上榜。这是从昨日"决策层 Agent"到今日"数据层 + 研究层 + 本地化适配"的演进。Kronos 是第一个在 45 个全球交易所数据上预训练的开源金融 K 线基础模型，OHLCV 专属 tokenizer + 自回归 Transformer，AAAI 2026 学术背书，4,070 forks 对学术项目而言极为罕见。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📦 Shubhamsaboo/awesome-llm-apps（109k）——"可运行 cookbook" 击败"资源收藏列表"</div>
+        <p>109,087 ⭐，16,139 forks，Apache-2.0，今日新上榜 Stars 最高。每个模板原创手写 + 端到端测试 + 3 条命令运行，覆盖 Starter AI Agents / Advanced Agents / Multi-agent Teams / Voice AI / MCP Agents / RAG / Agent Skills / Memory / Fine-tuning，Claude / Gemini / GPT / Llama / Qwen / xAI 全 Provider 支持。与昨日 coding-interview-university（346k，学习路线图）形成鲜明对比：今日社区用 Star 投票证明——可以直接跑的代码比指路牌更值钱。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🌐 LadybirdBrowser/ladybird（63k）——独立浏览器登场，今日是"基础设施日"</div>
+        <p>今日 Trending 的独特特征是"基础设施类项目集中"：pytorch（99.7k，ML 基础框架）+ LadybirdBrowser（63k，独立浏览器）+ Kronos（金融基础模型）+ onyx（开源 AI 平台）+ InsForge（AI agent 原生后端）同日出现。ladybird 是唯一不依赖 Chromium / WebKit 的真正独立浏览器，SerenityOS 作者 Andreas Kling 从零实现，每次 Trending 登榜通常对应重大里程碑。63k Stars + 3k forks，是今日 Trending 中唯一非 AI 工具的基础软件代表，说明即使在 AI 工具爆发的时代，基础软件依然有最强劲的社区情感支持。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（按总 Stars 排序）</div>
+
+    <!-- #1 public-apis -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/public-apis/public-apis" target="_blank">public-apis / public-apis</a></div>
+          <div class="project-desc">A collective list of free APIs. 连续第 2 日榜首，Stars 从 432,503 增至 432,826，日增 323。47,330 forks，GitHub 全站前 5 的超级资源库，昨日带动的社区分享潮延续。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">432,826</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>47,330</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">api</span><span class="topic-badge">free</span><span class="topic-badge">list</span><span class="topic-badge">resource</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>全球最大免费 API 资源列表，500+ 分类开放 API，HTTPS / Auth / CORS 属性全标注，自动化 CI 校验链接有效性，社区持续维护。连续第 2 日上榜，昨日带动的社区分享潮延续。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>500+ 免费 API，分类覆盖 Animals / Business / Finance / Science / Weather / Sports 等</li>
+          <li>每条标注 HTTPS / Auth / CORS 三属性</li>
+          <li>自动化 CI 校验链接，保证质量</li>
+          <li>47,330 forks，今日持续项目中最高</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">Python（校验）</span><span class="tech-tag">GitHub Actions</span></div></div>
+        <div class="recommend-quote">💬 "连续第 2 日榜首，日增 323——昨日带动的分享潮仍在持续，public-apis 是今日 Trending 中唯一的"两连冠"。"</div>
+      </div>
+    </div>
+
+    <!-- #2 Shubhamsaboo/awesome-llm-apps -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Shubhamsaboo/awesome-llm-apps" target="_blank">Shubhamsaboo / awesome-llm-apps</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">100+ AI Agent & RAG apps you can actually run — clone, customize, ship. 今日新上榜 Stars 最高，16,139 forks，每个模板原创手写 + 端到端测试 + 3 条命令启动，Apache-2.0。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">109,087</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>16,139</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">llm</span><span class="topic-badge">ai-agents</span><span class="topic-badge">rag</span><span class="topic-badge">mcp</span><span class="topic-badge">voice-ai</span><span class="topic-badge">multi-agent</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>100+ 可运行 AI 应用模板库，每个模板原创手写 + 端到端测试验证 + 3 条命令启动，涵盖 Starter AI Agents / Advanced Agents / Multi-agent Teams / Voice AI / MCP AI Agents / RAG / Agent Skills / Memory / Fine-tuning，Claude / Gemini / GPT / Llama / Qwen / xAI 全 Provider 一键切换，Apache-2.0 无限制商用。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>100+ 模板：Starter Agents / Advanced Agents / Game-Playing Agents / Multi-agent Teams</li>
+          <li>Voice AI Agents / MCP AI Agents / RAG / Agent Skills / Memory / Fine-tuning</li>
+          <li>每个模板：原创 + 端到端测试 + 3 命令运行，不是"收藏清单"</li>
+          <li>Provider 无关：Claude / Gemini / GPT / Llama / Qwen / xAI 配置一键切换</li>
+          <li>Featured 本月：Insurance Claim Live Agent Team / Self-Improving Agent Skills</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Streamlit</span><span class="tech-tag">Claude</span><span class="tech-tag">LangChain</span><span class="tech-tag">CrewAI</span><span class="tech-tag">Phidata</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 项目快速启动参考；LLM App 模板选型；Agent / RAG / Voice 场景工程学习。</p></div>
+        <div class="recommend-quote">💬 "109k Stars + 16k forks，'可运行 cookbook' 的王者——今日社区证明：能直接跑的代码比指路牌更值钱。"</div>
+      </div>
+    </div>
+
+    <!-- #3 pytorch/pytorch -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/pytorch/pytorch" target="_blank">pytorch / pytorch</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Tensors and Dynamic neural networks in Python with strong GPU acceleration. ML 领域最重要的基础框架，99.7k Stars + 27.7k forks，今日上 Trending 通常对应重大版本发布或 ML 社区事件。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">99,711</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>27,695</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 BSD-3-Clause</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">deep-learning</span><span class="topic-badge">machine-learning</span><span class="topic-badge">gpu</span><span class="topic-badge">cuda</span><span class="topic-badge">neural-network</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>ML / 深度学习领域最广泛使用的基础框架，动态计算图 + Python 优先 + 强 GPU 加速。torch.compile 提供图编译加速，FSDP / DDP 支持分布式训练，TorchScript + ONNX 支持生产部署，生态极为丰富（transformers / diffusers / torchvision 等）。今日上 Trending 通常意味着重大版本发布或技术社区事件。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>动态计算图（define-by-run），Python 优先，调试友好</li>
+          <li>torch.compile：TorchInductor 图编译加速</li>
+          <li>分布式训练：FSDP / DDP / torch.distributed</li>
+          <li>GPU 加速：CUDA 原生 + Apple Silicon MPS</li>
+          <li>27.7k forks 是今日所有项目最高</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">C++</span><span class="tech-tag">CUDA</span><span class="tech-tag">Triton</span><span class="tech-tag">TorchInductor</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>深度学习模型研究与训练；生产 ML pipeline 部署；GPU 加速科学计算。</p></div>
+        <div class="recommend-quote">💬 "99.7k Stars 的 ML 基础框架登 Trending——pytorch + Kronos（金融基础模型）今日同框，今日是 Trending 近期难得的'ML 基础设施日'。"</div>
+      </div>
+    </div>
+
+    <!-- #4 bytedance/deer-flow -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">04</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/bytedance/deer-flow" target="_blank">bytedance / deer-flow</a></div>
+          <div class="project-desc">DeerFlow 2.0 - An open-source long-horizon SuperAgent harness. 连续第 2 日上榜，Stars 从 65,293 增至 65,667，日增 374，8,681 forks，字节跳动 SuperAgent 运行时持续热度。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">65,667</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>8,681</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">superagent</span><span class="topic-badge">langgraph</span><span class="topic-badge">claude-code</span><span class="topic-badge">bytedance</span><span class="topic-badge">mcp</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>字节跳动 SuperAgent Harness，从 Deep Research 框架重构为内置文件系统 / 长期记忆 / .skill 技能架构 / 沙箱执行 / 动态子 Agent 的全栈运行时。内置 claude-to-deerflow 技能，Claude Code 一条命令接入，支持 flash / standard / pro / ultra 四种执行模式。连续第 2 日上榜，日增 374。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>SuperAgent 运行时：文件系统 / 长期记忆 / .skill 技能架构 / 沙箱隔离执行</li>
+          <li>动态子 Agent：Lead Agent 按需孵化并行子 Agent，结构化汇报并合成</li>
+          <li>claude-to-deerflow 技能：Claude Code 一命令接入，4 种执行模式</li>
+          <li>技能系统：按需加载防 context 膨胀，内置研究/报告/PPT/图片 Skill</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">LangChain</span><span class="tech-tag">Docker</span><span class="tech-tag">MCP</span></div></div>
+        <div class="recommend-quote">💬 "连续第 2 日上榜——DeerFlow 2.0 今日与 addyosmani/agent-skills 共同出现，SuperAgent 运行时 + 工程 Skill 体系，Agent 生态上下游今日同框。"</div>
+      </div>
+    </div>
+
+    <!-- #5 LadybirdBrowser/ladybird -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">05</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/LadybirdBrowser/ladybird" target="_blank">LadybirdBrowser / ladybird</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Truly independent web browser. 唯一不基于 Chromium / WebKit 的真正独立浏览器，C++ 实现，SerenityOS 作者 Andreas Kling 创立，63k Stars + 3k forks，今日登 Trending 通常对应重大里程碑。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">63,044</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,999</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#f34b7d"></span> C++</span>
+            <span class="meta-item">📄 BSD-2-Clause</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">browser</span><span class="topic-badge">web-standards</span><span class="topic-badge">cpp</span><span class="topic-badge">independent</span><span class="topic-badge">serenityos</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>唯一真正独立的浏览器引擎：不 fork Chromium / Firefox / WebKit，从零构建。由 SerenityOS 作者 Andreas Kling 创立，完整目标是实现全 Web 标准（HTML / CSS / JS / WebAssembly）。LibWeb 是核心布局/渲染引擎，LibJS 是 JavaScript 引擎。每次 Trending 登榜通常意味着重大里程碑（新 alpha 版本、功能突破、重要性能公告等）。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>完全独立实现：不 fork 任何现有浏览器代码，从零构建</li>
+          <li>LibWeb：自研布局 + 渲染引擎，LibJS：自研 JavaScript 引擎</li>
+          <li>跨平台：macOS / Linux / Windows（实验性）</li>
+          <li>完整 Web 标准目标：HTML / CSS / JS / WebAssembly / WebGL</li>
+          <li>开发透明：Kling 的 YouTube 系列 "Browser from Scratch" 直播开发全程</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C++</span><span class="tech-tag">Swift（macOS）</span><span class="tech-tag">LibWeb</span><span class="tech-tag">LibJS</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>浏览器引擎开发研究；Web 标准实现学习；独立浏览器生态支持；C++ 大型系统工程参考。</p></div>
+        <div class="recommend-quote">💬 "今日 Trending 最独特的项目——在 AI 工具爆发的时代，一个从零写的独立浏览器登热榜，说明基础软件依然有最强劲的社区情感支持。每次 ladybird 上 Trending 都值得关注是否有重大里程碑。"</div>
+      </div>
+    </div>
+
+    <!-- #6 D4Vinci/Scrapling -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">06</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/D4Vinci/Scrapling" target="_blank">D4Vinci / Scrapling</a></div>
+          <div class="project-desc">🕷️ An adaptive Web Scraping framework. 连续第 2 日上榜，Stars 从 45,604 增至 46,566，日增 962（今日持续项目中日增最高），4,308 forks，反 bot + MCP + Scrapy API 三合一。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">46,566</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>4,308</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">web-scraping</span><span class="topic-badge">anti-bot</span><span class="topic-badge">mcp</span><span class="topic-badge">playwright</span><span class="topic-badge">async</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Python 自适应爬虫全栈框架，连续第 2 日上榜，日增 962 是今日持续项目中最高。StealthyFetcher + DynamicFetcher + Scrapy 风格 Spider API + MCP Server，92% 测试覆盖，自动绕过 Cloudflare Turnstile。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>StealthyFetcher：TLS 指纹伪装，自动绕过 Cloudflare Turnstile/Interstitial</li>
+          <li>DynamicFetcher：Playwright 浏览器自动化</li>
+          <li>Scrapy 风格 Spider：并发 / 断点续传 / Streaming</li>
+          <li>MCP Server：与 Claude/Cursor 集成，减少 token 消耗</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Playwright</span><span class="tech-tag">asyncio</span><span class="tech-tag">MCP</span></div></div>
+        <div class="recommend-quote">💬 "连续第 2 日，日增 962 是今日持续项目最高——Scrapling 的反 bot + MCP 双核能力持续吸引开发者关注。"</div>
+      </div>
+    </div>
+
+    <!-- #7 ruvnet/ruflo -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank">07</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/ruvnet/ruflo" target="_blank">ruvnet / ruflo</a></div>
+          <div class="project-desc">🌊 The leading agent orchestration platform for Claude. 连续第 5 日上榜，Stars 从 44,548 增至 45,500，日增 952，5 日累计增长约 8,210（05-03：37,290），5,031 forks。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">45,500</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>5,031</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">agent</span><span class="topic-badge">orchestration</span><span class="topic-badge">swarm</span><span class="topic-badge">rust</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Claude Code 的 Agent 编排平台，连续第 5 日上榜，5 日累计增长约 8,210 Stars（05-03 起 37,290→45,500），日均增约 1,642。Rust WASM 内核策略引擎，自学习 + 自优化 Swarm 架构，跨机器 Federation 安全通信，1,471+ 次发布。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>Rust WASM 内核：策略引擎 + 嵌入 + 证明系统</li>
+          <li>自学习 Swarm：agents 自优化架构，自我改进</li>
+          <li>跨机器 Federation：安全通信协议</li>
+          <li>1,471+ 次发布：超高迭代节奏</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Rust</span><span class="tech-tag">WASM</span><span class="tech-tag">MCP</span></div></div>
+        <div class="recommend-quote">💬 "连续第 5 日上榜，今日是 Top 12 持续天数最长项目——Ruflo 五连榜，Claude Code Agent 编排热度最具持续性。"</div>
+      </div>
+    </div>
+
+    <!-- #8 addyosmani/agent-skills -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">08</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/addyosmani/agent-skills" target="_blank">addyosmani / agent-skills</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Production-grade engineering skills for AI coding agents. Google Chrome 团队 Engineering Manager Addy Osmani 出品，20 个 Skill + 7 个 slash command，覆盖 Define→Plan→Build→Verify→Review→Ship 全工程生命周期，3,678 forks。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">31,246</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>3,678</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#aaaaaa"></span> Markdown</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">claude-code</span><span class="topic-badge">cursor</span><span class="topic-badge">windsurf</span><span class="topic-badge">skills</span><span class="topic-badge">engineering</span><span class="topic-badge">gemini-cli</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Google Chrome 团队 Engineering Manager Addy Osmani 出品，20 个工程生命周期 Skill，7 个 slash command（/spec / /plan / /build / /test / /review / /code-simplify / /ship），技能上下文自动激活（设计 API → api-and-interface-design，构建 UI → frontend-ui-engineering），支持 Claude Code / Cursor / Windsurf / Gemini CLI / Copilot / OpenCode / Kiro 全主流 AI IDE。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li><strong>7 slash commands</strong>：/spec / /plan / /build / /test / /review / /code-simplify / /ship</li>
+          <li><strong>20 Skill × 6 阶段</strong>：Define（2）/ Plan（1）/ Build（5）/ Verify（2）/ Review（4）/ Ship（5）</li>
+          <li>Build 阶段：TDD / context-engineering / source-driven-development / frontend-ui-engineering / api-and-interface-design</li>
+          <li>Review 阶段：code-review-and-quality / code-simplification / security-and-hardening / performance-optimization</li>
+          <li>上下文自动激活：根据当前任务类型智能触发对应 Skill</li>
+          <li>全 IDE 兼容：Claude Code / Cursor / Windsurf / Gemini CLI / Copilot / OpenCode / Kiro</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">SKILL.md</span><span class="tech-tag">AGENTS.md</span><span class="tech-tag">.cursor/rules</span><span class="tech-tag">GEMINI.md</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Claude Code / Cursor 用户系统性提升工程质量；AI coding agent 全生命周期行为约束；前端工程师 AI 辅助开发工作流搭建。</p></div>
+        <div class="recommend-quote">💬 "昨日 karpathy-skills（4 条原则）→ 今日 agent-skills（20 个 Skill）——Addy Osmani 的 Google Chrome 工程背景为这套体系带来了真实生产级可信度，是今日最值得 Claude Code 用户安装的新 Skill 集。"</div>
+      </div>
+    </div>
+
+    <!-- #9 onyx-dot-app/onyx -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">09</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/onyx-dot-app/onyx" target="_blank">onyx-dot-app / onyx</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Open Source AI Platform - AI Chat with advanced features that works with every LLM. 企业级开源 AI 平台，40+ 数据源连接器，权限感知 RAG，29k Stars + 3,915 forks，支持所有主流 LLM。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">29,101</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>3,915</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">ai-platform</span><span class="topic-badge">rag</span><span class="topic-badge">enterprise</span><span class="topic-badge">open-source</span><span class="topic-badge">llm</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>企业级开源 AI 平台，支持所有主流 LLM（Claude / GPT / Llama / Gemini / 本地模型），内置 40+ 数据源连接器（Slack / GitHub / Confluence / Jira / Google Drive / Salesforce 等），权限感知 RAG（按用户权限过滤检索），SSO / SAML 企业安全，Chat + Search + Agent 三种模式，支持完全本地部署。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>40+ 数据源连接器：Slack / GitHub / Confluence / Jira / Google Drive / Salesforce 等</li>
+          <li>权限感知 RAG：按用户权限过滤检索结果，不泄露无权限数据</li>
+          <li>全 LLM 支持：Claude / GPT / Llama / Gemini / 本地模型</li>
+          <li>企业安全：SSO / SAML / 完全本地部署选项</li>
+          <li>三种模式：Chat（对话）/ Search（搜索）/ Agent（任务）</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Redis</span><span class="tech-tag">Vespa</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>企业内部 AI 知识库搭建；开源版 Notion AI / Glean 替代方案；多数据源统一 RAG 平台。</p></div>
+        <div class="recommend-quote">💬 "29k Stars 的企业级开源 AI 平台——今日与 InsForge（AI agent 原生后端，Explore）共同出现，企业 AI 基础设施（AI 平台 + AI 网关 + AI backend）今日在 Trending 集中登场。"</div>
+      </div>
+    </div>
+
+    <!-- #10 hsliuping/TradingAgents-CN -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">10</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/hsliuping/TradingAgents-CN" target="_blank">hsliuping / TradingAgents-CN</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">基于多智能体 LLM 的中文金融交易框架——TradingAgents 中文增强版。针对中国 A 股市场深度适配，5,442 forks 是今日新上榜项目最高，中国量化 AI 社区用脚投票。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">25,810</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>5,442</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">trading</span><span class="topic-badge">multi-agent</span><span class="topic-badge">a-share</span><span class="topic-badge">deepseek</span><span class="topic-badge">langgraph</span><span class="topic-badge">china</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>TauricResearch/TradingAgents 的中文增强 fork，专为中国 A 股市场深度适配。中文数据源（东方财富 / 同花顺 / AKShare / Tushare）+ 中文 LLM 优先支持（DeepSeek / Qwen / ChatGLM）+ 中文分析报告生成 + A 股规则适配。5,442 forks 是今日新上榜项目中最高，说明中国量化 AI 社区已大量 fork 用于实验。昨日国际版 TradingAgents 从 Top 12 退出，今日中文版接棒。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>中文 A 股数据源：东方财富 / 同花顺 / AKShare / Tushare</li>
+          <li>中文 LLM 优先：DeepSeek / Qwen / ChatGLM 优化适配</li>
+          <li>中文分析报告：基于 A 股规则的多 Agent 分析辩论</li>
+          <li>5,442 forks，今日新上榜最高</li>
+          <li>Docker 一键部署，中文文档完整</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">AKShare</span><span class="tech-tag">DeepSeek</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>中国 A 股量化研究；中文金融 AI 策略研究；本地化 LLM 金融应用开发。</p></div>
+        <div class="recommend-quote">💬 "5,442 forks 今日新上榜最高——昨日国际版 TradingAgents 退出 Top 12，今日中文版 TradingAgents-CN 接棒，中国量化 AI 社区用脚投票。"</div>
+      </div>
+    </div>
+
+    <!-- #11 virattt/dexter -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">11</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/virattt/dexter" target="_blank">virattt / dexter</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">An autonomous agent for deep financial research. 2,977 forks，今日与 TradingAgents-CN + Kronos 形成金融 AI 三连，dexter 是"研究中间层"——数据采集 → 分析 → 完整研究报告全自动生成。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">24,469</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>2,977</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">financial-research</span><span class="topic-badge">agent</span><span class="topic-badge">sec</span><span class="topic-badge">claude</span><span class="topic-badge">autonomous</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>自主深度金融研究 Agent，从提问到完整研究报告全自动生成。多数据源：SEC 文件 / 财务报表 / 新闻 / 分析师报告，结构化研究流程（数据收集 → 分析 → 报告生成），支持 Claude 和 GPT 系列模型，2,977 forks。今日是金融 AI 三连的"研究信息层"。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>全自动深度研究：从问题 → 数据采集 → 分析 → 完整研究报告</li>
+          <li>多数据源：SEC 文件 / 财务报表 / 新闻 / 分析师报告</li>
+          <li>支持 Claude 和 GPT 系列模型</li>
+          <li>LangGraph 驱动结构化研究流程</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Claude</span><span class="tech-tag">LangGraph</span><span class="tech-tag">SEC API</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>自动化股权研究报告生成；投资决策辅助信息收集；SEC 文件分析自动化。</p></div>
+        <div class="recommend-quote">💬 "今日金融 AI 三连的'研究中间层'——Kronos（数据预测层）+ dexter（研究信息层）+ TradingAgents-CN（决策层），金融 AI 完整栈今日在 Trending 同时闪现。"</div>
+      </div>
+    </div>
+
+    <!-- #12 shiyu-coder/Kronos -->
+    <div class="project-card new-card">
+      <div class="project-header">
+        <div class="project-rank">12</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/shiyu-coder/Kronos" target="_blank">shiyu-coder / Kronos</a> <span class="new-badge">今日新上榜</span></div>
+          <div class="project-desc">Kronos: A Foundation Model for the Language of Financial Markets. AAAI 2026 录用，第一个在 45 个全球交易所 K 线数据上预训练的开源金融基础模型，4,070 forks（学术项目罕见高 forks）。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">23,262</span></span>
+            <span class="meta-item"><span class="icon">🍴</span>4,070</span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics">
+            <span class="topic-badge">finance</span><span class="topic-badge">foundation-model</span><span class="topic-badge">k-lines</span><span class="topic-badge">trading</span><span class="topic-badge">aaai-2026</span><span class="topic-badge">huggingface</span>
+          </div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>AAAI 2026 录用论文开源实现，第一个在 45 个全球交易所 K 线数据上预训练的开源金融基础模型。两阶段框架：① 专属 Tokenizer（将 OHLCV 连续数据量化为层次化离散 token）② 大型自回归 Transformer（在金融 K 线"语言"上预训练）。模型家族：Kronos-mini / Kronos-small / Kronos-base（Hugging Face 开放），内置 A 股微调脚本，Live Demo 展示 BTC/USDT 未来 24 小时预测。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list">
+          <li>专属 Tokenizer：OHLCV → 层次化离散 token，专为金融时序设计</li>
+          <li>预训练数据：45+ 全球交易所，股票/加密货币/期货覆盖</li>
+          <li>模型家族：Kronos-mini / Kronos-small / Kronos-base（HuggingFace）</li>
+          <li>支持任务：多空预测 / 价格预测 / 趋势识别 / 波动率预测</li>
+          <li>A 股微调：内置 4 步微调脚本（Configure→数据→微调→回测）</li>
+          <li>AAAI 2026 学术背书，arXiv 论文 2508.02739</li>
+        </ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">HuggingFace</span><span class="tech-tag">Transformers</span><span class="tech-tag">Gradio</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>金融时序预测研究；量化策略基础模型微调；K 线模式识别；A 股市场自适应预测。</p></div>
+        <div class="recommend-quote">💬 "AAAI 2026 + 4,070 forks——Kronos 是今日学术深度最高的项目，4k forks 对学术 ML 项目极为罕见，说明量化社区已大量 fork 用于实验，是今日金融 AI 三连中最具学术价值的基础模型。"</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row">
+        <div class="lang-name">Python</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:75%;background:#3572A5"></div></div>
+        <div class="lang-count">9 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">C++</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#f34b7d"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">TypeScript</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#3178C6"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+      <div class="lang-bar-row">
+        <div class="lang-name">Markdown</div>
+        <div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#aaaaaa"></div></div>
+        <div class="lang-count">1 项目</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌐</span> GitHub Explore 精选</div>
+    <div class="insight-box">
+      <div class="trending-item">
+        <div class="trending-num">01</div>
+        <div>
+          <a href="https://github.com/cheahjs/free-llm-api-resources" target="_blank"><strong>cheahjs / free-llm-api-resources</strong></a> ⭐ 20,639 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">今日同时出现在全语言 Trending 和 Python Trending 双榜。免费 LLM 推理 API 资源列表（2,098 forks），与 awesome-llm-apps 和 public-apis 同日出现，今日"可用 AI 资源"类项目是第二热门主题，开发者在 AI 工具爆发期对"免费 API 资源"的需求持续上升。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">02</div>
+        <div>
+          <a href="https://github.com/anthropics/financial-services" target="_blank"><strong>anthropics / financial-services</strong></a> ⭐ 9,421 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">今日同时出现在全语言 Trending 和 Python Trending 双榜。Anthropic 官方金融服务示例库，1,274 forks，与今日金融 AI 三连（Kronos + dexter + TradingAgents-CN）共同出现，Anthropic 今日亲身入场金融 AI 生态展示，是官方背书金融领域的重要信号。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">03</div>
+        <div>
+          <a href="https://github.com/InsForge/InsForge" target="_blank"><strong>InsForge / InsForge</strong></a> ⭐ 8,566 <span class="new-badge">今日新上榜</span>
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Postgres-based backend with auth, storage, compute, hosting, and AI gateway. Built for coding agents. 708 forks，类 Supabase 的 AI agent 原生后端，今日与 onyx（AI 平台）共同出现，企业 AI 基础设施赛道（AI backend + AI 平台）今日集中登场。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">04</div>
+        <div>
+          <a href="https://github.com/Hmbown/DeepSeek-TUI" target="_blank"><strong>Hmbown / DeepSeek-TUI</strong></a> ⭐ 15,564
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">连续第 2 日出现在全语言 Trending（昨日 Explore），Stars 从昨日 10,854 跳升至今日 15,564，日增约 4,710，是今日所有 Trending 项目中日增最快的。终端 DeepSeek 编程 Agent，1,213 forks。</p>
+        </div>
+      </div>
+      <div class="trending-item">
+        <div class="trending-num">05</div>
+        <div>
+          <a href="https://github.com/AIDC-AI/Pixelle-Video" target="_blank"><strong>AIDC-AI / Pixelle-Video</strong></a> ⭐ 12,929
+          <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">连续多日出现在 Python Trending，AI 全自动短视频引擎，1,951 forks，今日 Stars 12,929，持续稳定热度。与今日 pytorch（ML 基础设施）和 Kronos（金融模型）同日出现，多模态 AI 生成的 Trending 热度丝毫未减。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📊 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/trending/python?since=daily" target="_blank">Python Trending</a></p>
+    <p style="margin-top:8px;">生成时间：2026-05-07 · 仅供参考，不构成投资或法律建议</p>
+  </div>
+
+</div>
+
+<script>
+function toggleDetail(btn) {
+  var details = btn.nextElementSibling;
+  if (details.classList.contains('open')) {
+    details.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    details.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+}
+</script>
+</body>
+</html>

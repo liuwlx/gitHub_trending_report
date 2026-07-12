@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-18</title>
+<style>
+:root {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d; --border: #30363d;
+  --text: #c9d1d9; --text2: #8b949e; --accent: #58a6ff; --accent2: #3fb950;
+  --accent3: #f78166; --gold: #e3b341; --silver: #8b949e; --bronze: #d18016;
+  --new-badge: #238636; --cont-badge: #1f6feb;
+  --python: #3572A5; --typescript: #3178C6; --cpp: #f34b7d;
+  --elixir: #6e4a7e; --jupyter: #da5b0b;
+}
+.light {
+  --bg: #f6f8fa; --bg2: #ffffff; --bg3: #f0f2f4; --border: #d0d7de;
+  --text: #24292f; --text2: #57606a; --accent: #0969da; --accent2: #1a7f37;
+  --accent3: #cf222e; --gold: #9a6700; --silver: #57606a; --bronze: #953800;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo { font-size: 20px; }
+.header-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.header-date { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.theme-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.theme-btn:hover { background: var(--border); }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+.stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.section-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.insights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
+.insight-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; border-left: 3px solid var(--accent); }
+.insight-card:nth-child(2) { border-left-color: var(--accent2); }
+.insight-card:nth-child(3) { border-left-color: var(--gold); }
+.insight-card:nth-child(4) { border-left-color: var(--accent3); }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.insight-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
+.project-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s; }
+.project-card:hover { border-color: var(--accent); }
+.top-card { border-left: 3px solid var(--cont-badge); }
+.new-card { border-left: 3px solid var(--new-badge); }
+.rank-1 { border-left: 3px solid var(--gold); }
+.rank-2 { border-left: 3px solid var(--silver); }
+.rank-3 { border-left: 3px solid var(--bronze); }
+.card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.card-rank { font-size: 20px; font-weight: 800; min-width: 36px; color: var(--text2); }
+.rank-1 .card-rank { color: var(--gold); }
+.rank-2 .card-rank { color: var(--silver); }
+.rank-3 .card-rank { color: var(--bronze); }
+.card-title-area { flex: 1; }
+.card-repo { font-size: 14px; font-weight: 600; color: var(--accent); }
+.card-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.new-badge { background: var(--new-badge); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.cont-badge { background: var(--cont-badge); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.lang-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; color: #fff; }
+.lang-python { background: var(--python); }
+.lang-typescript { background: var(--typescript); }
+.lang-cpp { background: var(--cpp); }
+.lang-elixir { background: var(--elixir); }
+.lang-jupyter { background: var(--jupyter); }
+.card-meta { padding: 0 16px 10px; display: flex; gap: 14px; flex-wrap: wrap; }
+.meta-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text2); }
+.meta-stars { color: var(--gold); }
+.meta-growth { color: var(--accent2); }
+.meta-alert { color: var(--accent3); font-weight: 600; }
+.card-detail { border-top: 1px solid var(--border); padding: 12px 16px; display: none; }
+.card-detail.open { display: block; }
+.detail-section { margin-bottom: 10px; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.detail-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.detail-tag { background: var(--bg3); border: 1px solid var(--border); font-size: 11px; padding: 2px 8px; border-radius: 10px; color: var(--text2); }
+.toggle-btn { display: block; width: 100%; background: var(--bg3); border: none; border-top: 1px solid var(--border); color: var(--text2); padding: 8px; cursor: pointer; font-size: 11px; text-align: center; }
+.toggle-btn:hover { background: var(--border); color: var(--text); }
+.lang-dist { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px; }
+.lang-bar-row { margin-bottom: 10px; }
+.lang-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+.lang-bar-track { background: var(--bg3); border-radius: 4px; height: 8px; overflow: hidden; }
+.lang-bar-fill { height: 100%; border-radius: 4px; }
+.explore-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 32px; }
+.explore-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 14px; }
+.explore-num { font-size: 18px; font-weight: 800; color: var(--text2); min-width: 28px; }
+.explore-content { flex: 1; }
+.explore-repo { font-size: 13px; font-weight: 600; color: var(--accent); }
+.explore-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.explore-meta { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 20px 24px; text-align: center; font-size: 12px; color: var(--text2); }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <span class="header-logo">📊</span>
+    <div>
+      <div class="header-title">GitHub Trending 日报</div>
+      <div class="header-date">2026-05-18 · llama.cpp 领衔基础推理层 · RuView WiFi 透视 · HKUDS CLI-Anything · 科研 Skills 双框</div>
+    </div>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()">☀️ 切换主题</button>
+</div>
+
+<div class="container">
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">今日 Top 项目</div></div>
+    <div class="stat-card"><div class="stat-value">~517k</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--new-badge)">12</div><div class="stat-label">今日新上榜</div></div>
+    <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">编程语言数</div></div>
+  </div>
+
+  <div class="section-title">🔍 今日洞察</div>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-title">🏗️ llama.cpp（110.7k）领衔——AI 推理基础层再度主导，5 月"基础工具层双峰"</div>
+      <div class="insight-text">今日由 llama.cpp 领衔，是继 05-12 SD-webui（162.9k）之后第二次"AI 基础工具层主导日"。图像生成推理层（SD-webui，05-12）vs LLM 文本推理层（llama.cpp，05-18）——Ollama / LM Studio / Jan.ai 等几乎所有本地 LLM 工具都以 llama.cpp 为底层引擎。今日登顶意味着开发者注意力从"Agent 应用层"回归"基础推理基础设施"。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">📡 ruvnet/RuView（59.5k）——"WiFi 透视"惊艳登场，AI 边界从代码空间延伸至物理空间</div>
+      <div class="insight-text">今日第三位，"Turn ordinary WiFi into spatial intelligence — detect people, measure breathing and heart rate, track movement — through walls, in the dark, with no cameras or wearables. Just physics." 7,763 forks 今日全榜最高，内置 Claude Code & Codex Plugin，是今日唯一将 AI agent 能力引入物理世界感知的项目，代表 AI 应用的空间感知新前沿。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🔬 科研 Skills 双框——K-Dense-AI/scientific-agent-skills + Imbad0202/academic-research-skills 今日同上 Trending</div>
+      <div class="insight-text">K-Dense-AI/scientific-agent-skills（24.1k，135 个科研 Skills，覆盖 100+ 数据库 + 70+ Python 科研包，药物发现/基因组学/量子计算）与 Imbad0202/academic-research-skills（10.2k，学术写作全流程，Explore）今日同框，Skills 生态从"通用编程辅助"向"专业科研自动化"纵深拓展，是本系列日报首次出现的科研 Skills 双框。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🦀 HKUDS/CLI-Anything（36.3k）——港大继 AI-Trader 后推出通用 Agent-Native 基础设施</div>
+      <div class="insight-text">HKUDS（AI-Trader 同组织）今日以 CLI-Anything 再度登榜——"Making ALL Software Agent-Native"。7 阶段 Pipeline 将任意 GUI 软件生成 CLI 接口，SKILL.md 自动生成，CLI-Hub 中心化注册表，pip 一行安装。AI-Trader（金融 Agent 应用）+ CLI-Anything（通用 Agent 基础设施）= HKUDS"让一切 Agent-Native"完整战略布局。</div>
+    </div>
+  </div>
+
+  <div class="section-title">🏆 今日 Top 12</div>
+  <div class="projects-grid">
+
+    <!-- #01 llama.cpp -->
+    <div class="project-card rank-1 new-card">
+      <div class="card-header">
+        <div class="card-rank">#01</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/ggml-org/llama.cpp" target="_blank">ggml-org/llama.cpp</a>
+          <div class="card-desc">LLM inference in C/C++ — 本地 LLM 推理事实工业标准，Ollama / LM Studio 底层引擎</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-cpp">C++</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 110,736</span>
+        <span class="meta-item">🍴 18,339</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">纯 C/C++ 实现，跨平台无依赖，支持 GGUF 格式几乎所有主流模型（Llama / Mistral / Phi / Gemma / Qwen），多后端加速（Metal / CUDA / Vulkan），2-8 bit 量化，内置 OpenAI 兼容 HTTP server，Speculative decoding / LoRA 推理 / Function calling，每周多个 commit 支持最新模型。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">核心功能</div>
+          <div class="detail-tags">
+            <span class="detail-tag">GGUF 模型推理</span>
+            <span class="detail-tag">Metal / CUDA 加速</span>
+            <span class="detail-tag">2-8 bit 量化</span>
+            <span class="detail-tag">OpenAI 兼容 API</span>
+            <span class="detail-tag">Speculative Decoding</span>
+            <span class="detail-tag">LoRA 推理</span>
+            <span class="detail-tag">Function Calling</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日 Top 1，本地 AI 生态的"底座"。Ollama / LM Studio / Jan.ai 等几乎所有本地 LLM 工具都依赖 llama.cpp。今日登顶意味着开发者注意力从 Agent Skills 工具层回归最底层推理基础设施——通常预示新一轮模型发布或量化支持更新即将带动新的工具链迭代。与 05-12 SD-webui 领衔共同构成 5 月"基础工具层双峰"。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #02 microsoft/ai-agents-for-beginners -->
+    <div class="project-card rank-2 new-card">
+      <div class="card-header">
+        <div class="card-rank">#02</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/microsoft/ai-agents-for-beginners" target="_blank">microsoft/ai-agents-for-beginners</a>
+          <div class="card-desc">12 Lessons to Get Started Building AI Agents — 微软官方 AI Agent 入门课程</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-jupyter">Jupyter</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 63,072</span>
+        <span class="meta-item">🍴 21,124</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">微软官方出品，12 课完整 AI Agent 入门课程，覆盖 Autogen / Semantic Kernel / OpenAI API 等主流框架，Python + TypeScript 双语言示例，Jupyter Notebook 格式，21k+ forks（fork/star = 0.334）说明大量开发者 fork 用于自定义学习路径，配套视频和资源。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">课程覆盖</div>
+          <div class="detail-tags">
+            <span class="detail-tag">AI Agent 基础概念</span>
+            <span class="detail-tag">Autogen 实践</span>
+            <span class="detail-tag">Semantic Kernel</span>
+            <span class="detail-tag">OpenAI API 集成</span>
+            <span class="detail-tag">Azure AI 服务</span>
+            <span class="detail-tag">多 Agent 协作</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">21k forks 今日全榜第一高 fork 数！微软官方背书 + 12 课结构化内容是今日"Agent 学习资源"代表。与 scientific-agent-skills（应用层 Skills）形成学习→工具的完整衔接。fork/star = 0.334 属于"课程型"项目的高 fork 率——大量学员 fork 用于记录学习进度。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #03 ruvnet/RuView -->
+    <div class="project-card rank-3 new-card">
+      <div class="card-header">
+        <div class="card-rank">#03</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/ruvnet/RuView" target="_blank">ruvnet/RuView</a>
+          <div class="card-desc">π RuView turns commodity WiFi signals into real-time spatial intelligence — 无摄像头穿墙感知，纯物理原理</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 59,505</span>
+        <span class="meta-item">🍴 7,763</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">"See through walls with WiFi" — 利用 WiFi CSI（信道状态信息）：人体存在检测（穿墙）、生命体征监测（呼吸频率 + 心率）、运动轨迹追踪、全黑暗环境工作，仅需普通 WiFi 路由器，无摄像头无穿戴设备。内置 Claude Code & Codex Plugin，AI agent 可直接调用感知能力。7,763 forks 今日全榜最高 fork 数。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">感知能力</div>
+          <div class="detail-tags">
+            <span class="detail-tag">WiFi CSI 信号分析</span>
+            <span class="detail-tag">穿墙人体检测</span>
+            <span class="detail-tag">呼吸频率实时测量</span>
+            <span class="detail-tag">心率监测</span>
+            <span class="detail-tag">运动轨迹追踪</span>
+            <span class="detail-tag">Claude Code Plugin</span>
+            <span class="detail-tag">边缘端低功耗</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">7,763 forks 今日全榜最高！无摄像头穿墙 WiFi 感知平台，内置 Claude Code Plugin——今日唯一将 AI agent 能力延伸到物理世界感知的项目。居家安全 / 老人监护 / 空间感知等场景，代表 AI 应用从"数字代码空间"向"物理真实世界"的前沿突破，是 2026 年 AI 应用边界最令人惊艳的一次延伸。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #04 ZhuLinsen/daily_stock_analysis -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#04</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/ZhuLinsen/daily_stock_analysis" target="_blank">ZhuLinsen/daily_stock_analysis</a>
+          <div class="card-desc">LLM驱动的 A/H/美股智能分析：多数据源行情 + 实时新闻 + LLM决策仪表盘 + 多渠道推送，零成本定时运行</div>
+          <div class="card-badges">
+            <span class="new-badge">重返 Top 12</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 36,748</span>
+        <span class="meta-item meta-alert">🍴 36,063 (ratio=0.981!)</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">重返 Top 12（曾于 05-11 上榜 at 35,102 ⭐）。今日 36,748 Stars + 36,063 forks，比 05-11 增加 +1,646 Stars（约 235/天稳定增长）。Fork/Star = 36,063/36,748 = 0.981 极端异常值——用户必须 fork + 配置 API keys + GitHub Actions 才能使用，"必须 fork 才能白嫖"的设计天然推高 Fork 率至接近 1.0。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Fork/Star = 0.981，今日全榜最极端数据异常，是本系列日报追踪以来 Fork/Star 比率最高的项目。"自部署工具型"项目的完美案例：零成本白嫖 = 必须 fork。今日重返说明金融 AI 自动化持续热度——距 05-11 过去 7 天仍保持 235+/天增速，金融 AI 赛道的长尾效应显著。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #05 HKUDS/CLI-Anything -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#05</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/HKUDS/CLI-Anything" target="_blank">HKUDS/CLI-Anything</a>
+          <div class="card-desc">"CLI-Anything: Making ALL Software Agent-Native" — 港大 HKUDS（AI-Trader 同组织），7 阶段 Pipeline 让任意软件变 Agent 可调用</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 36,258</span>
+        <span class="meta-item">🍴 3,522</span>
+        <span class="meta-item">📄 Apache-2.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">7 阶段全自动 Pipeline：任意 GUI 软件→生成 CLI wrapper。SKILL.md 自动生成（Phase 6.5）：每个生成的 CLI 自动附带 AI 可发现的 Skill 定义。CLI-Hub（clianything.cc）中心化 CLI 注册表，pip install 一行安装。真实演示：FreeCAD（探测器）/ Blender（无人机轨迹）/ Slay the Spire II（游戏自动化）。支持 Claude Code / Codex / Cursor / OpenClaw / Antigravity。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">核心特性</div>
+          <div class="detail-tags">
+            <span class="detail-tag">7 阶段自动化 Pipeline</span>
+            <span class="detail-tag">SKILL.md 自动生成</span>
+            <span class="detail-tag">CLI-Hub 注册表</span>
+            <span class="detail-tag">Claude Code 集成</span>
+            <span class="detail-tag">HARNESS.md 标准</span>
+            <span class="detail-tag">多软件演示</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">HKUDS 继 AI-Trader（金融 Agent 应用）后推出 CLI-Anything（通用 Agent 基础设施）——完整呈现"Agent-Native 生态"战略：先做垂直应用，再做通用基础设施。CLI-Anything 意义在于：任何 GUI 软件都能被 AI agent 调用，是"一切皆 Agent-Native"愿景的工具层实现。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #06 plausible/analytics -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#06</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/plausible/analytics" target="_blank">plausible/analytics</a>
+          <div class="card-desc">Open source, privacy-first web analytics. Lightweight, cookie-free Google Analytics alternative. Self-hosted or cloud.</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-elixir">Elixir</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 25,702</span>
+        <span class="meta-item">🍴 1,479</span>
+        <span class="meta-item">📄 AGPL-3.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">今日唯一非 AI 直接相关项目，也是唯一 Elixir 语言项目。隐私优先 Web 分析：无 Cookie，不收集个人数据，GDPR 合规，单行脚本（&lt;1KB），Google Analytics 替代方案，自托管或云端。Elixir / Phoenix / PostgreSQL / ClickHouse 技术栈。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日唯一非 AI 系项目。在 AI 工具密集爆发的 Trending 中，plausible/analytics 的出现说明开发者对"隐私优先基础设施"的持续关注不会因 AI 热潮减退——构建 AI 应用同样需要监控用户行为，而 GDPR 合规的分析工具是刚需。今日也是 Elixir 语言在本系列日报中的首次出现。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #07 K-Dense-AI/scientific-agent-skills -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#07</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/K-Dense-AI/scientific-agent-skills" target="_blank">K-Dense-AI/scientific-agent-skills</a>
+          <div class="card-desc">A set of ready to use Agent Skills for research, science, engineering, analysis, finance and writing — 135 个科研 Skills，76 次发布</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 24,130</span>
+        <span class="meta-item">🍴 2,556</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">135 个科研 Skills，分 5 大类：100+ 科学数据库（PubChem / ChEMBL / UniProt / NCBI / ClinicalTrials.gov / FRED / USPTO 等 78 个）；70+ Python 科研包 Skills（RDKit / Scanpy / BioPython / PyTorch Lightning / scikit-learn / PennyLane / Qiskit / OpenMM 等）；9 科研集成（Benchling / DNAnexus / LatchBio / Protocols.io）；30+ 分析传播工具；10+ 研究临床工具。76 次发布！</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">覆盖领域</div>
+          <div class="detail-tags">
+            <span class="detail-tag">药物发现 / 分子设计</span>
+            <span class="detail-tag">基因组学 / 单细胞 RNA</span>
+            <span class="detail-tag">临床研究 / 精准医疗</span>
+            <span class="detail-tag">多组学 / 系统生物学</span>
+            <span class="detail-tag">量子计算 / 量子化学</span>
+            <span class="detail-tag">文献综述 / 科学写作</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">135 个科研 Skills，覆盖从基因组测序到量子化学的完整科研领域。76 次发布说明这是专业持续维护的工程。今日与 academic-research-skills（Explore #1）同框，两者构成"科研 Skills 双层"：scientific-agent-skills（科学计算工具层）+ academic-research-skills（论文写作流程层），Skills 生态今日向专业科研纵深。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #08 humanlayer/12-factor-agents -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#08</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/humanlayer/12-factor-agents" target="_blank">humanlayer/12-factor-agents</a>
+          <div class="card-desc">What are the principles we can use to build LLM-powered software that is actually good enough to put in the hands of production customers?</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-typescript">TypeScript</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 20,204</span>
+        <span class="meta-item">🍴 1,530</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">"12-Factor App"是 Web 应用工程化的里程碑方法论，12-factor-agents 试图为 AI Agent 做同样的事：12 条 Agent 设计原则，专门针对"真正能交付给生产用户"的 LLM 软件，HumanLayer 出品（人机协作 AI 平台背后的理论沉淀），既有原则说明也有代码示例，面向工程师的实战经验总结。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">20k Stars 说明社区对"如何真正把 AI Agent 用于生产"的需求远超"如何构建 AI Agent Demo"。类比经典"12-Factor App"方法论的做法本身就有强烈的工程美感——从"能跑"到"生产可用"的工程化跨越，正是今日大量 AI 创业公司面临的最核心挑战。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #09 topoteretes/cognee -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#09</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/topoteretes/cognee" target="_blank">topoteretes/cognee</a>
+          <div class="card-desc">Memory control plane for AI Agents in 6 lines of code — 极简记忆基础设施，知识图谱 + 向量双引擎</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 17,310</span>
+        <span class="meta-item">🍴 1,813</span>
+        <span class="meta-item">📄 Apache-2.0</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">"6 行代码"为 AI Agent 添加记忆控制面，统一管理短期/长期记忆，知识图谱 + 向量存储双引擎，支持 OpenAI / Anthropic / Cohere 等多 LLM，与 LangChain / LlamaIndex / AutoGen 集成。今日与 LEANN（Explore #2，97% 存储节省的私有 RAG）同框，共同构成 Agent 记忆/知识管理双视角。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日与 CLI-Anything（工具接口层）+ scientific-agent-skills（专业技能层）同框，三者共同构成 Agent 生态不同层次：工具调用（CLI-Anything）+ 专业知识（scientific-agent-skills）+ 记忆持久化（cognee）。"6 行代码"的极简集成是今日最实用的 Agent 基础设施更新。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #10 tinyhumansai/openhuman -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#10</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/tinyhumansai/openhuman" target="_blank">tinyhumansai/openhuman</a>
+          <div class="card-desc">Your Personal AI super intelligence. Private, Simple and extremely powerful. — 6 天 Stars +818%，今日全榜增速最快</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-typescript">TypeScript</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 15,400</span>
+        <span class="meta-item">🍴 1,323</span>
+        <span class="meta-item meta-growth">↑ +13,724（6天）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">6 天 Stars 暴增 +818%：05-12（1,676）→ 05-18（15,400），+13,724 Stars，平均 +2,287/天，是今日全榜增速最快项目。上次（05-12）以 1,676 Stars 出现在全语言 Trending 时还是"长尾新项目"，今日已 15.4k Stars，说明过去 6 天内经历了一次社区传播爆发。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日最惊人的增速——6 天 +818% Stars 增长！"Private, Simple and extremely powerful"的定位 + TypeScript 技术栈，在隐私 AI 个人智能领域触动了社区神经。从 1.7k 到 15.4k 的 6 天爆发是本系列日报中见过的最快增速之一。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #11 CloakHQ/CloakBrowser -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#11</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/CloakHQ/CloakBrowser" target="_blank">CloakHQ/CloakBrowser</a>
+          <div class="card-desc">Stealth Chromium that passes every bot detection test. Drop-in Playwright replacement with source-level fingerprint patches. 30/30 tests passed.</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 14,484</span>
+        <span class="meta-item">🍴 1,130</span>
+        <span class="meta-item meta-growth">↑ +9,277（8天）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">本系列日报长期持续增长项目：05-10（5,207）→ 05-12（6,529）→ 05-18（14,484），8 天 +9,277 Stars（+178%）。"30/30 bot detection tests passed"是核心卖点，Drop-in Playwright 替代方案，source-level fingerprint patches，所有主流机器人检测测试 30/30 全通过。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">连续 8 天持续增长（05-10 → 05-18：5.2k → 14.5k），是本系列日报追踪周期内持续增长最稳定的项目之一。Stealth 浏览器自动化赛道需求旺盛的背后：AI Agent 浏览器控制场景的普及让反爬虫检测绕过成为刚需，"source-level fingerprint patches"的技术路径比 hook 层面更彻底。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #12 GreyDGL/PentestGPT -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#12</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/GreyDGL/PentestGPT" target="_blank">GreyDGL/PentestGPT</a>
+          <div class="card-desc">Automated Penetration Testing Agentic Framework Powered by Large Language Models</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 13,153</span>
+        <span class="meta-item">🍴 2,257</span>
+        <span class="meta-item">📄 MIT</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">项目亮点</div>
+          <div class="detail-text">LLM 驱动的自动化渗透测试 Agent 框架，全自动渗透测试（规划 + 执行 + 报告），GPT-4 / Claude 等 LLM 为决策核心，Nmap / SQLMap / Metasploit 等安全工具调用，ReAct + Tree-of-Thought 推理框架，支持 CTF 竞赛自动化解题。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日唯一安全 AI 方向项目，与 RuView（物理空间感知）同框，两者代表 AI 在安全领域的两个维度：主动渗透测试自动化（PentestGPT）vs 被动物理空间感知（RuView）。今日"技术基础设施"主题的 Trending 中，安全 AI 自然浮现——LLM 驱动的渗透测试自动化是 AI Agent 能力在专业安全领域的典型落地。</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Language Distribution -->
+  <div class="section-title">🌐 语言分布</div>
+  <div class="lang-dist">
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>🐍 Python</span><span>7 项目（58%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:58%;background:var(--python)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>🔷 TypeScript</span><span>2 项目（17%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:17%;background:var(--typescript)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>⚡ C++</span><span>1 项目（8%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:8%;background:var(--cpp)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>💜 Elixir</span><span>1 项目（8%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:8%;background:var(--elixir)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>📓 Jupyter Notebook</span><span>1 项目（8%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:8%;background:var(--jupyter)"></div></div>
+    </div>
+  </div>
+
+  <!-- Explore -->
+  <div class="section-title">🌟 GitHub Explore 精选</div>
+  <div class="explore-grid">
+
+    <div class="explore-card">
+      <div class="explore-num">01</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/Imbad0202/academic-research-skills" target="_blank">Imbad0202/academic-research-skills</a>
+        <div class="explore-desc">Academic Research Skills for Claude Code: research → write → review → revise → finalize. 以 126 Stars 之差刚好落出 Top 12（10,224 vs #12 PentestGPT 13,153），今日全语言 + Python 双榜。1,100 forks，学术写作完整流程 Skills，与 scientific-agent-skills 共同构成"科研 Skills 双层"：科学计算工具层（scientific-agent-skills）+ 论文写作流程层（academic-research-skills）。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 10,224</span>
+          <span class="meta-item">🍴 1,100</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">02</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/yichuan-w/LEANN" target="_blank">yichuan-w/LEANN</a>
+        <div class="explore-desc">[MLsys2026]: RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device. 11,423 ⭐，1,020 forks，入选 MLsys2026 会议。今日与 cognee（#9，记忆控制面）同框，两者代表 Agent 记忆/知识管理两个方向：长期记忆管理（cognee）vs 高效本地私有 RAG（LEANN）。97% 存储节省是核心创新。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 11,423</span>
+          <span class="meta-item">🍴 1,020</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">03</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep" target="_blank">wanshuiyin/Auto-claude-code-research-in-sleep</a>
+        <div class="explore-desc">ARIS ⚔️ (Auto-Research-In-Sleep) — Lightweight Markdown-only skills for autonomous ML research: cross-model review loops, idea discovery, and experiment automation. 9,817 ⭐（从 05-12 的 8,898 持续增长 +919）。今日与 scientific-agent-skills + academic-research-skills 构成"研究自动化三层"：ARIS（睡眠中自主研究）+ academic（写作流程）+ scientific（科学计算工具）。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 9,817</span>
+          <span class="meta-item">🍴 944</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">04</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/tech-leads-club/agent-skills" target="_blank">tech-leads-club/agent-skills</a>
+        <div class="explore-desc">The secure, validated skill registry for professional AI coding agents. Extend Antigravity, Claude Code, Cursor, Copilot and more with absolute confidence. 3,794 ⭐，334 forks，今日全语言 Trending。面向专业团队的 Skills 安全验证注册表，强调安全性与可信度，是今日多个 Skills 仓库中定位最"企业级"的一个。今日 Skills 生态多元：科研（scientific / academic）+ 企业安全（tech-leads-club）+ 通用（CLI-Anything SKILL.md 自动生成）。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 3,794</span>
+          <span class="meta-item">🍴 334</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">05</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/BigBodyCobain/Shadowbroker" target="_blank">BigBodyCobain/Shadowbroker</a>
+        <div class="explore-desc">Open-source intelligence for the global theater. Track everything from the corporate/private jets of the wealthy, and spy satellites, to seismic events in one unified interface. Hook an AI agent up to have it parse through data and find previously unseen correlations. 7,446 ⭐，1,165 forks，今日全语言 + Python 双榜。今日与 PentestGPT（#12）+ RuView（#3）同框，三者共同构成"AI 安全/感知"今日最完整的场景覆盖：物理空间感知（RuView）+ 全球情报聚合（Shadowbroker）+ 渗透测试自动化（PentestGPT）。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 7,446</span>
+          <span class="meta-item">🍴 1,165</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  GitHub Trending 日报 · 2026-05-18 · 数据来源：GitHub Trending（全语言）+ Python Trending · 生成时间：2026-05-18
+</footer>
+
+<script>
+function toggleDetail(btn) {
+  const detail = btn.previousElementSibling;
+  if (detail.classList.contains('open')) {
+    detail.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    detail.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const btn = document.querySelector('.theme-btn');
+  btn.textContent = document.body.classList.contains('light') ? '🌙 切换主题' : '☀️ 切换主题';
+}
+</script>
+</body>
+</html>

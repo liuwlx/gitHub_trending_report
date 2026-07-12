@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-05-24</title>
+<style>
+:root {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d; --border: #30363d;
+  --text: #c9d1d9; --text2: #8b949e; --accent: #58a6ff; --accent2: #3fb950;
+  --accent3: #f78166; --gold: #e3b341; --silver: #8b949e; --bronze: #d18016;
+  --new-badge: #238636; --cont-badge: #1f6feb;
+  --python: #3572A5; --typescript: #3178C6; --shell: #89e051;
+  --markdown: #083fa1; --cpp: #f34b7d;
+}
+.light {
+  --bg: #f6f8fa; --bg2: #ffffff; --bg3: #f0f2f4; --border: #d0d7de;
+  --text: #24292f; --text2: #57606a; --accent: #0969da; --accent2: #1a7f37;
+  --accent3: #cf222e; --gold: #9a6700; --silver: #57606a; --bronze: #953800;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo { font-size: 20px; }
+.header-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.header-date { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.theme-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.theme-btn:hover { background: var(--border); }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+.stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.section-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.insights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
+.insight-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; border-left: 3px solid var(--accent); }
+.insight-card:nth-child(2) { border-left-color: var(--gold); }
+.insight-card:nth-child(3) { border-left-color: var(--accent3); }
+.insight-card:nth-child(4) { border-left-color: var(--accent2); }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.insight-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
+.project-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s; }
+.project-card:hover { border-color: var(--accent); }
+.top-card { border-left: 3px solid var(--cont-badge); }
+.new-card { border-left: 3px solid var(--new-badge); }
+.promote-card { border-left: 3px solid #6f42c1; }
+.rank-1 { border-left: 3px solid var(--gold); }
+.rank-2 { border-left: 3px solid var(--silver); }
+.rank-3 { border-left: 3px solid var(--bronze); }
+.card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.card-rank { font-size: 20px; font-weight: 800; min-width: 36px; color: var(--text2); }
+.rank-1 .card-rank { color: var(--gold); }
+.rank-2 .card-rank { color: var(--silver); }
+.rank-3 .card-rank { color: var(--bronze); }
+.card-title-area { flex: 1; }
+.card-repo { font-size: 14px; font-weight: 600; color: var(--accent); }
+.card-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.new-badge { background: var(--new-badge); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.cont-badge { background: var(--cont-badge); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.lang-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; color: #fff; }
+.lang-python { background: var(--python); }
+.lang-typescript { background: var(--typescript); }
+.lang-shell { background: var(--shell); color: #1a1a1a; }
+.lang-markdown { background: var(--markdown); }
+.lang-cpp { background: var(--cpp); }
+.card-meta { padding: 0 16px 10px; display: flex; gap: 14px; flex-wrap: wrap; }
+.meta-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text2); }
+.meta-stars { color: var(--gold); }
+.meta-growth { color: var(--accent2); }
+.meta-alert { color: var(--accent3); font-weight: 600; }
+.card-detail { border-top: 1px solid var(--border); padding: 12px 16px; display: none; }
+.card-detail.open { display: block; }
+.detail-section { margin-bottom: 10px; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.detail-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.detail-tag { background: var(--bg3); border: 1px solid var(--border); font-size: 11px; padding: 2px 8px; border-radius: 10px; color: var(--text2); }
+.toggle-btn { display: block; width: 100%; background: var(--bg3); border: none; border-top: 1px solid var(--border); color: var(--text2); padding: 8px; cursor: pointer; font-size: 11px; text-align: center; }
+.toggle-btn:hover { background: var(--border); color: var(--text); }
+.lang-dist { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px; }
+.lang-bar-row { margin-bottom: 10px; }
+.lang-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+.lang-bar-track { background: var(--bg3); border-radius: 4px; height: 8px; overflow: hidden; }
+.lang-bar-fill { height: 100%; border-radius: 4px; }
+.explore-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 32px; }
+.explore-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 14px; }
+.explore-num { font-size: 18px; font-weight: 800; color: var(--text2); min-width: 28px; }
+.explore-content { flex: 1; }
+.explore-repo { font-size: 13px; font-weight: 600; color: var(--accent); }
+.explore-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.explore-meta { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 20px 24px; text-align: center; font-size: 12px; color: var(--text2); }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <span class="header-logo">📊</span>
+    <div>
+      <div class="header-title">GitHub Trending 日报</div>
+      <div class="header-date">2026-05-24（周六）· andrej-karpathy-skills Day 5 破 150k 加速 · multica-ai 首次双入 Top 12 · yt-dlp 165k 经典工具 · Skills 三强全退场</div>
+    </div>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()">☀️ 切换主题</button>
+</div>
+
+<div class="container">
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">今日 Top 项目</div></div>
+    <div class="stat-card"><div class="stat-value">~981k</div><div class="stat-label">累计 Stars</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--new-badge)">6</div><div class="stat-label">今日新上榜</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:#6f42c1">2</div><div class="stat-label">Explore 升入 Top 12</div></div>
+  </div>
+
+  <div class="section-title">🔍 今日洞察</div>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-title">⚡ multica-ai/andrej-karpathy-skills Day 5：149,900 ⭐，+5,865（2天），五天加速不减——距破 150k 仅差 100 Stars</div>
+      <div class="insight-text">05-20（138,654）→ 05-21（140,969，+2,315）→ 05-22（144,035，+3,066）→ 05-24（149,900，+5,865 in 2 days ≈ +2,932/天）。5天累计 +11,246 Stars（+8.1%），增速持续加速，是本系列日报持续时间最长的 Skills 项目。今日 multica-ai 同时双入 Top 12（karpathy-skills #4 + multica #8），是 multica-ai 组织历史首次两个项目同时在 Top 12 中。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🔧 yt-dlp/yt-dlp（165,010 ⭐）NEW — 经典 CLI 工具今日 #2，与 trimstray #1 共同打破 AI Skills 主导格局</div>
+      <div class="insight-text">yt-dlp（youtube-dl 高功能分支，feature-rich CLI 音视频下载器）今日首次进入本系列 Top 12，165,010 Stars，直接跻身 #2。今日 #1 trimstray（223,906，经典知识仓库）+ #2 yt-dlp（165,010，经典下载工具），两个经典非 AI 项目联手主导榜单前两位。这是本系列日报中连续报告日出现经典非 AI 实用工具最多的一天（今日有 trimstray + yt-dlp + odoo），开发者对"经典基础工具"的热情始终并行于 AI agent 浪潮。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🏛️ multica-ai 历史首次双入 Top 12：andrej-karpathy-skills（#4 Day 5）+ multica（#8 首入 Top 12）</div>
+      <div class="insight-text">multica-ai/multica（31,989 ⭐，+971）从 05-22 Explore #1 正式升入今日 Top 12 #8，multica-ai 组织首次同时有两个项目在 Top 12 中。完整产品矩阵：最小化单文件 CLAUDE.md（karpathy-skills，优化单体 agent）+ 完整 Agent 运营平台（multica，多 agent 团队协作）。同时，anthropics/claude-plugins-official（#10，+15% in 2 days）+ andrej-karpathy-skills（#4）+ multica（#8）形成完整的 Claude Code 生态三角：官方插件目录 + 行为配置 + 团队协作平台。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">📤 Skills 三强全退场，今日大换血 8 位；代码理解工具集体爆发：Understand-Anything +29%、codegraph +36%</div>
+      <div class="insight-text">obra/superpowers（201k，Day 3 退）、agency-agents（104k，Day 3 退）、karpathy/autoresearch（83k）、CLI-Anything、ZhuLinsen 等全部退出，共 8 个位置换血。同时，代码理解方向今日集体爆发：Lum1104/Understand-Anything（+4,970，+29% in 2 days，#12）+ colbymchenry/codegraph（Explore，+5,226，+36%，描述新增支持 Hermes Agent）+ OpenPipe/ART（Explore，强化学习训练多步骤 agent）。代码知识图谱 + RL agent 训练是今日 Trending 最重要的技术新方向。</div>
+    </div>
+  </div>
+
+  <div class="section-title">🏆 今日 Top 12</div>
+  <div class="projects-grid">
+
+    <!-- #01 trimstray/the-book-of-secret-knowledge -->
+    <div class="project-card rank-1 top-card">
+      <div class="card-header">
+        <div class="card-rank">#01</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/trimstray/the-book-of-secret-knowledge" target="_blank">trimstray/the-book-of-secret-knowledge</a>
+          <div class="card-desc">A collection of inspiring lists, manuals, cheatsheets, blogs, hacks, one-liners, cli/web tools and more — 连续 #1，本系列历史最高 Stars</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 3</span>
+            <span class="new-badge" style="background:#9a6700">🏆 历史最高 223k</span>
+            <span class="lang-badge lang-shell">Shell</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 223,906</span>
+        <span class="meta-item">🍴 13,429</span>
+        <span class="meta-item meta-growth">↑ +1,224（2天）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">222,682（05-22）→ 223,906（05-24），2天 +1,224 Stars（+612/天，增速放缓）。依然稳居 #1，连续 3 天为本系列日报历史最高 Stars 项目。今日与 yt-dlp（165k，另一个经典工具）同框，两个经典非 AI 项目共同占据 #1 和 #2。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #02 yt-dlp/yt-dlp -->
+    <div class="project-card rank-2 new-card">
+      <div class="card-header">
+        <div class="card-rank">#02</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/yt-dlp/yt-dlp" target="_blank">yt-dlp/yt-dlp</a>
+          <div class="card-desc">A feature-rich command-line audio/video downloader — youtube-dl 高功能分支，本系列首次入榜，直接 #2</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 165,010</span>
+        <span class="meta-item">🍴 13,861</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">本系列日报首次出现 yt-dlp！165,010 Stars，13.9k forks，今日直接跻身 #2（仅以 449 Stars 之差超越 hermes-agent 164,561）。yt-dlp 是 youtube-dl 的高功能分支，积极维护，支持更多网站/格式/功能，是开发者社区最广泛的媒体下载 CLI 工具之一。今日与 trimstray（#1，222k）共同主导 Top 2，两个经典非 AI 实用工具在 AI agent 工具主导的 Trending 时代联手占据前两名——"经典工具复苏"信号。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #03 NousResearch/hermes-agent -->
+    <div class="project-card rank-3 top-card">
+      <div class="card-header">
+        <div class="card-rank">#03</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/NousResearch/hermes-agent" target="_blank">NousResearch/hermes-agent</a>
+          <div class="card-desc">The agent that grows with you — 自主 Skills 进化，Day 3，27k forks 今日全榜最高</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 3</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 164,561</span>
+        <span class="meta-item meta-alert">🍴 27,052（全榜最高！）</span>
+        <span class="meta-item meta-growth">↑ +2,549（2天）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">162,012（05-22）→ 164,561（05-24），2天 +2,549 Stars（~1,274/天）。forks 从 26,398 → 27,052（+654），依然是今日全榜 forks 最高。yt-dlp（165,010）仅以 449 Stars 之差超越 hermes-agent（164,561），两者今日几乎并列，是今日最接近的相邻名次。The only agent with a built-in learning loop — 内置 Skills 进化机制持续吸引用户 Fork 自部署。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #04 multica-ai/andrej-karpathy-skills -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#04</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/multica-ai/andrej-karpathy-skills" target="_blank">multica-ai/andrej-karpathy-skills</a>
+          <div class="card-desc">A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pitfalls</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 5</span>
+            <span class="new-badge" style="background:#6f42c1">🏅 最长坚守者</span>
+            <span class="new-badge" style="background:#0d6efd">⚡ +5,865 今日全榜最多</span>
+            <span class="lang-badge lang-markdown">Markdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 149,900</span>
+        <span class="meta-item">🍴 15,376</span>
+        <span class="meta-item meta-growth">↑ +5,865（2天，~2,932/天）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">5天增长轨迹</div>
+          <div class="detail-text">05-20（138,654）→ 05-21（140,969，+2,315）→ 05-22（144,035，+3,066）→ 05-24（149,900，+5,865 in 2 days），5天累计 +11,246 Stars（+8.1%）。增速持续加速，明日大概率突破 150k 里程碑（今日距 150k 仅差 100 Stars）。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">Day 5！今日 multica-ai 双入 Top 12 首次实现（karpathy-skills #4 + multica #8）。+5,865（2天）是今日全部项目（新旧）增量最多的。五天来每天增速都在加速，单文件 CLAUDE.md 的 Karpathy 洞见传播效应持续且加速——Skills 三强全退场后，karpathy-skills 成为本系列唯一 Day 5+ 的 Skills 项目。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #05 crewAIInc/crewAI -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#05</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/crewAIInc/crewAI" target="_blank">crewAIInc/crewAI</a>
+          <div class="card-desc">Framework for orchestrating role-playing, autonomous AI agents — 多 agent 编排框架，collaborative intelligence</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 52,042</span>
+        <span class="meta-item">🍴 7,211</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日最重要的新多 agent 框架入榜！52,042 Stars，7.2k forks，今日 #5。crewAI 以"role-playing"（角色扮演）和"collaborative intelligence"（协同智能）为核心，agents 协同处理复杂任务。今日与 multica-ai/multica（#8，Agent 运营平台）同框，两者都是"多 agent 协作"方向：crewAI 是"多 agent 编排框架（执行层）"，multica 是"多 agent 运营平台（管理层）"——执行框架 vs 运营基础设施。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #06 odoo/odoo -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#06</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/odoo/odoo" target="_blank">odoo/odoo</a>
+          <div class="card-desc">Odoo. Open Source Apps To Grow Your Business — ERP 接力！frappe/erpnext（05-22 #12）之后，今日 #6</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="new-badge" style="background:#6f42c1">🔄 ERP 接力</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 51,520</span>
+        <span class="meta-item meta-alert">🍴 32,531（今日全榜最高！）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">ERP 接力现象！05-22 #12 是 frappe/erpnext（34,860），今日 #6 是 odoo/odoo（51,520）——两个 ERP 系统连续两个报告日各进一次 Top 12。32,531 forks 是今日全榜最高（超越 hermes-agent 27,052），说明 odoo 的自部署用户基础极为庞大。在 AI agent Skills 主导的 Trending 中，连续两天出现 ERP 系统代表了"企业级开源软件"的周期性强势回归。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #07 ChromeDevTools/chrome-devtools-mcp -->
+    <div class="project-card top-card">
+      <div class="card-header">
+        <div class="card-rank">#07</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank">ChromeDevTools/chrome-devtools-mcp</a>
+          <div class="card-desc">Chrome DevTools for coding agents — Google 官方，Puppeteer + CDP，Day 3</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 3</span>
+            <span class="lang-badge lang-typescript">TypeScript</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 41,373</span>
+        <span class="meta-item">🍴 2,623</span>
+        <span class="meta-item meta-growth">↑ +737（2天）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">今日动态</div>
+          <div class="detail-text">40,636（05-22）→ 41,373（05-24），2天 +737 Stars（~368/天，增速放缓）。Day 3，今日与 Lum1104/Understand-Anything（#12，代码知识图谱）共同在 Top 12，构成"让 coding agent 更理解代码/运行时"的双覆盖：chrome-devtools-mcp 是动态浏览器运行时，Understand-Anything 是静态代码知识图谱。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #08 multica-ai/multica -->
+    <div class="project-card promote-card">
+      <div class="card-header">
+        <div class="card-rank">#08</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/multica-ai/multica" target="_blank">multica-ai/multica</a>
+          <div class="card-desc">The open-source managed agents platform. Turn coding agents into real teammates — Explore #1 升入 Top 12，multica-ai 历史首次双入</div>
+          <div class="card-badges">
+            <span class="new-badge" style="background:#6f42c1">🏅 首入 Top 12</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 31,989</span>
+        <span class="meta-item">🍴 3,861</span>
+        <span class="meta-item meta-growth">↑ +971（vs 05-22 Explore）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">升入历程</div>
+          <div class="detail-text">05-22 Explore #1（31,018）→ 05-24 Top 12 #8（31,989），+971 Stars，今日全语言 + Python 双榜。multica-ai 组织历史首次两个项目同时在 Top 12 中（andrej-karpathy-skills #4 + multica #8）。</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">首入 Top 12！multica（Multiplexed Information and Computing Agent，致敬 Multics OS 1960s）将 coding agents 变成真正同事：分配任务/追踪进度/复用 Skills，Squads 多 agent 团队路由，74+ 次发布。今日 multica 双榜（全语言 + Python）说明 Python 开发者认可度在快速提升。与 crewAI（#5，多 agent 编排框架执行层）同框：crewAI 执行层 vs multica 管理层。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #09 Alishahryar1/free-claude-code -->
+    <div class="project-card promote-card">
+      <div class="card-header">
+        <div class="card-rank">#09</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/Alishahryar1/free-claude-code" target="_blank">Alishahryar1/free-claude-code</a>
+          <div class="card-desc">Use claude-code for free in the terminal, VSCode extension or discord like OpenClaw (voice supported) — Day 5，Explore 升入 Top 12</div>
+          <div class="card-badges">
+            <span class="cont-badge">Day 5</span>
+            <span class="new-badge" style="background:#6f42c1">🏅 Explore→Top 12</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 28,659</span>
+        <span class="meta-item">🍴 4,294</span>
+        <span class="meta-item meta-growth">↑ +1,017（vs 05-22）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">5天增长轨迹</div>
+          <div class="detail-text">05-20（26,465，Explore）→ 05-21（26,970）→ 05-22（27,642，Explore）→ 05-24（28,659，Top 12 首入），5天 +2,194 Stars（+8.3%）。今日 Day 5 首次进入正式 Top 12 序列，是今日继 andrej-karpathy-skills 之后第二个 Day 5 项目。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #10 anthropics/claude-plugins-official -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#10</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/anthropics/claude-plugins-official" target="_blank">anthropics/claude-plugins-official</a>
+          <div class="card-desc">Official, Anthropic-managed directory of high quality Claude Code Plugins — Anthropic 官方，2天 +15% 今日相对增速最快</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜 Top 12</span>
+            <span class="new-badge" style="background:#0d6efd">⚡ +15%（2天）</span>
+            <span class="lang-badge lang-markdown">Markdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 26,575</span>
+        <span class="meta-item">🍴 2,861</span>
+        <span class="meta-item meta-growth">↑ +3,470（vs 05-22，+15%！）</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">23,105（05-22 trending）→ 26,575（05-24），2天 +3,470（+15%！），是今日相对增速最快的 Top 12 项目。Anthropic 官方 Claude Code 插件目录，今日与 andrej-karpathy-skills（#4）和 multica（#8）形成完整的 Claude Code 生态三角：官方插件目录（plugins-official）+ 行为配置 CLAUDE.md（karpathy-skills）+ 团队协作平台（multica）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #11 Fincept-Corporation/FinceptTerminal -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#11</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/Fincept-Corporation/FinceptTerminal" target="_blank">Fincept-Corporation/FinceptTerminal</a>
+          <div class="card-desc">State-of-the-art financial intelligence platform — C++20 + Qt6 原生性能，拒绝 Electron，反主流技术选型</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="lang-badge lang-cpp">C++ + Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 23,167</span>
+        <span class="meta-item">🍴 3,197</span>
+        <span class="meta-item">27 次发布</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">技术架构</div>
+          <div class="detail-tags">
+            <span class="detail-tag">C++20 + Qt6（native）</span>
+            <span class="detail-tag">Single binary</span>
+            <span class="detail-tag">No Electron / Node.js</span>
+            <span class="detail-tag">100+ 数据连接器</span>
+            <span class="detail-tag">Yahoo Finance → 政府数据库</span>
+            <span class="detail-tag">Adanos Market Sentiment</span>
+            <span class="detail-tag">AGPL-3.0</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">分析覆盖</div>
+          <div class="detail-tags">
+            <span class="detail-tag">股票/组合分析</span>
+            <span class="detail-tag">衍生品</span>
+            <span class="detail-tag">固定收益</span>
+            <span class="detail-tag">企业金融</span>
+            <span class="detail-tag">另类资产</span>
+            <span class="detail-tag">Reddit/X/新闻情绪聚合</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日最独特的项目！"Your Thinking is the Only Limit. The Data Isn't." 在 Python web 框架主导的 Trending 时代，FinceptTerminal 用 C++20 + Qt6 构建金融终端——no Electron/web overhead, no Node.js, single binary——反主流技术选型。今日与 odoo（#6，ERP，Python）同框，两者都是"传统企业软件"方向，在 AI Skills 浪潮中形成"企业工具复苏"信号。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- #12 Lum1104/Understand-Anything -->
+    <div class="project-card new-card">
+      <div class="card-header">
+        <div class="card-rank">#12</div>
+        <div class="card-title-area">
+          <a class="card-repo" href="https://github.com/Lum1104/Understand-Anything" target="_blank">Lum1104/Understand-Anything</a>
+          <div class="card-desc">Turn any code into an interactive knowledge graph — Tree-sitter + LLM hybrid，5 Agent 并行 Pipeline，今日增速最快新项目</div>
+          <div class="card-badges">
+            <span class="new-badge">今日新上榜</span>
+            <span class="new-badge" style="background:#0d6efd">⚡ +4,970（+29%，2天）</span>
+            <span class="lang-badge lang-python">Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item meta-stars">⭐ 21,983</span>
+        <span class="meta-item">🍴 1,961</span>
+        <span class="meta-item">7 次发布</span>
+      </div>
+      <button class="toggle-btn" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="card-detail">
+        <div class="detail-section">
+          <div class="detail-label">技术架构</div>
+          <div class="detail-text">Tree-sitter（确定性静态分析：imports / exports / 函数类定义 / 调用图 / 继承）+ LLM（语义理解：plain-English 摘要 / 架构层分配 / 业务域映射）。Multi-Agent Pipeline：/understand 命令编排 5 个专业 Agent（project-scanner / file-analyzer / architecture-analyzer / tour-builder / graph-reviewer），最多 5 并发，每批 20-30 文件，fingerprint-based 增量更新。Live demo：understand-anything.com</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">支持平台</div>
+          <div class="detail-tags">
+            <span class="detail-tag">Claude Code</span>
+            <span class="detail-tag">Codex / OpenCode</span>
+            <span class="detail-tag">Cursor</span>
+            <span class="detail-tag">VS Code</span>
+            <span class="detail-tag">GitHub Copilot</span>
+            <span class="detail-tag">Gemini CLI</span>
+            <span class="detail-tag">Hermes</span>
+            <span class="detail-tag">KIMI CLI</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">编辑点评</div>
+          <div class="detail-text">今日增速最快的新入榜项目！17,013（05-22）→ 21,983（05-24），+4,970（+29%！）。与 chrome-devtools-mcp（#7，动态运行时）和 codegraph（Explore，+36%，静态预索引）构成"代码理解工具方法论三角"：Understand-Anything（交互式知识图+Multi-Agent 分析）+ codegraph（预索引知识图，更少 tokens）+ chrome-devtools-mcp（动态浏览器运行时）。</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Language Distribution -->
+  <div class="section-title">🌐 语言分布</div>
+  <div class="lang-dist">
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>🐍 Python</span><span>7 项目（58%）— yt-dlp / hermes-agent / crewAI / odoo / multica / free-claude-code / FinceptTerminal（含 Python 组件）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:58%;background:var(--python)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>📝 Markdown</span><span>2 项目（17%）— andrej-karpathy-skills（Day 5）/ claude-plugins-official（+15% 今日最快相对增速）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:17%;background:var(--markdown)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>🔷 TypeScript</span><span>2 项目（17%）— chrome-devtools-mcp（Day 3）/ Understand-Anything（+29%）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:17%;background:var(--typescript)"></div></div>
+    </div>
+    <div class="lang-bar-row">
+      <div class="lang-bar-label"><span>🐚 Shell</span><span>1 项目（8%）— the-book-of-secret-knowledge（223k 历史最高，Day 3）</span></div>
+      <div class="lang-bar-track"><div class="lang-bar-fill" style="width:8%;background:var(--shell)"></div></div>
+    </div>
+  </div>
+
+  <!-- Explore -->
+  <div class="section-title">🌟 GitHub Explore 精选</div>
+  <div class="explore-grid">
+
+    <div class="explore-card">
+      <div class="explore-num">01</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/google-research/timesfm" target="_blank">google-research/timesfm</a>
+        <div class="explore-desc">TimesFM (Time Series Foundation Model) is a pretrained time-series foundation model developed by Google Research for time-series forecasting. 20,080 ⭐，1,950 forks，今日 Python Trending。Google Research 官方出品，通用时序预测基础模型，可跨域应用。今日与 FinceptTerminal（#11，金融数据分析，C++）同框，两者都是"数据驱动决策"方向：TimesFM 是通用时序预测基础模型，FinceptTerminal 是垂直金融分析终端——基础模型 vs 垂直应用。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 20,080</span>
+          <span class="meta-item">🍴 1,950</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">02</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/colbymchenry/codegraph" target="_blank">colbymchenry/codegraph</a>
+        <div class="explore-desc">Pre-indexed code knowledge graph for Claude Code, Codex, Cursor, OpenCode, and Hermes Agent — fewer tokens, fewer tool calls, 100% local. 19,825 ⭐，+5,226（+35.8%！）in 2 days。05-22 Explore #4（14,599）→ 05-24 Explore #2（19,825）。描述中新增支持 Hermes Agent（NousResearch/hermes-agent 生态扩展），今日全语言 Trending 在榜。今日代码知识图谱方向集体爆发：codegraph（+36%）+ Understand-Anything（+29%）双双高速增长，代码理解工具是今日 Trending 最重要的技术新方向。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 19,825</span>
+          <span class="meta-item meta-growth">↑ +5,226（+36%！）</span>
+          <span class="lang-badge lang-typescript" style="font-size:10px;padding:2px 7px">TypeScript</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">03</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/pydantic/pydantic-ai" target="_blank">pydantic/pydantic-ai</a>
+        <div class="explore-desc">AI Agent Framework, the Pydantic way. 17,244 ⭐，2,125 forks，今日 Python Trending。Pydantic 团队出品，类型安全的结构化 Agent 框架。今日与 crewAI（#5，52k，角色扮演型多 agent 编排）同框，两者代表 Python AI agent 框架的两个设计哲学：crewAI 是角色扮演/协同智能，pydantic-ai 是类型安全/结构化输出。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 17,244</span>
+          <span class="meta-item">🍴 2,125</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">04</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/OpenPipe/ART" target="_blank">OpenPipe/ART</a>
+        <div class="explore-desc">Agent Reinforcement Trainer: train multi-step agents for real-world tasks using GRPO. Give your agents on-the-job training. Reinforcement learning for Qwen3.6, GPT-OSS, Llama, and more! 9,808 ⭐，867 forks，今日 Python Trending。今日最具技术深度的 Explore 项目！GRPO（Group Relative Policy Optimization）强化学习，让 agent 在真实任务中自我改进。今日与 hermes-agent（#3，工作层面 Skills 进化）同框：hermes 是工具调用层面的 Skills 自我进化，ART 是模型权重层面的强化学习训练——工具学 vs 模型学。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 9,808</span>
+          <span class="meta-item">🍴 867</span>
+          <span class="lang-badge lang-python" style="font-size:10px;padding:2px 7px">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explore-card">
+      <div class="explore-num">05</div>
+      <div class="explore-content">
+        <a class="explore-repo" href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills" target="_blank">mukul975/Anthropic-Cybersecurity-Skills</a>
+        <div class="explore-desc">754 structured cybersecurity skills for AI agents · Mapped to 5 frameworks: MITRE ATT&amp;CK, NIST CSF 2.0, MITRE ATLAS, D3FEND &amp; NIST AI RMF · agentskills.io standard · Works with Claude Code, GitHub Copilot, Codex CLI, Cursor, Gemini CLI &amp; 20+ platforms · 26 security domains · Apache 2.0. 7,514 ⭐，1,014 forks，今日全语言 + Python 双榜。今日最专业领域的 Skills 项目——Skills 生态正在从"通用开发方法论"（obra/superpowers）向"垂直专业领域 Skills"（网络安全 754 项/学术研究/dotnet 等）分化。MITRE ATT&amp;CK + NIST CSF 2.0 + MITRE ATLAS + D3FEND + NIST AI RMF 五大框架映射是其核心差异化。</div>
+        <div class="explore-meta">
+          <span class="meta-item meta-stars">⭐ 7,514</span>
+          <span class="meta-item">🍴 1,014</span>
+          <span class="lang-badge lang-markdown" style="font-size:10px;padding:2px 7px">Markdown</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  GitHub Trending 日报 · 2026-05-24 · 数据来源：GitHub Trending（全语言）+ Python Trending · 生成时间：2026-05-24
+</footer>
+
+<script>
+function toggleDetail(btn) {
+  const detail = btn.previousElementSibling;
+  if (detail.classList.contains('open')) {
+    detail.classList.remove('open');
+    btn.textContent = '▼ 展开详情';
+  } else {
+    detail.classList.add('open');
+    btn.textContent = '▲ 收起详情';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const btn = document.querySelector('.theme-btn');
+  btn.textContent = document.body.classList.contains('light') ? '🌙 切换主题' : '☀️ 切换主题';
+}
+</script>
+</body>
+</html>
