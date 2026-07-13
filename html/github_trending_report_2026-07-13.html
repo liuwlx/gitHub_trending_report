@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-07-13</title>
+<style>
+  :root { --bg:#0D1117;--surface:#161B22;--surface2:#21262D;--border:#30363D;--text:#C9D1D9;--text-muted:#8B949E;--blue:#58A6FF;--green:#3FB950;--orange:#D29922;--purple:#BC8CFF;--red:#F85149;--yellow:#E3B341; }
+  * { box-sizing:border-box;margin:0;padding:0; }
+  body { background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6; }
+  a { color:var(--blue);text-decoration:none; } a:hover { text-decoration:underline; }
+  code { background:var(--surface2);border-radius:4px;padding:1px 5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  .container { max-width:1100px;margin:0 auto;padding:24px 16px; }
+  .header { text-align:center;padding:48px 0 32px;border-bottom:1px solid var(--border);margin-bottom:32px; }
+  .header h1 { font-size:28px;font-weight:700;color:#fff;margin-bottom:8px; }
+  .header h1 span { color:var(--blue); }
+  .header .subtitle { color:var(--text-muted);font-size:15px; }
+  .header .date-badge { display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 16px;margin-top:12px;font-size:13px;color:var(--text-muted); }
+  .theme-toggle { position:fixed;top:16px;right:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;color:var(--text);z-index:100; }
+  .theme-toggle:hover { background:var(--border); }
+  .stats-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px; }
+  .stat-card { background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center; }
+  .stat-card .stat-num { font-size:32px;font-weight:700;color:var(--blue); }
+  .stat-card .stat-label { color:var(--text-muted);font-size:13px;margin-top:4px; }
+  .stat-card .stat-icon { font-size:24px;margin-bottom:8px; }
+  .section { margin-bottom:40px; }
+  .section-title { font-size:20px;font-weight:600;color:#fff;margin-bottom:20px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px; }
+  .section-title span { font-size:20px; }
+  .project-card { background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;transition:border-color .2s,box-shadow .2s; }
+  .project-card:hover { border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)22; }
+  .project-card.top-card { border-left:3px solid var(--orange); }
+  .project-header { display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap; }
+  .project-rank { font-size:22px;font-weight:700;color:var(--orange);min-width:36px; }
+  .project-rank.rank-1 { color:#FFD700; }.project-rank.rank-2 { color:#C0C0C0; }.project-rank.rank-3 { color:#CD7F32; }
+  .project-info { flex:1;min-width:0; }.project-name { font-size:18px;font-weight:600;overflow-wrap:anywhere; }.project-name a { color:#fff; }.project-name a:hover { color:var(--blue);text-decoration:none; }
+  .project-desc { color:var(--text-muted);margin-top:6px;font-size:13px;line-height:1.6; }
+  .project-meta { display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:13px;color:var(--text-muted); }.meta-item { display:flex;align-items:center;gap:5px; }
+  .stars { color:var(--green);font-weight:600; }.today-stars { color:var(--orange);font-weight:600; }.forks { color:var(--text-muted); }.lang-dot { width:12px;height:12px;border-radius:50%;display:inline-block; }
+  .topics { display:flex;flex-wrap:wrap;gap:6px;margin-top:10px; }.topic-badge { background:var(--surface2);border:1px solid #1f6feb;color:var(--blue);border-radius:20px;padding:2px 10px;font-size:12px; }
+  .detail-toggle { background:none;border:1px solid var(--border);border-radius:6px;color:var(--blue);padding:6px 14px;font-size:12px;cursor:pointer;margin-top:12px;transition:background .15s; }
+  .detail-toggle:hover { background:var(--surface2); }.project-details { display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border); }.project-details.open { display:block; }
+  .detail-section { margin-bottom:16px; }.detail-section h4 { font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px; }.detail-section p { color:var(--text);font-size:13px;line-height:1.7; }
+  .feature-list { list-style:none; }.feature-list li { padding:4px 0;color:var(--text);font-size:13px; }.feature-list li::before { content:"✨ "; }
+  .tech-tags { display:flex;flex-wrap:wrap;gap:6px; }.tech-tag { background:#1c2c3e;border:1px solid #1f6feb44;color:var(--blue);border-radius:4px;padding:2px 8px;font-size:12px; }
+  .recommend-quote { background:var(--surface2);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;padding:10px 14px;font-style:italic;color:var(--text);font-size:13px;margin-top:8px; }
+  .caveat { display:block;color:var(--text-muted);font-style:normal;margin-top:9px; }
+  .lang-chart { margin-bottom:32px; }.lang-bar-row { display:flex;align-items:center;gap:12px;margin-bottom:10px; }.lang-name { width:120px;font-size:13px;color:var(--text);flex-shrink:0; }.lang-bar-wrap { flex:1;background:var(--surface2);border-radius:4px;height:18px;overflow:hidden; }.lang-bar { height:100%;border-radius:4px;transition:width .4s; }.lang-count { width:110px;text-align:right;font-size:12px;color:var(--text-muted);flex-shrink:0; }
+  .insight-box { background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border:1px solid var(--border);border-radius:10px;padding:24px; }.insight-box .insight-item { margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border); }.insight-box .insight-item:last-child { border-bottom:none;margin-bottom:0;padding-bottom:0; }.insight-box .insight-title { font-weight:600;color:var(--blue);margin-bottom:6px;font-size:14px; }.insight-box p { color:var(--text-muted);font-size:13px;line-height:1.7; }
+  .trending-list { }.trending-item { display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border); }.trending-item:last-child { border-bottom:none; }.trending-num { font-size:16px;font-weight:700;color:var(--text-muted);width:28px;flex-shrink:0; }
+  .footer { text-align:center;padding:32px 0;border-top:1px solid var(--border);margin-top:40px;color:var(--text-muted);font-size:13px; }.footer a { color:var(--text-muted); }
+  body.light { --bg:#FFFFFF;--surface:#F6F8FA;--surface2:#EAECEF;--border:#D0D7DE;--text:#24292F;--text-muted:#57606A;--blue:#0969DA;--green:#1A7F37; }
+  body.light .header h1,body.light .section-title,body.light .project-name a { color:#24292F; } body.light .insight-box { background:linear-gradient(135deg,#fff 0%,#f6f8fa 100%); }
+  @media (max-width:600px) { .stats-grid { grid-template-columns:repeat(2,1fr); }.project-header { flex-direction:column; }.lang-name { width:88px; }.lang-count { width:86px; }.theme-toggle { position:absolute; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="切换明暗主题">🌓 切换主题</button>
+<div class="container">
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">AI Agent 开始补上安全闸门，并继续进入交易、后台开发与离线知识系统</div>
+    <div class="date-badge">📅 2026-07-13 · Repositories / Any language / Today · 动态页面快照</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">3,722</div><div class="stat-label">今日累计新增 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">5</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">9</div><div class="stat-label">AI 相关项目</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item"><div class="insight-title">🛡️ AI Agent 的新战场，是“动手之前先别闯祸”</div><p>榜首 <code>destructive_command_guard</code> 不负责让 Agent 更聪明，而是把危险命令挡在执行前；<code>DesktopCommanderMCP</code> 和 <code>background-agents</code> 则把终端、文件系统与后台开发环境交给模型。能力越接近真实机器，权限边界越不能靠一句“请谨慎”维持。Agent 工程正在从功能竞赛进入执行安全与治理阶段。</p></div>
+      <div class="insight-item"><div class="insight-title">🎯 AI 正从通用助手下沉到交易、知识库与家庭场景</div><p><code>Vibe-Trading</code>、<code>ai-hedge-fund</code> 把多 Agent 带进量化研究与投资实验，<code>project-nomad</code> 把本地模型和离线知识库装进自托管设备，Home Assistant 继续守住本地优先的家庭自动化。大家不再只问“模型会不会回答”，而是开始问“它能否在一个具体系统里持续工作”。</p></div>
+      <div class="insight-item"><div class="insight-title">🧪 可运行样例仍然是 AI 开发最硬的学习资料</div><p><code>awesome-llm-apps</code> 和 Anthropic 官方 <code>claude-cookbooks</code> 同时上榜，一个提供大量可克隆应用，一个提供 API 使用配方。文档讲概念，样例替你踩第一遍坑；不过样例能跑不等于可直接上线，密钥、成本、依赖版本和数据安全仍要自己收拾。</p></div>
+      <div class="insight-item"><div class="insight-title">📈 原始排名与今日增星速度，还是两本账</div><p>第 3 名 <code>Vibe-Trading</code> 今日新增 776 Stars，第 10 名 <code>Wand-Enhancer</code> 新增 603，而第 4 名 Prefect 只有 55。GitHub 的榜单顺序不是简单按 Stars Today 排列；前者看综合趋势，后者看突然升温。</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（GitHub 原始排名）</div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-1">01</div><div class="project-info"><div class="project-name"><a href="https://github.com/Dicklesworthstone/destructive_command_guard" target="_blank" rel="noopener">Dicklesworthstone / destructive_command_guard</a></div><div class="project-desc">给 AI 编程代理加一道命令执行闸门，在危险 Git、文件系统、云平台或数据库操作真正落地前进行拦截。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">2,721</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +444</span></span><span class="meta-item">🍴 <span class="forks">102</span></span><span class="meta-item"><span class="lang-dot" style="background:#DEA584"></span> Rust</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">git</span><span class="topic-badge">rust</span><span class="topic-badge">safety</span><span class="topic-badge">ai-agents</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Destructive Command Guard（dcg）安装在 AI 编程工具与 Shell 执行之间。它检查 Agent 准备运行的命令，识别破坏性 Git 操作、递归删除、云资源销毁和数据库高风险操作，并在拦截时解释原因或给出更安全的替代建议。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>支持 Claude Code、Codex CLI、Gemini CLI、Copilot CLI、Cursor 等多种 Agent 工具</li><li>模块化规则包覆盖 Git、文件系统、云平台、容器和数据库命令，并扫描内联脚本</li><li>提供 explain、allowlist、scan 与 CI 用法，方便团队解释规则和管理例外</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Rust</span><span class="tech-tag">CLI Hooks</span><span class="tech-tag">Command Parsing</span><span class="tech-tag">TOML</span><span class="tech-tag">Regex/SIMD</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>给具备 Shell 权限的编码 Agent 增加防误操作保护；统一团队危险命令策略；在 CI 中提前发现脚本里的高风险操作。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">Agent 能帮你敲命令，也可能帮你把盘掀了；dcg 就是上菜前先看一眼托盘稳不稳。<span class="caveat">⚠️ Honest Caveat：它不是沙盒或完整权限隔离；存在绕过与 fail-open 机制，默认规则也不覆盖全部风险。README 性能数据为维护者自测。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-2">02</div><div class="project-info"><div class="project-name"><a href="https://github.com/wonderwhy-er/DesktopCommanderMCP" target="_blank" rel="noopener">wonderwhy-er / DesktopCommanderMCP</a></div><div class="project-desc">通过 MCP 把终端、文件搜索、进程管理和差异化文件编辑能力交给 Claude 等 AI 客户端。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">7,950</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +207</span></span><span class="meta-item">🍴 <span class="forks">984</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">mcp</span><span class="topic-badge">terminal-ai</span><span class="topic-badge">code-analysis</span><span class="topic-badge">vibe-coding</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Desktop Commander MCP 是本地 MCP Server，让支持 MCP 的 AI 客户端搜索和编辑文件、执行终端命令、管理长时间运行进程，并通过差异化编辑减少整文件重写。它适合把桌面开发任务交给 Agent 连续完成。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>提供终端执行、进程管理、文件搜索、读取和差异编辑工具</li><li>支持长任务会话、输出流与进程交互，不只跑一次性命令</li><li>提供配置、日志及目录或命令限制选项，可连接多个 MCP 客户端</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Node.js</span><span class="tech-tag">MCP</span><span class="tech-tag">Terminal</span><span class="tech-tag">Filesystem APIs</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>让 Claude Desktop 等客户端处理本地代码库、批量文件修改和搜索，或在对话中管理构建、测试与数据处理进程。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">想让 AI 真正在桌面上干活，它很能干；也正因为太能干，门钥匙别随手扔给它。<span class="caveat">⚠️ Honest Caveat：项目文档明确说明目录和命令限制可被终端路径绕过；生产或不可信任务应配合容器、最小权限目录和额外隔离。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-3">03</div><div class="project-info"><div class="project-name"><a href="https://github.com/HKUDS/Vibe-Trading" target="_blank" rel="noopener">HKUDS / Vibe-Trading</a></div><div class="project-desc">用自然语言启动研究、回测和多 Agent 讨论的个人交易研究工具箱。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">20,420</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +776</span></span><span class="meta-item">🍴 <span class="forks">3,582</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">trading</span><span class="topic-badge">multi-agent</span><span class="topic-badge">backtesting</span><span class="topic-badge">mcp</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Vibe-Trading 把行情研究、策略回测、量化因子和多 Agent 讨论组合成一个可通过命令行、Web 或 MCP 调用的个人交易研究环境。用户可用自然语言描述资产、时间区间和研究目标，再让系统组织分析流程。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>自然语言触发回测、市场分析和策略研究，提供 CLI、Web 与 API/MCP 入口</li><li>内置多种专家与委员会式 Agent 预设，覆盖技术分析、风险和跨市场配置</li><li>提供量化 Alpha 库、回测约束和前视偏差检查，便于做可重复研究</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span><span class="tech-tag">React</span><span class="tech-tag">Backtesting</span><span class="tech-tag">Multi-Agent</span><span class="tech-tag">MCP</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>学习量化研究工作流、搭建个人策略实验室，或为 Agent 接入市场数据、回测和风险讨论能力。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">它适合拿来做研究搭子，不适合拿来当财神爷——回测曲线再漂亮，也不会替你承担亏损。<span class="caveat">⚠️ Honest Caveat：金融结果依赖数据质量、费用、滑点和回测设计；历史表现不保证未来收益，本报告不验证策略收益，也不构成投资建议。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">04</div><div class="project-info"><div class="project-name"><a href="https://github.com/PrefectHQ/prefect" target="_blank" rel="noopener">PrefectHQ / prefect</a></div><div class="project-desc">把普通 Python 函数升级为可调度、可重试、可观察的数据与自动化工作流。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">23,101</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +55</span></span><span class="meta-item">🍴 <span class="forks">2,386</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 Apache-2.0</span></div><div class="topics"><span class="topic-badge">workflow</span><span class="topic-badge">orchestration</span><span class="topic-badge">data-engineering</span><span class="topic-badge">observability</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Prefect 是 Python 工作流编排框架，在尽量保留普通 Python 编程体验的同时，为任务增加调度、重试、缓存、状态跟踪和事件触发。它常用于数据管道、机器学习任务与跨系统自动化。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>用 Python 装饰器把函数组织成 Flow 与 Task，并保留本地调试体验</li><li>提供计划调度、失败重试、缓存、并发与状态管理</li><li>支持事件自动化、Worker 执行和可观察界面，管理分布式任务</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Workflow Orchestration</span><span class="tech-tag">Scheduling</span><span class="tech-tag">Retries</span><span class="tech-tag">Workers</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>数据清洗与 ETL、机器学习训练或批处理，以及需要可靠重试、定时执行和运行状态追踪的 Python 自动化。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">脚本偶尔跑一次叫工具，天天准时跑、失败会重来、出了事能查，才叫系统；Prefect 管的就是这一步。<span class="caveat">⚠️ Honest Caveat：编排平台会增加 Worker、状态存储和运维复杂度；开源自托管与云服务需按成本和治理需求分别评估。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">05</div><div class="project-info"><div class="project-name"><a href="https://github.com/Shubhamsaboo/awesome-llm-apps" target="_blank" rel="noopener">Shubhamsaboo / awesome-llm-apps</a></div><div class="project-desc">汇集 100 多个能实际运行的 AI Agent、RAG 和多模型应用，适合克隆后拆解或改造。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">118,429</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +450</span></span><span class="meta-item">🍴 <span class="forks">17,616</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 Apache-2.0</span></div><div class="topics"><span class="topic-badge">agents</span><span class="topic-badge">rag</span><span class="topic-badge">llms</span><span class="topic-badge">examples</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>awesome-llm-apps 是按应用场景整理的可运行 AI 项目集合，覆盖 Agent、RAG、语音、视觉、记忆、多 Agent 和不同模型服务商。它更像一个大型实验货架，适合快速找到起点并研究项目结构。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>大量独立应用目录，可直接查看依赖、配置和运行入口</li><li>覆盖多家模型服务、开源模型、向量数据库和 Agent 框架</li><li>场景从基础聊天、文档问答延伸到研究助手和垂直行业应用</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LLM APIs</span><span class="tech-tag">RAG</span><span class="tech-tag">Vector DB</span><span class="tech-tag">Agent Frameworks</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 应用入门、寻找 PoC 或黑客松起点，以及比较不同 RAG、模型和 Agent 框架的实现方式。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">想学 AI 应用，别只在岸上背泳姿；这里有一百多个泳池，不过下水前记得先看水深。<span class="caveat">⚠️ Honest Caveat：各示例的维护状态、安全措施和生产成熟度不一；使用前需逐个审查密钥、数据隐私、依赖版本和成本。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">06</div><div class="project-info"><div class="project-name"><a href="https://github.com/anthropics/claude-cookbooks" target="_blank" rel="noopener">anthropics / claude-cookbooks</a></div><div class="project-desc">Anthropic 官方提供的 Claude API Notebook 与配方集，用可复制代码演示常见能力和组合方式。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">48,304</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +464</span></span><span class="meta-item">🍴 <span class="forks">5,718</span></span><span class="meta-item"><span class="lang-dot" style="background:#DA5B0B"></span> Jupyter Notebook</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">claude</span><span class="topic-badge">notebooks</span><span class="topic-badge">api-examples</span><span class="topic-badge">multimodal</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>claude-cookbooks 是 Anthropic 官方维护的 Notebook 和代码配方集合，围绕 Claude API 展示提示设计、工具调用、视觉理解、检索和不同平台集成。内容适合复制到自己的实验环境后逐段修改。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>以 Notebook 和可运行代码呈现常见 Claude API 模式</li><li>覆盖工具使用、视觉、多轮工作流、检索与第三方平台</li><li>示例配有解释和输入输出，便于定位请求结构与模型行为</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Jupyter</span><span class="tech-tag">Python</span><span class="tech-tag">Anthropic API</span><span class="tech-tag">Tool Use</span><span class="tech-tag">Retrieval</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Claude API 入门、验证某项能力是否适合产品，或为团队建立内部示例与实验基线。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">官方菜谱的好处不是保证你一夜成大厨，而是至少先告诉你锅该放哪儿。<span class="caveat">⚠️ Honest Caveat：示例会随 API 与模型版本演进，部分平台样例需修改；运行会产生 API 成本，也不替代生产级错误处理和隐私设计。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">07</div><div class="project-info"><div class="project-name"><a href="https://github.com/home-assistant/core" target="_blank" rel="noopener">home-assistant / core</a></div><div class="project-desc">本地优先、重视隐私的开源家庭自动化核心，统一连接设备、传感器和自动化规则。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">88,985</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +404</span></span><span class="meta-item">🍴 <span class="forks">38,076</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 Apache-2.0</span></div><div class="topics"><span class="topic-badge">home-automation</span><span class="topic-badge">mqtt</span><span class="topic-badge">raspberry-pi</span><span class="topic-badge">iot</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Home Assistant Core 是 Home Assistant 的 Python 自动化引擎，负责接入设备和服务、维护实体状态并执行自动化。它强调在本地服务器或树莓派上运行，让家庭数据和控制尽量留在用户自己的网络中。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>通过大量集成连接灯具、传感器、能源设备、媒体和云服务</li><li>使用事件和状态驱动自动化，按时间、设备变化或复杂条件触发动作</li><li>支持本地部署及多种安装方式，并配套仪表盘、移动端与语音生态</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">asyncio</span><span class="tech-tag">IoT</span><span class="tech-tag">MQTT</span><span class="tech-tag">Event Automation</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>自建智能家居中枢、统一不同品牌设备，或为重视本地控制与隐私的家庭和实验室建立自动化。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">智能家居最怕每个插座都有自己的脾气，Home Assistant 干的就是把这一屋子“亲戚”拉进同一个群聊。<span class="caveat">⚠️ Honest Caveat：设备兼容、网络隔离、远程访问和升级仍可能复杂；关键设备应保留备份与手动控制方案。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">08</div><div class="project-info"><div class="project-name"><a href="https://github.com/Crosstalk-Solutions/project-nomad" target="_blank" rel="noopener">Crosstalk-Solutions / project-nomad</a></div><div class="project-desc">把离线百科、教育资源、地图、工具和本地 AI 打包成自托管知识服务器。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">33,733</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +122</span></span><span class="meta-item">🍴 <span class="forks">3,384</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 Apache-2.0</span></div><div class="topics"><span class="topic-badge">offline</span><span class="topic-badge">knowledge-base</span><span class="topic-badge">ollama</span><span class="topic-badge">self-hosted</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Project N.O.M.A.D 是面向 Debian 系统的一套离线知识与教育服务器安装方案。它组合 Kiwix、离线百科与医疗资料、Kolibri 课程、离线地图、CyberChef，以及由 Ollama 和 Qdrant 支撑的本地问答与文档检索。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>在局域网浏览器中提供统一入口，无需持续联网即可访问知识和工具</li><li>集成离线百科、教育内容、电子书、地图和应急资料</li><li>通过本地模型与向量检索支持离线聊天和文档语义搜索</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Debian</span><span class="tech-tag">Kiwix</span><span class="tech-tag">Ollama</span><span class="tech-tag">Qdrant</span><span class="tech-tag">Kolibri</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>网络不稳定地区的教育资料站、应急准备，以及房车、船只、社区中心或家庭实验室的离线知识服务。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">这不是“断网后还能聊两句”的小玩具，而是一整座离线资料室；问题是，资料室也得有人定期换新书。<span class="caveat">⚠️ Honest Caveat：安装需要较高系统权限并部署多个服务，对存储、内存和运维有要求；内容时效依赖用户主动更新。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">09</div><div class="project-info"><div class="project-name"><a href="https://github.com/ColeMurray/background-agents" target="_blank" rel="noopener">ColeMurray / background-agents</a></div><div class="project-desc">开源的后台编码 Agent 系统，让开发任务在独立环境中持续执行并通过 GitHub、Slack 或 Web 管理。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">2,223</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +9</span></span><span class="meta-item">🍴 <span class="forks">341</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">coding-agents</span><span class="topic-badge">github</span><span class="topic-badge">slack</span><span class="topic-badge">webhooks</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>background-agents（Open Inspect）让用户把编码任务交给独立开发环境中的 Agent 后继续做别的事情。Agent 可以安装依赖、运行代码和浏览器、修改仓库并提交结果，用户可从 Web、Slack、GitHub PR、Linear 或 Webhook 发起和跟踪任务。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>任务环境包含 Node、Python、Git、浏览器自动化和 VS Code</li><li>支持 Web、Slack、GitHub、Linear、定时任务与 Webhook 触发</li><li>提供多人协作、提交归属和结果回传，方便团队审查 Agent 行为</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Dev Environments</span><span class="tech-tag">GitHub App</span><span class="tech-tag">Slack</span><span class="tech-tag">Browser Automation</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>把耗时代码改造、测试或调查放到后台，构建自托管编码 Agent 平台，或把错误监控和工单转成开发任务。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">它像给编码 Agent 安排了夜班，但夜班员工拿着仓库钥匙——门禁和摄像头一个都不能少。<span class="caveat">⚠️ Honest Caveat：项目面向单租户和可信组织用户，不适合直接作为开放多租户服务；应放在 SSO/VPN 后并严格限制 GitHub App 范围。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">10</div><div class="project-info"><div class="project-name"><a href="https://github.com/k1tbyte/Wand-Enhancer" target="_blank" rel="noopener">k1tbyte / Wand-Enhancer</a></div><div class="project-desc">面向 Wand（WeMod）桌面客户端的开源本地增强工具，改善界面、兼容性和设备互操作体验。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">6,846</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +603</span></span><span class="meta-item">🍴 <span class="forks">19,248</span></span><span class="meta-item"><span class="lang-dot" style="background:#178600"></span> C#</span><span class="meta-item">📄 Apache-2.0</span></div><div class="topics"><span class="topic-badge">csharp</span><span class="topic-badge">wpf</span><span class="topic-badge">wand</span><span class="topic-badge">wemod</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Wand-Enhancer 是本地运行的 Wand（WeMod）客户端互操作与 UX 增强项目。它调整本地配置、处理版本兼容、提供界面和主题改进，并可通过同一局域网中的移动 Web 面板进行部分控制。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>扩展本地客户端配置并进行自动兼容性调整</li><li>提供界面、主题和交互体验增强，以及项目所称的 AI 相关功能</li><li>可启动移动端 Web 面板，在同一 Wi-Fi 网络中访问本机服务</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C#</span><span class="tech-tag">WPF</span><span class="tech-tag">Local Configuration</span><span class="tech-tag">Web Panel</span><span class="tech-tag">Desktop Interop</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>已使用 Wand/WeMod 且希望改善桌面体验的用户，以及研究 C# 桌面客户端扩展与本地配置互操作的开发者。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">这是给特定客户端“精装修”的工具，不是万能扳手；先认准官方仓库，别从野生视频评论区捡安装包。<span class="caveat">⚠️ Honest Caveat：依赖第三方专有客户端，兼容性会随上游变化；移动面板会开放本地端口。Forks 显著高于 Stars 已由 Trending 与仓库页交叉确认，但原因无法确定。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">11</div><div class="project-info"><div class="project-name"><a href="https://github.com/pingdotgg/t3code" target="_blank" rel="noopener">pingdotgg / t3code</a></div><div class="project-desc">用一个简洁 Web/桌面界面统一启动和操作 Codex、Claude、Cursor 与 OpenCode 编码代理。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">13,712</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +79</span></span><span class="meta-item">🍴 <span class="forks">2,879</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">codex</span><span class="topic-badge">claude</span><span class="topic-badge">cursor</span><span class="topic-badge">web-gui</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>T3 Code 是面向编码 Agent 的轻量 Web GUI，目前支持 Codex、Claude、Cursor 和 OpenCode。它复用用户已安装并登录的各家 CLI，也提供桌面安装包，让用户在统一界面中选择不同提供方处理代码任务。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>在同一界面中接入多种主流编码 Agent，减少工具切换</li><li>支持 <code>npx t3@latest</code> 快速运行，并提供多平台桌面安装</li><li>保留各提供方原有认证方式，不要求重新托管全部凭据</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Vite+</span><span class="tech-tag">Web UI</span><span class="tech-tag">Desktop App</span><span class="tech-tag">Provider CLIs</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>同时使用多个编码 Agent 的开发者、希望为团队提供统一入口的工程组，或比较不同 Agent 在同一任务上的表现。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">当 AI 编程工具多到像电视遥控器，T3 Code 想做的就是那只“万能遥控器”——目前还属于早期工程样机。<span class="caveat">⚠️ Honest Caveat：README 明确称项目仍非常早期并提示可能有 Bug；公共文档尚在完善，也依赖用户自行维护各家 Provider CLI。</span></div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">12</div><div class="project-info"><div class="project-name"><a href="https://github.com/virattt/ai-hedge-fund" target="_blank" rel="noopener">virattt / ai-hedge-fund</a></div><div class="project-desc">用多个投资风格 Agent、风险与组合管理角色模拟 AI 投资研究团队的教育型项目。</div><div class="project-meta"><span class="meta-item">⭐ <span class="stars">61,352</span></span><span class="meta-item">🔥 <span class="today-stars">今日 +109</span></span><span class="meta-item">🍴 <span class="forks">10,851</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">finance</span><span class="topic-badge">multi-agent</span><span class="topic-badge">trading</span><span class="topic-badge">backtesting</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)" aria-expanded="false">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>ai-hedge-fund 用多个模拟知名投资方法的 Agent 分析公司、估值、基本面和市场信号，再由风险管理与组合角色汇总意见。项目正向持续回测、模拟交易和可选实时运行演进，但当前仍是探索 AI 投资决策的概念验证。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多个投资风格 Agent 并行给出观点，由风险和组合角色汇总</li><li>支持金融数据与不同 LLM Provider，便于比较分析流程</li><li>提供回测、命令行和可视化代码，并公开纸面交易路线图</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Multi-Agent</span><span class="tech-tag">Financial APIs</span><span class="tech-tag">LLM Providers</span><span class="tech-tag">Backtesting</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>学习多 Agent 协作和金融分析流程，研究角色分工如何影响结果，或搭建教育型回测实验。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">把它当金融 Agent 实验室很有意思，把它当持牌基金经理就有点拿相声票进证券交易所了。<span class="caveat">⚠️ Honest Caveat：项目明确仅供教育，不用于真实交易或投资；输出可能包含事实错误、数据延迟与模型偏见，本报告不构成金融建议。</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row"><span class="lang-name">Python</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:41.7%;background:#3572A5"></div></div><span class="lang-count">5 项目 (41.7%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">TypeScript</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:33.3%;background:#3178C6"></div></div><span class="lang-count">4 项目 (33.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Rust</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#DEA584"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">C#</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#178600"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Jupyter Notebook</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#DA5B0B"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Explore 页面抓取成功，但当天推荐与 Trending Top 12 高度重合。以下作为补充入口，不另造第二份排行榜。</p>
+      <div class="trending-list">
+        <div class="trending-item"><span class="trending-num">01</span><div><a href="https://github.com/Dicklesworthstone/destructive_command_guard" target="_blank" rel="noopener" style="font-weight:600">Dicklesworthstone/destructive_command_guard</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">Rust · Agent 命令执行安全</span></div></div>
+        <div class="trending-item"><span class="trending-num">02</span><div><a href="https://github.com/wonderwhy-er/DesktopCommanderMCP" target="_blank" rel="noopener" style="font-weight:600">wonderwhy-er/DesktopCommanderMCP</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">TypeScript · MCP 本地终端与文件操作</span></div></div>
+        <div class="trending-item"><span class="trending-num">03</span><div><a href="https://github.com/HKUDS/Vibe-Trading" target="_blank" rel="noopener" style="font-weight:600">HKUDS/Vibe-Trading</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">Python · 今日 +776 Stars</span></div></div>
+        <div class="trending-item"><span class="trending-num">04</span><div><a href="https://github.com/PrefectHQ/prefect" target="_blank" rel="noopener" style="font-weight:600">PrefectHQ/prefect</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">Python · 可靠工作流编排</span></div></div>
+        <div class="trending-item"><span class="trending-num">05</span><div><a href="https://github.com/anthropics/claude-cookbooks" target="_blank" rel="noopener" style="font-weight:600">anthropics/claude-cookbooks</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">官方 Claude API 配方</span></div></div>
+        <div class="trending-item"><span class="trending-num">06</span><div><a href="https://github.com/home-assistant/core" target="_blank" rel="noopener" style="font-weight:600">home-assistant/core</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">本地优先的家庭自动化</span></div></div>
+        <div class="trending-item"><span class="trending-num">07</span><div><span style="font-size:12px;color:var(--text-muted);">📦 Collection: </span><a href="https://github.com/collections/github-copilot-sdk-reddit-contest-winners" target="_blank" rel="noopener" style="font-weight:600">GitHub Copilot SDK Reddit Contest Winners</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">11 个获奖原型</span></div></div>
+        <div class="trending-item"><span class="trending-num">08</span><div><span style="font-size:12px;color:var(--text-muted);">📌 Popular topic: </span><a href="https://github.com/topics/css" target="_blank" rel="noopener" style="font-weight:600">CSS</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">GitHub 今日推荐话题</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📅 报告生成时间：2026-07-13 09:04:33 JST &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank" rel="noopener">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank" rel="noopener">GitHub Explore</a></p>
+    <p style="margin-top:8px;">保留 GitHub 原始排名，Stars Today 单独展示；Trending 算法未公开，金融与高权限工具请按 Caveat 独立评估。</p>
+  </div>
+</div>
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  }
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>
