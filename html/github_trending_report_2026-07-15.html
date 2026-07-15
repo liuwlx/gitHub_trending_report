@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-07-15</title>
+<style>
+  :root {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --surface2: #21262D;
+    --border: #30363D;
+    --text: #C9D1D9;
+    --text-muted: #8B949E;
+    --blue: #58A6FF;
+    --green: #3FB950;
+    --orange: #D29922;
+    --purple: #BC8CFF;
+    --red: #F85149;
+    --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Layout */
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Header */
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+
+  /* Theme Toggle */
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+
+  /* Stats Cards */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+
+  /* Section */
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title span { font-size: 20px; }
+
+  /* Project Cards */
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue)22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .meta-item .icon { font-size: 14px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .forks { color: var(--text-muted); }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+  /* Topics */
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+
+  /* Expandable Details */
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .info-item { background: var(--surface2); border-radius: 6px; padding: 8px 12px; }
+  .info-item .info-key { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-item .info-val { font-size: 13px; color: var(--text); font-weight: 500; margin-top: 2px; }
+
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+
+  /* Language Chart */
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .lang-count { width: 110px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+
+  /* Insight */
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-box .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-box .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-box .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+
+  /* Trending List (compact) */
+  .trending-list { }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+
+  /* Light theme */
+  body.light {
+    --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE;
+    --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37;
+  }
+
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .project-header { flex-direction: column; }
+    .info-grid { grid-template-columns: repeat(2, 1fr); }
+    .lang-count { width: 92px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">视频编辑器冲上增速榜首，Agent 工程转向技能、质量门禁与可控工作流</div>
+    <div class="date-badge">📅 2026-07-15 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-num">12</div>
+      <div class="stat-label">Trending 项目</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🌟</div>
+      <div class="stat-num">12,073</div>
+      <div class="stat-label">Stars Today 合计</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💻</div>
+      <div class="stat-num">9</div>
+      <div class="stat-label">编程语言</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🤖</div>
+      <div class="stat-num">7</div>
+      <div class="stat-label">AI 相关项目</div>
+    </div>
+  </div>
+
+  <!-- 今日洞察 -->
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item">
+        <div class="insight-title">🎬 OpenCut 一天新增 4,276 Stars，创作工具成了今天最响的一炮</div>
+        <p>OpenCut 的增量超过榜单总增量三分之一。看点不只是一款开源视频编辑器，还包括 Rust 核心、插件优先和多端共用代码的重写方向。不过主分支仍在设计和重写期，路线图不是交付单，想用于生产先验收 Classic 和当前版本。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🧩 Agent 竞争进入“技能与质量标准”阶段</div>
+        <p>mattpocock/skills、Hallmark 和 awesome-llm-apps 合计新增 3,800 Stars。大家不再满足于一个通用聊天框，而是在争夺可复用技能、设计质量门禁和应用范式。资料多和架构成熟是两码事，别看菜单厚就以为后厨有米其林。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">📈 AI 交易工具热度高，风险提示也得跟上</div>
+        <p>Vibe-Trading 今日新增 1,256 Stars，已经形成 FastAPI、React、MCP、会话、回测与实验性券商执行的完整工作台；ai-hedge-fund 仍强调教育和研究。两者适合研究 Agent 工作流，不适合把一次回测截图当银行卡密码。</p>
+      </div>
+      <div class="insight-item">
+        <div class="insight-title">🛠️ 今天有工程含量的共同词：可控</div>
+        <p>Win11Debloat 控制系统噪音，Penpot 控制设计资产，grok2api 控制模型路由和账号状态。真正值得看源码的，不是项目简介里写了几个 AI，而是入口、权限、状态、失败和审计有没有交代明白。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔥 今日最热 Top 12 -->
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（GitHub 原始排名）</div>
+
+    <!-- #1 Shubhamsaboo/awesome-llm-apps -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-1">01</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/Shubhamsaboo/awesome-llm-apps" target="_blank">Shubhamsaboo / awesome-llm-apps</a></div>
+          <div class="project-desc">LLM 应用、AI Agent 与 RAG 示例集合。它是菜谱大全，不是一个统一运行平台。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">121,210</span></span>
+            <span class="meta-item"><span class="icon">📈</span><span class="stars">1,106 today</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">17,921</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span>
+            <span class="meta-item">📄 Apache-2.0</span>
+          </div>
+          <div class="topics"><span class="topic-badge">agents</span><span class="topic-badge">rag</span><span class="topic-badge">llms</span><span class="topic-badge">examples</span></div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>大型 AI 应用示例与教程仓库，按 Agent、RAG、语音、视觉和业务场景整理可运行项目。适合找参考实现，不应把所有子目录视为统一维护质量的生产系统。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>覆盖多类 LLM 应用与多 Agent 示例</li><li>通常提供代码、依赖和启动说明</li><li>便于比较模型、框架与向量存储组合</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">RAG</span><span class="tech-tag">Agents</span><span class="tech-tag">LLM SDKs</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 原型学习、方案调研和 Demo 复用；每个示例用于生产前都要单独检查安全、依赖和维护状态。</p></div>
+        <div class="recommend-quote">💬 “想抄作业可以来，想找一套统一架构得另看——这是菜谱大全，不是一口锅。”</div>
+      </div>
+    </div>
+
+    <!-- #2 mattpocock/skills -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-2">02</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/mattpocock/skills" target="_blank">mattpocock / skills</a></div>
+          <div class="project-desc">面向 Claude Code、Codex 等编程 Agent 的小型、可组合工程技能集。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">170,917</span></span>
+            <span class="meta-item"><span class="icon">📈</span><span class="stars">1,679 today</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">14,702</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#89E051"></span> Shell</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics"><span class="topic-badge">agent-skills</span><span class="topic-badge">claude-code</span><span class="topic-badge">codex</span></div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>把软件工程方法拆成可安装、可组合的 Agent Skills，帮助兼容工具获得更明确的任务流程。它主要交付指令和方法资产，而非独立后端系统。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>可用 Skills 安装器加入编码 Agent</li><li>每个 Skill 聚焦一个工程问题</li><li>兼顾 Claude 插件与通用分发方式</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Shell</span><span class="tech-tag">Markdown</span><span class="tech-tag">Agent Skills</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>个人或团队标准化 AI 编程工作流；效果仍取决于模型、宿主工具和项目上下文。</p></div>
+        <div class="recommend-quote">💬 “这是给编程 Agent 发的岗位说明书，不是再造一个 Agent 公司。”</div>
+      </div>
+    </div>
+
+    <!-- #3 OpenCut-app/OpenCut -->
+    <div class="project-card top-card">
+      <div class="project-header">
+        <div class="project-rank rank-3">03</div>
+        <div class="project-info">
+          <div class="project-name"><a href="https://github.com/OpenCut-app/OpenCut" target="_blank">OpenCut-app / OpenCut</a></div>
+          <div class="project-desc">开源跨平台视频编辑器；主仓库正在进行 Rust 核心、插件优先的全新重写。</div>
+          <div class="project-meta">
+            <span class="meta-item"><span class="icon">⭐</span><span class="stars">69,577</span></span>
+            <span class="meta-item"><span class="icon">📈</span><span class="stars">4,276 today</span></span>
+            <span class="meta-item"><span class="icon">🍴</span><span class="forks">7,231</span></span>
+            <span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span>
+            <span class="meta-item">📄 MIT</span>
+          </div>
+          <div class="topics"><span class="topic-badge">video-editor</span><span class="topic-badge">react</span><span class="topic-badge">rust</span><span class="topic-badge">desktop</span></div>
+        </div>
+      </div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>目标是提供无水印、无订阅、可自托管的视频编辑体验。当前主分支是新架构重写，Classic 版本仍是现阶段更可用的实现。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>开源、本地控制的视频剪辑方向</li><li>新架构计划采用 Editor API、插件优先和共享 Rust Core</li><li>Web、API、Desktop 按工作区分别开发</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">React</span><span class="tech-tag">Rust</span><span class="tech-tag">Moonrepo</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>关注开源视频编辑器和多端核心架构；需要稳定生产剪辑时先验证 Classic 或等待重写成熟。</p></div>
+        <div class="recommend-quote">💬 “热度像开演唱会，主分支还在搭舞台——路线图别当交付房。”</div>
+      </div>
+    </div>
+
+    <!-- #4 virattt/ai-hedge-fund -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">04</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/virattt/ai-hedge-fund" target="_blank">virattt / ai-hedge-fund</a></div>
+        <div class="project-desc">让多个模拟投资风格 Agent 协作研究市场的教育型概念验证项目。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">62,011</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">109 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">10,920</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">finance</span><span class="topic-badge">multi-agent</span><span class="topic-badge">education</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>多个价值、增长、宏观等风格 Agent 分别研究，再由风险和组合角色汇总。官方明确：教育和研究用途，不是真实投顾。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多角色并行研究同一标的</li><li>分析、风险与组合决策分离</li><li>提供命令行和可视化使用路径</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LLM Agents</span><span class="tech-tag">Finance Data</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>多 Agent 教学、金融研究原型和决策流程实验；不适合直接用于真实资金自动交易。</p></div>
+        <div class="recommend-quote">💬 “看它研究 Agent 怎么开投委会可以，拿它当基金经理身份证就过了。”</div>
+      </div>
+    </div>
+
+    <!-- #5 Nutlope/hallmark -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">05</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/Nutlope/hallmark" target="_blank">Nutlope / hallmark</a></div>
+        <div class="project-desc">给编码 Agent 使用的网页设计质量 Skill，用规则和审计门禁减少“AI 味”界面。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">6,409</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">1,015 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">360</span></span><span class="meta-item"><span class="lang-dot" style="background:#563D7C"></span> CSS</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">web-design</span><span class="topic-badge">agent-skill</span><span class="topic-badge">ui-audit</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>把常见 AI 生成页面的问题整理成设计 Skill 和质量门禁，支持 Claude Code、Cursor、Codex 等工具在生成或审计界面时减少套路化错误。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>build、audit、redesign、study 等工作模式</li><li>数十项排版、色彩、层级和动效门禁</li><li>可作为项目级设计约束复用</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">CSS</span><span class="tech-tag">Markdown</span><span class="tech-tag">Agent Skill</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 辅助前端和设计审查；不能替代品牌设计、用户研究和可访问性专项测试。</p></div>
+        <div class="recommend-quote">💬 “给 AI 设计稿请了个嘴损但有用的监工，至少不让它满屏渐变大药丸。”</div>
+      </div>
+    </div>
+
+    <!-- #6 HKUDS/Vibe-Trading -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">06</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/HKUDS/Vibe-Trading" target="_blank">HKUDS / Vibe-Trading</a></div>
+        <div class="project-desc">自然语言金融研究、回测、多 Agent、MCP 与实验性交易执行工作台。<a href="../analysis/2026-07-15/HKUDS__Vibe-Trading.md" target="_blank">架构解析</a></div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">23,138</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">1,256 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">3,966</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">trading</span><span class="topic-badge">mcp</span><span class="topic-badge">backtesting</span><span class="topic-badge">multi-agent</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>把研究目标转成会话、Agent 事件、工具调用、策略代码和回测产物。FastAPI/React 工作台之外，还包含 MCP、计划任务和实验性券商通道。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>会话、Goal、SSE 和 AgentLoop 形成可追踪执行链</li><li>运行目录保存状态、策略、指标、交易与验证产物</li><li>近期强化认证、沙箱、SSE Ticket 和 Docker 安全</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span><span class="tech-tag">React</span><span class="tech-tag">MCP</span><span class="tech-tag">AgentLoop</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>金融研究 Agent、回测与 MCP 工作流研究；真实资金执行前必须独立安全、风控和合规审查。</p></div>
+        <div class="recommend-quote">💬 “这是金融研究实验室，不是彩票站；工具链挺全，钱包得自己看住。”</div>
+      </div>
+    </div>
+
+    <!-- #7 Raphire/Win11Debloat -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">07</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/Raphire/Win11Debloat" target="_blank">Raphire / Win11Debloat</a></div>
+        <div class="project-desc">PowerShell 清理 Windows 11 预装应用、遥测、广告建议和常见界面干扰项。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">51,962</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">783 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">2,144</span></span><span class="meta-item"><span class="lang-dot" style="background:#012456"></span> PowerShell</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">windows-11</span><span class="topic-badge">privacy</span><span class="topic-badge">debloat</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>用交互式或预设脚本集中处理应用卸载、隐私设置和界面调整，降低手工改注册表和逐项设置的成本。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>默认、精简和自定义执行模式</li><li>集中处理 Appx、遥测和 UI 设置</li><li>参数化运行，方便新设备重复初始化</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">PowerShell</span><span class="tech-tag">Registry</span><span class="tech-tag">Appx</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>个人新装系统与测试设备初始化；企业环境应先在测试机验证并结合组策略。</p></div>
+        <div class="recommend-quote">💬 “系统送一桌子赠品，它问你哪些真不要——先备份，别把桌腿也扔了。”</div>
+      </div>
+    </div>
+
+    <!-- #8 hasaneyldrm/exercises-dataset -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">08</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/hasaneyldrm/exercises-dataset" target="_blank">hasaneyldrm / exercises-dataset</a></div>
+        <div class="project-desc">面向健身应用的结构化动作数据与 GIF 媒体集合，代码与媒体许可需要分开看。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">13,813</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">851 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,652</span></span><span class="meta-item"><span class="lang-dot" style="background:#E34C26"></span> HTML</span><span class="meta-item">📄 Code MIT / Media Terms</span></div>
+        <div class="topics"><span class="topic-badge">fitness</span><span class="topic-badge">dataset</span><span class="topic-badge">gif</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>提供按部位、器械和目标肌群整理的健身动作数据，并配有大量动作 GIF，适合快速搭建动作检索和训练计划产品。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>大量结构化动作条目</li><li>README 声称支持 9 种语言</li><li>代码与媒体授权分开说明</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">JSON</span><span class="tech-tag">HTML</span><span class="tech-tag">GIF Assets</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>健身 App 原型和动作搜索；商业分发前必须核对 GIF 归属、署名与媒体条款。</p></div>
+        <div class="recommend-quote">💬 “数据能拿来练产品，GIF 不能闭眼搬家——代码免费不等于教练也白送。”</div>
+      </div>
+    </div>
+
+    <!-- #9 penpot/penpot -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">09</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/penpot/penpot" target="_blank">penpot / penpot</a></div>
+        <div class="project-desc">开放标准驱动的协作设计与原型平台，可云端使用也可自托管。<a href="../analysis/2026-07-15/penpot__penpot.md" target="_blank">架构解析</a></div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">56,315</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">395 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">3,697</span></span><span class="meta-item"><span class="lang-dot" style="background:#DB5855"></span> Clojure</span><span class="meta-item">📄 MPL-2.0</span></div>
+        <div class="topics"><span class="topic-badge">design</span><span class="topic-badge">prototyping</span><span class="topic-badge">self-hosted</span><span class="topic-badge">svg</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>成熟的开源设计平台，使用 SVG、CSS、HTML 和 JSON 等开放标准表达资产，包含前端编辑器、后端 RPC、实时协作、导出和自托管组件。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>矢量设计、原型、设计系统与开发者检查模式</li><li>前端变更队列、后端 revision 校验和 WebSocket 协作</li><li>插件、API、Webhooks、Token 与 Docker 自托管</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Clojure</span><span class="tech-tag">ClojureScript</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Valkey</span><span class="tech-tag">WebSocket</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>产品设计协作、内网设计平台和开放设计系统；迁移前用真实复杂文件验证兼容性。</p></div>
+        <div class="recommend-quote">💬 “不想把设计资产锁在黑箱里，Penpot 是一条正经路，不是开源版截图工具。”</div>
+      </div>
+    </div>
+
+    <!-- #10 AIEraDev/Clypra -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">10</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/AIEraDev/Clypra" target="_blank">AIEraDev / Clypra</a></div>
+        <div class="project-desc">基于 Tauri、React 与 Rust 的跨平台轻量视频编辑器，支持多轨时间线与本地导出。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">2,747</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">85 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">282</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">tauri</span><span class="topic-badge">video-editor</span><span class="topic-badge">ffmpeg</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Tauri v2 应用壳配合 React UI 和 Rust 原生能力，通过 FFmpeg 完成媒体导出，目标是桌面和移动端的轻量编辑体验。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多轨时间线、剪切、文字、音频和转场</li><li>命令模式支持撤销与重做</li><li>本地导出并预留可选 AI 功能</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Tauri v2</span><span class="tech-tag">React 19</span><span class="tech-tag">Rust</span><span class="tech-tag">FFmpeg</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>轻量桌面视频编辑和 Tauri 多媒体应用学习；专业剪辑需实测性能、格式和复杂工程能力。</p></div>
+        <div class="recommend-quote">💬 “个头不大，零件不少；适合研究轻量编辑器，先别让它吞院线工程。”</div>
+      </div>
+    </div>
+
+    <!-- #11 par274/sharpemu -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">11</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/par274/sharpemu" target="_blank">par274 / sharpemu</a></div>
+        <div class="project-desc">从零用 C# 开发的实验性 PlayStation 5 模拟器，目前重点是准确性和基础设施。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">2,276</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">332 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">149</span></span><span class="meta-item"><span class="lang-dot" style="background:#178600"></span> C#</span><span class="meta-item">📄 GPL-2.0</span></div>
+        <div class="topics"><span class="topic-badge">emulator</span><span class="topic-badge">ps5</span><span class="topic-badge">reverse-engineering</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>早期 PS5 模拟器，可加载 eboot.bin/ELF、执行部分原生 CPU 指令、读取元数据和处理部分内核与系统模块，主开发目标为 Windows。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>专注 PS5，不以 PS4 兼容为目标</li><li>已有可执行文件、系统模块和部分内核基础设施</li><li>持续提供开发构建供研究者观察</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C#</span><span class="tech-tag">.NET</span><span class="tech-tag">Emulation</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>模拟器架构与逆向工程学习；项目明确早期且不支持盗版，不适合期待稳定游戏兼容的普通用户。</p></div>
+        <div class="recommend-quote">💬 “这是发动机试车台，不是游戏机代购；看技术进展有意思，拿来通关还早。”</div>
+      </div>
+    </div>
+
+    <!-- #12 chenyme/grok2api -->
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">12</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/chenyme/grok2api" target="_blank">chenyme / grok2api</a></div>
+        <div class="project-desc">将 Grok Build、Web 和 Console 多账号池统一成 OpenAI/Anthropic 兼容 API。<a href="../analysis/2026-07-15/chenyme__grok2api.md" target="_blank">架构解析</a></div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">5,945</span></span><span class="meta-item"><span class="icon">📈</span><span class="stars">186 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,938</span></span><span class="meta-item"><span class="lang-dot" style="background:#00ADD8"></span> Go</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">grok</span><span class="topic-badge">api-gateway</span><span class="topic-badge">account-pool</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>三类 Grok Provider 与账号池对外暴露 Responses、Chat、Messages、图片和视频接口，并提供模型、密钥、用量、代理和审计后台。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>OpenAI/Anthropic 兼容接口</li><li>优先级、额度、并发、粘滞、冷却和故障切换</li><li>凭据加密、Key 哈希、日志脱敏和传输限制</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Go</span><span class="tech-tag">Gin</span><span class="tech-tag">React</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Redis</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>研究模型网关和多账号调度；部署前必须核对上游条款、凭据安全、账号来源和合规责任。</p></div>
+        <div class="recommend-quote">💬 “三路账号排成公交调度站；车能发，票和路权得你自己合法解决。”</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language Distribution -->
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row"><span class="lang-name">Python</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:25%;background:#3572A5"></div></div><span class="lang-count">3 项目 (25.0%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">TypeScript</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:16.7%;background:#3178C6"></div></div><span class="lang-count">2 项目 (16.7%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Shell</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#89E051"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">CSS</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#563D7C"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">PowerShell</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#012456"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">HTML</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#E34C26"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Clojure</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#DB5855"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">C#</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#178600"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Go</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#00ADD8"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+    </div>
+  </div>
+
+  <!-- GitHub Explore Highlights -->
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Explore 只作补充，不参与 Top 12 排名或统计。以下保留本次官方 Explore 页面中有实际软件或明确工程价值的条目：</p>
+      <div class="trending-list">
+        <div class="trending-item"><span class="trending-num">01</span><div><a href="https://github.com/OpenCut-app/OpenCut" target="_blank" style="font-weight:600">OpenCut-app/OpenCut</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">开源视频编辑器 · Trending #3</span></div></div>
+        <div class="trending-item"><span class="trending-num">02</span><div><a href="https://github.com/Nutlope/hallmark" target="_blank" style="font-weight:600">Nutlope/hallmark</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">Agent 网页设计质量 Skill</span></div></div>
+        <div class="trending-item"><span class="trending-num">03</span><div><a href="https://github.com/mattpocock/skills" target="_blank" style="font-weight:600">mattpocock/skills</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">编程 Agent Skills</span></div></div>
+        <div class="trending-item"><span class="trending-num">04</span><div><a href="https://github.com/moeru-ai/airi" target="_blank" style="font-weight:600">moeru-ai/airi</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">自托管 AI 角色与伴侣系统</span></div></div>
+        <div class="trending-item"><span class="trending-num">05</span><div><a href="https://github.com/Dicklesworthstone/destructive_command_guard" target="_blank" style="font-weight:600">Dicklesworthstone/destructive_command_guard</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">危险终端命令防护</span></div></div>
+        <div class="trending-item"><span class="trending-num">06</span><div><a href="https://github.com/HKUDS/Vibe-Trading" target="_blank" style="font-weight:600">HKUDS/Vibe-Trading</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">AI 金融研究与回测</span></div></div>
+        <div class="trending-item"><span class="trending-num">07</span><div><a href="https://github.com/openinterpreter/openinterpreter" target="_blank" style="font-weight:600">openinterpreter/openinterpreter</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">本地自然语言计算机执行</span></div></div>
+        <div class="trending-item"><span class="trending-num">08</span><div><a href="https://github.com/HKUDS/DeepTutor" target="_blank" style="font-weight:600">HKUDS/DeepTutor</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">深度推理与个性化学习 Agent</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>📅 报告生成时间：2026-07-15 21:01 JST &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending?since=daily" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">本报告由 <strong>skill-github-trending-report</strong> 生成 &nbsp;|&nbsp; Stars 为累计值，Stars Today 为本次 Trending 页面展示的当日增量</p>
+    <p style="margin-top:8px;">架构分析：<a href="../analysis/2026-07-15/README.md" target="_blank">3 个项目源码深读与端到端业务案例</a></p>
+  </div>
+
+</div>
+
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>
