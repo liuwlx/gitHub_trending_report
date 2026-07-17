@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-07-17</title>
+<style>
+  :root {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --surface2: #21262D;
+    --border: #30363D;
+    --text: #C9D1D9;
+    --text-muted: #8B949E;
+    --blue: #58A6FF;
+    --green: #3FB950;
+    --orange: #D29922;
+    --purple: #BC8CFF;
+    --red: #F85149;
+    --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { background: var(--surface2); border-radius: 4px; padding: 1px 5px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title span { font-size: 20px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px #58a6ff22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; min-width: 0; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .meta-item .icon { font-size: 14px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .forks { color: var(--text-muted); }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .lang-count { width: 100px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-box .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-box .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-box .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-list { }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  body.light .header h1, body.light .section-title, body.light .project-name a { color: #24292F; }
+  body.light .insight-box { background: linear-gradient(135deg, #ffffff 0%, #f6f8fa 100%); }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .project-header { flex-direction: column; }
+    .lang-name { width: 82px; }
+    .lang-count { width: 86px; }
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">今天最热的不只是 AI，还有让 AI 真正干活的工程底盘</div>
+    <div class="date-badge">📅 2026-07-17 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">12,451</div><div class="stat-label">今日累计新增 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">7</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">8</div><div class="stat-label">AI 相关项目</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item"><div class="insight-title">🧰 AI 编程工具开始比拼“运行底盘”</div><p>Open Interpreter、LobeHub、DeepTutor 和两套工程 Skills 都不再满足于给模型套一层聊天界面。它们在争夺的是会话状态、工具调用、权限、长期任务、知识库和多 Agent 编排。模型仍重要，但决定用户体验的越来越是 Agent harness 和运行时工程。</p></div>
+      <div class="insight-item"><div class="insight-title">🪴 本地小模型从“能跑”走向“能做事”</div><p>Bonsai Demo 把 1-bit / ternary 模型、llama.cpp、MLX、视觉输入、OpenAI 风格工具调用和 MCP 放进一套安装脚本里。开发者关心的不只是压缩率，而是普通设备能否真正跑起长上下文、视觉和工具链。</p></div>
+      <div class="insight-item"><div class="insight-title">🎬 开源生产力工具一边爆发，一边重写地基</div><p>OpenCut 的当日增量很高，但当前主仓库明确处于从零重写阶段，经典版本才是现阶段更稳妥的使用入口。星标像掌声，地基像钢筋，鼓掌再响也不能替钢筋上班。</p></div>
+      <div class="insight-item"><div class="insight-title">🧭 数据、规范与技能库也能成为基础设施</div><p>Apache Ossie 试图统一分析、AI 与 BI 的语义元数据；exercises-dataset 把健身数据、Schema 和浏览器打包；Hallmark 与 mattpocock/skills 把设计和工程方法做成可分发的 Agent Skill。</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（GitHub 原始排名）</div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-1">01</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/apache/ossie" target="_blank">apache / ossie</a></div>
+        <div class="project-desc">为分析、AI 与 BI 平台定义厂商中立的语义元数据交换规范。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">1,056 · +60 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">142</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 Apache-2.0</span></div>
+        <div class="topics"><span class="topic-badge">metadata</span><span class="topic-badge">semantic</span><span class="topic-badge">json-schema</span><span class="topic-badge">analytics</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Apache Ossie 是一套语义元数据交换规范及配套工具，目标是在分析、AI 和 BI 产品之间交换指标、维度、实体与关系定义，让同一业务口径不必在每个平台重新翻译。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>用 JSON/YAML 表达厂商中立的语义模型，并通过 Schema 约束结构</li><li>提供示例、验证与转换工具，不只是概念白皮书</li><li>面向指标口径治理、语义层迁移和 AI 数据上下文共享</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">JSON</span><span class="tech-tag">YAML</span><span class="tech-tag">JSON Schema</span><span class="tech-tag">Python</span><span class="tech-tag">Semantic Metadata</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>多 BI 平台共存、企业语义层治理、向 AI Agent 提供可靠指标定义、语义模型迁移与审计。价值取决于生态采纳度，不能把“规范发布”自动理解成“全行业兼容”。</p></div>
+        <div class="recommend-quote">💬 “要是你们还在为同一个收入指标开三轮会，它想先把这门外语统一了。”</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-2">02</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/Nutlope/hallmark" target="_blank">Nutlope / hallmark</a></div>
+        <div class="project-desc">面向 Claude Code、Cursor 和 Codex 的反 AI 套路化界面设计 Skill。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">11,399 · +3,372 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">566</span></span><span class="meta-item"><span class="lang-dot" style="background:#563D7C"></span> CSS</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">design-skill</span><span class="topic-badge">claude-code</span><span class="topic-badge">cursor</span><span class="topic-badge">anti-ai-slop</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Hallmark 是一套给编码 Agent 使用的设计技能，提供 build、audit、redesign、study 四类工作方式，并用主题知识和规则门禁约束常见的 AI 套路化设计。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>覆盖新建设计、现有页面审计、重设计和风格研究</li><li>提供视觉主题与反模式检查，要求解释设计选择</li><li>可安装到主流编码 Agent，直接参与生成与评审</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Agent Skills</span><span class="tech-tag">Markdown</span><span class="tech-tag">CSS</span><span class="tech-tag">Design Audit</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 辅助前端、设计系统审查、营销页和产品页去模板化。它能改善审校过程，但不能替代用户研究、品牌规范与专业设计评审。</p></div>
+        <div class="recommend-quote">💬 “不是给页面补妆，是先把 AI 那套紫色渐变玻璃卡从购物车里删了。”</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-3">03</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/OpenCut-app/OpenCut" target="_blank">OpenCut-app / OpenCut</a></div>
+        <div class="project-desc">面向 Web、桌面与移动端的开源视频编辑器，目标是成为 CapCut 的开放替代品。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">74,363 · +3,537 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">7,512</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">video-editor</span><span class="topic-badge">rust-core</span><span class="topic-badge">plugins</span><span class="topic-badge">mcp</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>OpenCut 是免费开源视频编辑器项目。当前主仓库正在从零重写，规划以 Rust core 支撑浏览器、桌面和移动端，并加入 Editor API、插件优先架构、MCP、无头模式和脚本能力。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>目标覆盖 Web、桌面和移动端，减少平台分叉</li><li>规划 Editor API、第三方插件、无头批处理和 Agent 集成</li><li>已搭起 Web、Cloudflare API 和 GPUI 桌面工程</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">React 19</span><span class="tech-tag">Vite 8</span><span class="tech-tag">Cloudflare Workers</span><span class="tech-tag">Rust</span><span class="tech-tag">GPUI</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>适合跟踪开源创作工具架构、参与早期生态和研究自动化剪辑。当前主仓库仍在重写，官方建议需要稳定使用的用户选择 classic 版本。</p></div>
+        <div class="recommend-quote">💬 “星星很亮，地基还在浇；想围观未来可以冲，今晚交片先别拿它赌命。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">04</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/PostHog/posthog" target="_blank">PostHog / posthog</a></div>
+        <div class="project-desc">把产品分析、回放、Feature Flags、实验、错误、日志、AI 可观测性和数据管道放进同一平台。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">35,981 · +77 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">2,999</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">analytics</span><span class="topic-badge">session-replay</span><span class="topic-badge">feature-flags</span><span class="topic-badge">ai-observability</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>PostHog 是开源产品工程平台，覆盖产品与 Web 分析、会话回放、Feature Flags、实验、错误跟踪、日志、数据仓库、数据管道和 AI 可观测性。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>统一收集用户行为、LLM 调用、错误与日志上下文</li><li>把分析、实验和发布控制放进同一工作台</li><li>Self-driving mode 尝试把异常信号转成研究与可审查变更</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Django</span><span class="tech-tag">React</span><span class="tech-tag">ClickHouse</span><span class="tech-tag">Kafka</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Rust</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>SaaS 产品分析、增长实验、回放诊断、LLM trace 和 Feature Flag 治理。完整自托管复杂度高，开源、云端和付费边界要按最新说明确认。</p></div>
+        <div class="recommend-quote">💬 “想少养几套互相不说话的数据工具，它打算把桌子都搬到一起。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">05</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/openinterpreter/openinterpreter" target="_blank">openinterpreter / openinterpreter</a></div>
+        <div class="project-desc">为 Kimi、Qwen、DeepSeek 等低成本开放模型优化的 Rust 编码 Agent。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">66,135 · +661 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">5,681</span></span><span class="meta-item"><span class="lang-dot" style="background:#DEA584"></span> Rust</span><span class="meta-item">📄 Apache-2.0</span></div>
+        <div class="topics"><span class="topic-badge">coding-agent</span><span class="topic-badge">harness</span><span class="topic-badge">acp</span><span class="topic-badge">mcp</span><span class="topic-badge">sandbox</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>新版 Open Interpreter 是基于 Codex 代码演进的 Rust 编码 Agent，重点复刻和切换不同模型供应商推荐的 harness，并提供 TUI、exec、ACP、MCP、沙箱、权限和会话恢复。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li><code>/harness</code> 可切换 native、Claude Code、Kimi Code、Qwen Code 和 DeepSeek 等范式</li><li>兼容 ACP 与 Codex exec/SDK 协议</li><li>命令解析、审批、沙箱、会话状态和工具调用组成完整运行时</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Rust</span><span class="tech-tag">Tokio</span><span class="tech-tag">TUI</span><span class="tech-tag">ACP</span><span class="tech-tag">MCP</span><span class="tech-tag">Sandboxing</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>开放模型代码修改、终端任务、编辑器 Agent 接入、harness 对比和本地自动化。不同模型的效果主张仍需在真实任务集独立验证。</p></div>
+        <div class="recommend-quote">💬 “同一匹马换套鞍具就能跑出不同成绩，它专门研究鞍具，还顺手把马厩也盖了。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">06</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/PrismML-Eng/Bonsai-demo" target="_blank">PrismML-Eng / Bonsai-demo</a></div>
+        <div class="project-desc">在消费级设备本地运行 1-bit 与 ternary Bonsai 模型的完整演示与安装工具链。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">1,617 · +196 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">158</span></span><span class="meta-item"><span class="lang-dot" style="background:#89E051"></span> Shell</span><span class="meta-item">📄 Apache-2.0</span></div>
+        <div class="topics"><span class="topic-badge">1-bit</span><span class="topic-badge">ternary</span><span class="topic-badge">llama.cpp</span><span class="topic-badge">mlx</span><span class="topic-badge">mcp</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Bonsai Demo 提供脚本、预编译二进制、模型下载和 UI 集成，让用户在 macOS、Linux、Windows、GPU 或 CPU 上运行 Bonsai 低比特模型。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>一键处理依赖、虚拟环境、模型、二进制和可选 WebUI</li><li>支持 llama.cpp 与 Apple MLX、多种尺寸和硬件后端</li><li>提供视觉、长上下文、OpenAI 风格工具调用与 MCP</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Shell</span><span class="tech-tag">Python/uv</span><span class="tech-tag">llama.cpp</span><span class="tech-tag">MLX</span><span class="tech-tag">GGUF</span><span class="tech-tag">Open WebUI</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>本地模型评估、消费级硬件部署、离线聊天、视觉和工具调用实验。性能与内存数字受硬件和配置影响，项目方 benchmark 不能替代本机实测。</p></div>
+        <div class="recommend-quote">💬 “论文说模型瘦了不算数，能在你桌上的机器跑起来，才算减肥成功。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">07</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/hasaneyldrm/exercises-dataset" target="_blank">hasaneyldrm / exercises-dataset</a></div>
+        <div class="project-desc">带 Schema、缩略图、动作 GIF 和多语言步骤的 1,324 条健身动作数据集。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">15,233 · +710 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,830</span></span><span class="meta-item"><span class="lang-dot" style="background:#E34C26"></span> HTML</span><span class="meta-item">📄 MIT（媒体另有条款）</span></div>
+        <div class="topics"><span class="topic-badge">fitness</span><span class="topic-badge">json</span><span class="topic-badge">dataset</span><span class="topic-badge">json-schema</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>仓库收录 1,324 个健身动作，包含目标肌群、器械、步骤、多语言说明、缩略图与动画 GIF，并附纯前端浏览器、JSON Schema 和接入向导。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>结构化 JSON 配套 Schema，可校验字段</li><li>每个动作带本地媒体和多语言说明</li><li>静态浏览器支持搜索、筛选与无限滚动</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">JSON</span><span class="tech-tag">JSON Schema 2020-12</span><span class="tech-tag">HTML</span><span class="tech-tag">Local Media</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>健身 App 原型、动作搜索、教学演示和推荐研究。图片与 GIF 并非普通 MIT 资产，商用前需核对媒体归属和条款。</p></div>
+        <div class="recommend-quote">💬 “不是健身动作大全.txt，而是一箱拆开就能接后端的数据零件。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">08</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/Shubhamsaboo/awesome-llm-apps" target="_blank">Shubhamsaboo / awesome-llm-apps</a></div>
+        <div class="project-desc">100+ 可运行的 AI Agent、RAG 与多模态应用模板合集。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">123,229 · +923 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">18,166</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 Apache-2.0</span></div>
+        <div class="topics"><span class="topic-badge">agents</span><span class="topic-badge">rag</span><span class="topic-badge">multimodal</span><span class="topic-badge">mcp</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>这是分类整理的开源 AI 应用案例库，包含基础 Agent、团队协作、RAG、语音、记忆、MCP 和垂直业务场景，每个子项目通常可独立安装运行。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>覆盖主流闭源与开放模型</li><li>案例从最小链路到复杂多 Agent 系统</li><li>适合复制、学习与快速改造原型</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Streamlit</span><span class="tech-tag">LLM SDKs</span><span class="tech-tag">Vector Stores</span><span class="tech-tag">RAG</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 应用入门、内部 PoC、技术选型和教学。它是应用合集而非统一框架，“能运行”不等于已处理生产安全、成本和并发。</p></div>
+        <div class="recommend-quote">💬 “先照菜谱把第一锅炒熟；开馆子之前，厨房还得自己重新收拾。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">09</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/lobehub/lobehub" target="_blank">lobehub / lobehub</a></div>
+        <div class="project-desc">把多个 Agent 组织成可招聘、排班、持续运行和汇报的 AI 团队操作平台。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">80,334 · +71 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">15,621</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 Community License</span></div>
+        <div class="topics"><span class="topic-badge">agent</span><span class="topic-badge">mcp</span><span class="topic-badge">agent-collaboration</span><span class="topic-badge">self-hosted</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>LobeHub 从多模型聊天产品演进为 Chief Agent Operator，强调创建和组织 Agent、安排持续任务、接入知识与工具并汇报执行结果。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>通过角色、技能、知识库与工具配置 Agent</li><li>支持多家模型与 MCP 扩展</li><li>提供 Web、云端和自托管路径</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">React/Next.js</span><span class="tech-tag">Node.js</span><span class="tech-tag">MCP</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>多 Agent 工作台、知识助手、持续研究与团队私有 AI 门户。Community License 不应按标准宽松开源许可证理解。</p></div>
+        <div class="recommend-quote">💬 “一个 Agent 是员工，十个 Agent 就得有人排班、发工单、收周报。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">10</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/YimMenu/YimMenuV2" target="_blank">YimMenu / YimMenuV2</a></div>
+        <div class="project-desc">面向 GTA 5 Enhanced 的实验性 C++ 菜单与修改框架。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">1,532 · +128 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">363</span></span><span class="meta-item"><span class="lang-dot" style="background:#F34B7D"></span> C++</span><span class="meta-item">📄 GPL-2.0</span></div>
+        <div class="topics"><span class="topic-badge">gta5</span><span class="topic-badge">mod-menu</span><span class="topic-badge">cpp23</span><span class="topic-badge">cmake</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>YimMenuV2 是 GTA 5 Enhanced 的实验性菜单项目，以 C++ 和 CMake 构建，需要 DLL 注入并关闭 BattlEye 才能运行。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>针对 Enhanced 版本重建菜单和底层 hook</li><li>提供 CMake 工程、文档和 Nightly Release</li><li>FSL 可将存档重定向到本地</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C++23</span><span class="tech-tag">CMake</span><span class="tech-tag">DLL Injection</span><span class="tech-tag">Game Hooks</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>仅适合了解游戏 Mod 工程和 C++ hook 技术。它可能违反游戏服务条款并带来封禁与安全风险，本报告不推荐绕过反作弊或在线滥用。</p></div>
+        <div class="recommend-quote">💬 “技术上是拆发动机，使用上是踩红线；别把能编译翻译成该上线。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">11</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/HKUDS/DeepTutor" target="_blank">HKUDS / DeepTutor</a></div>
+        <div class="project-desc">集知识库、Agent loop、长期记忆、学习路径和多渠道伙伴于一体的个性化 AI 学习平台。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">27,083 · +656 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">3,629</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 Apache-2.0</span></div>
+        <div class="topics"><span class="topic-badge">ai-tutor</span><span class="topic-badge">rag</span><span class="topic-badge">agent-loop</span><span class="topic-badge">memory</span><span class="topic-badge">multi-user</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>DeepTutor 是 Agent-native 学习伴侣，提供 Chat、Deep Research、Deep Solve、Guided Learning、知识库、三层记忆、问题本和可扩展 Partner/Skills。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>单一 Agent loop 统一工具调用、知识库检索与流式输出</li><li>LlamaIndex/FAISS 等可替换 RAG 后端和多文档解析</li><li>三层记忆、学习路径、问题库和多渠道 Partner</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python 3.11+</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Next.js 16</span><span class="tech-tag">LlamaIndex</span><span class="tech-tag">FAISS</span><span class="tech-tag">WebSocket/SSE</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>自建课程助教、个人知识学习、研究资料问答和企业培训。系统面广、依赖多，教育正确性、隐私、成本与长期效果要独立评估。</p></div>
+        <div class="recommend-quote">💬 “普通 AI 家教只会答题，它想把课本、错题本和班主任办公室一块儿搬进来。”</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">12</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/mattpocock/skills" target="_blank">mattpocock / skills</a></div>
+        <div class="project-desc">把需求澄清、TDD、调试、架构改进和代码审查做成可组合的 Agent Skills。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">174,845 · +2,060 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">14,991</span></span><span class="meta-item"><span class="lang-dot" style="background:#89E051"></span> Shell</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">agent-skills</span><span class="topic-badge">tdd</span><span class="topic-badge">debugging</span><span class="topic-badge">code-review</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>这是一组小型、可组合、模型无关的工程 Skills，覆盖需求追问、领域语言、规格、TDD、诊断、代码审查、合并冲突、研究与交接。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>区分用户触发的编排 Skill 与模型自动调用的纪律 Skill</li><li>强调需求对齐、共享领域语言和短反馈循环</li><li>支持可修改副本和 Claude Code 插件两种安装方式</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Agent Skills</span><span class="tech-tag">Markdown</span><span class="tech-tag">Shell</span><span class="tech-tag">Claude Code Plugin</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 编程团队规范、需求澄清、TDD、疑难 Bug、架构治理和代码评审。它是方法与指令资产，不是独立运行系统。</p></div>
+        <div class="recommend-quote">💬 “让 Agent 写快不难，让它别把坑也挖快了才难；这套技能给刹车和方向盘配齐。”</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row"><span class="lang-name">Python</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:33.3%;background:#3572A5"></div></div><span class="lang-count">4 项目 (33.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">TypeScript</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:16.7%;background:#3178C6"></div></div><span class="lang-count">2 项目 (16.7%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Shell</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:16.7%;background:#89E051"></div></div><span class="lang-count">2 项目 (16.7%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">CSS</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#563D7C"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Rust</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#DEA584"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">HTML</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#E34C26"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">C++</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#F34B7D"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Explore 是补充视角，不参与 Trending 排名和 Stars Today 统计：</p>
+      <div class="trending-list">
+        <div class="trending-item"><span class="trending-num">01</span><div><a href="https://www.youtube.com/@GitHub" target="_blank" style="font-weight:600">Rubber Duck Thursdays</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">GitHub 官方轻松编程与开源协作内容</span></div></div>
+        <div class="trending-item"><span class="trending-num">02</span><div><a href="https://github.com/topics/react" target="_blank" style="font-weight:600">React</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">今日热门 Topic</span></div></div>
+        <div class="trending-item"><span class="trending-num">03</span><div><a href="https://github.com/collections/game-engines" target="_blank" style="font-weight:600">Game Engines</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">跨平台游戏引擎精选集合</span></div></div>
+        <div class="trending-item"><span class="trending-num">04</span><div><a href="https://repography.com" target="_blank" style="font-weight:600">Repography</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">仓库数据仪表板与 README 可视化</span></div></div>
+        <div class="trending-item"><span class="trending-num">05</span><div><a href="https://github.com/explore" target="_blank" style="font-weight:600">GitHub Checkout：Copilot cloud agent</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">合并冲突与 Pull Request 工作流演示</span></div></div>
+        <div class="trending-item"><span class="trending-num">06</span><div><a href="https://github.com/github/copilot-sdk" target="_blank" style="font-weight:600">github/copilot-sdk</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">将 Copilot Agent 嵌入应用</span></div></div>
+        <div class="trending-item"><span class="trending-num">07</span><div><a href="https://github.com/Graphify-Labs/graphify" target="_blank" style="font-weight:600">Graphify-Labs/graphify</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">代码与知识图谱方向</span></div></div>
+        <div class="trending-item"><span class="trending-num">08</span><div><a href="https://github.com/Deploybot-app" target="_blank" style="font-weight:600">Deploybot-app</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">部署自动化补充线索</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📅 报告生成时间：2026-07-17 21:10（Asia/Tokyo） &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">本报告由 <strong>skill-github-trending-report</strong> 生成 &nbsp;|&nbsp; 保留 GitHub 原始排名，累计 Stars 与 Stars Today 分开呈现</p>
+    <p style="margin-top:8px;">诚实说明：OpenCut 主仓库仍在重写；Bonsai 性能未独立复测；YimMenu 涉及反作弊与服务条款风险。</p>
+  </div>
+</div>
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>
