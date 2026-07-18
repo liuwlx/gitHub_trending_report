@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="2026-07-18 GitHub Trending 中文日报：Top 12、今日洞察、语言分布与 GitHub Explore。">
+  <title>GitHub Trending 日报 · 2026-07-18</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8faff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #e4e9f2;
+      --primary: #635bff;
+      --primary-soft: #eeedff;
+      --accent: #2f80ed;
+      --success: #16a36a;
+      --warning: #e69a18;
+      --shadow: 0 14px 34px rgba(30, 42, 72, 0.08);
+    }
+    [data-theme="dark"] {
+      --bg: #0d111c;
+      --surface: #151b28;
+      --surface-soft: #1a2232;
+      --text: #edf2ff;
+      --muted: #a3aec2;
+      --border: #293246;
+      --primary: #9d97ff;
+      --primary-soft: #282448;
+      --accent: #68a8ff;
+      --success: #4bd19a;
+      --warning: #ffbd55;
+      --shadow: 0 16px 42px rgba(0, 0, 0, 0.28);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(99,91,255,.12), transparent 26rem),
+        radial-gradient(circle at 92% 8%, rgba(47,128,237,.10), transparent 24rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+      transition: background .25s ease, color .25s ease;
+    }
+    a { color: inherit; }
+    .theme-toggle {
+      position: fixed; top: 18px; right: 18px; z-index: 50;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      width: 42px; height: 42px; border-radius: 50%; cursor: pointer; box-shadow: var(--shadow);
+      font-size: 18px;
+    }
+    .container { width: min(1160px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 64px; }
+    .header {
+      padding: 42px; border: 1px solid var(--border); border-radius: 28px;
+      background: linear-gradient(135deg, var(--surface), var(--surface-soft)); box-shadow: var(--shadow);
+      overflow: hidden; position: relative;
+    }
+    .header::after {
+      content: ""; position: absolute; width: 260px; height: 260px; border-radius: 50%;
+      right: -80px; top: -100px; background: linear-gradient(135deg, rgba(99,91,255,.2), rgba(47,128,237,.08));
+    }
+    .header-badge { display: inline-flex; padding: 7px 12px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-weight: 750; font-size: 13px; }
+    .header h1 { margin: 16px 0 8px; font-size: clamp(34px, 5vw, 58px); line-height: 1.08; letter-spacing: -0.04em; }
+    .header p { max-width: 780px; margin: 0; color: var(--muted); font-size: 17px; }
+    .header-date { margin-top: 24px; color: var(--muted); font-weight: 650; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0 0; }
+    .stat-card { padding: 22px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); }
+    .stat-label { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .stat-value { display: block; margin-top: 8px; font-size: 32px; font-weight: 850; letter-spacing: -0.03em; }
+    .section { margin-top: 42px; }
+    .section-title { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; font-size: 25px; letter-spacing: -0.02em; }
+    .section-title::before { content: ""; width: 5px; height: 24px; border-radius: 999px; background: linear-gradient(var(--primary), var(--accent)); }
+    .insights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .insight-card { padding: 24px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); }
+    .insight-card h3 { margin: 0 0 9px; font-size: 18px; }
+    .insight-card p { margin: 0; color: var(--muted); }
+    .project-list { display: grid; gap: 14px; }
+    .project-card { border: 1px solid var(--border); border-radius: 22px; background: var(--surface); overflow: hidden; box-shadow: 0 8px 24px rgba(30,42,72,.05); }
+    .project-card.top-three { border-color: rgba(99,91,255,.42); box-shadow: 0 12px 28px rgba(99,91,255,.12); }
+    .project-header { display: grid; grid-template-columns: 58px 1fr auto; gap: 18px; align-items: center; padding: 22px; }
+    .project-rank { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: var(--surface-soft); color: var(--muted); font-weight: 900; }
+    .top-three .project-rank { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+    .project-info { min-width: 0; }
+    .project-name { margin: 0; font-size: 20px; overflow-wrap: anywhere; }
+    .project-name a { text-decoration: none; }
+    .project-name a:hover { color: var(--primary); }
+    .project-tagline { margin: 4px 0 10px; color: var(--muted); }
+    .project-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; color: var(--muted); font-size: 13px; }
+    .meta-item strong { color: var(--text); }
+    .project-action { border: 1px solid var(--border); background: var(--surface-soft); color: var(--text); padding: 10px 14px; border-radius: 12px; font-weight: 750; cursor: pointer; white-space: nowrap; }
+    .project-action:hover { border-color: var(--primary); color: var(--primary); }
+    .project-details { display: none; border-top: 1px solid var(--border); padding: 22px; background: var(--surface-soft); }
+    .project-details.open { display: block; }
+    .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .detail-block { padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+    .detail-block.wide { grid-column: 1 / -1; }
+    .detail-block h4 { margin: 0 0 9px; font-size: 15px; }
+    .detail-block p, .detail-block ul { margin: 0; color: var(--muted); }
+    .detail-block ul { padding-left: 20px; }
+    .tag { display: inline-flex; margin: 3px 5px 3px 0; padding: 5px 9px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 12px; font-weight: 750; }
+    .language-list { display: grid; gap: 13px; padding: 24px; border: 1px solid var(--border); border-radius: 22px; background: var(--surface); }
+    .language-item { display: grid; grid-template-columns: 100px 1fr 64px; gap: 12px; align-items: center; }
+    .language-name { font-weight: 700; }
+    .language-track { height: 10px; border-radius: 99px; background: var(--surface-soft); overflow: hidden; border: 1px solid var(--border); }
+    .language-bar { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .language-count { color: var(--muted); text-align: right; font-size: 13px; }
+    .explore-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .explore-item { display: grid; grid-template-columns: 38px 1fr; gap: 12px; padding: 15px 18px; border: 1px solid var(--border); border-radius: 15px; background: var(--surface); }
+    .explore-index { color: var(--primary); font-weight: 900; }
+    .explore-item p { margin: 0; color: var(--muted); }
+    .footer { margin-top: 48px; padding: 26px; border-top: 1px solid var(--border); color: var(--muted); text-align: center; font-size: 13px; }
+    .footer a { color: var(--primary); text-decoration: none; }
+    @media (max-width: 850px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .insights-grid, .detail-grid { grid-template-columns: 1fr; }
+      .detail-block.wide { grid-column: auto; }
+      .project-header { grid-template-columns: 48px 1fr; }
+      .project-action { grid-column: 1 / -1; width: 100%; }
+    }
+    @media (max-width: 520px) {
+      .container { width: min(100% - 20px, 1160px); padding-top: 22px; }
+      .header { padding: 28px 22px; border-radius: 22px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stat-card { padding: 16px; }
+      .stat-value { font-size: 26px; }
+      .project-header { padding: 17px; gap: 12px; }
+      .project-details { padding: 14px; }
+      .language-item { grid-template-columns: 82px 1fr 54px; }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" type="button" aria-label="切换主题" onclick="toggleTheme()">◐</button>
+  <main class="container">
+    <header class="header">
+      <span class="header-badge">GITHUB TRENDING · DAILY</span>
+      <h1>一边补基本功，<br>一边把 Agent 装进真系统</h1>
+      <p>榜首是“从零造轮子”教程索引；真正值得顺着源码往里钻的，是 Copilot SDK、代码关系图与电子签署工作流。先看真实增速，再判断它到底是资料、工具，还是能跑起来的系统。</p>
+      <div class="header-date">2026 年 7 月 18 日 · Repositories / Any language / Today</div>
+    </header>
+
+    <section class="stats-grid" aria-label="今日统计">
+      <article class="stat-card"><span class="stat-label">TRENDING 项目</span><strong class="stat-value">12</strong></article>
+      <article class="stat-card"><span class="stat-label">STARS TODAY 合计</span><strong class="stat-value">4,634</strong></article>
+      <article class="stat-card"><span class="stat-label">编程语言</span><strong class="stat-value">9</strong></article>
+      <article class="stat-card"><span class="stat-label">AI 相关</span><strong class="stat-value">9</strong></article>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">今日洞察</h2>
+      <div class="insights-grid">
+        <article class="insight-card"><h3>📚 榜首回到“从零造轮子”</h3><p><code>build-your-own-x</code> 一天新增 1,068 Stars。AI 工具越多，开发者越愿意回头补数据库、编译器、容器与搜索引擎的底层原理。它是学习路线图，不是统一运行时。</p></article>
+        <article class="insight-card"><h3>🎨 AI 页面开始卷“品控”</h3><p>Hallmark 以 1,485 Stars Today 成为增速第一，用宏观结构、20 套主题和 57 道检查约束编码 Agent。不过审美、无障碍和转化率，最终还得进真实项目验收。</p></article>
+        <article class="insight-card"><h3>🧠 Agent 走向 SDK、协议与权限</h3><p>Copilot SDK、Open Interpreter 与 Anthropic Workshops 同时上榜。竞争不再只是“能聊天”，而是能否嵌入应用、调用工具、管理会话，并在权限拒绝和超时时把事情收住。</p></article>
+        <article class="insight-card"><h3>🗺️ “少读、少存、快查”成独立赛道</h3><p>code-review-graph 用 Tree-sitter 与 SQLite 图缩小代码上下文；turbovec 用低比特量化与 SIMD 压缩向量索引。项目自报基准值得看，但不能省掉自己的复测。</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">GitHub Trending Top 12</h2>
+      <div class="project-list">
+
+        <article class="project-card top-three">
+          <div class="project-header">
+            <div class="project-rank">01</div>
+            <div class="project-info">
+              <h3 class="project-name"><a href="https://github.com/codecrafters-io/build-your-own-x">codecrafters-io/build-your-own-x</a></h3>
+              <p class="project-tagline">通过从零重建数据库、容器、编译器等经典技术，学习内部原理。</p>
+              <div class="project-meta"><span class="meta-item">⭐ <strong>527,763</strong></span><span class="meta-item">今日 <strong>+1,068</strong></span><span class="meta-item">⑂ <strong>49,941</strong></span><span class="meta-item">Markdown</span></div>
+            </div>
+            <button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button>
+          </div>
+          <div class="project-details">
+            <div class="detail-grid">
+              <div class="detail-block wide"><h4>📖 项目摘要</h4><p>按技术类别整理的“自己实现 X”教程集合，覆盖数据库、容器、Git、搜索引擎、神经网络和操作系统。它帮助读者沿真实系统拆原理，但不是可部署产品。</p></div>
+              <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>跨语言、跨领域教程索引。</li><li>强调动手重建而非只读概念。</li><li>适合搭建系统化学习路线。</li></ul></div>
+              <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Markdown</span><span class="tag">Tutorial Index</span><span class="tag">Multi-language</span></p></div>
+              <div class="detail-block"><h4>🎯 适用场景</h4><p>自学系统原理、技术面试和教学项目；不适合作为生产组件或统一架构框架。</p></div>
+              <div class="detail-block"><h4>💬 一句话推荐</h4><p>“造轮子说明书大全”，不是把目录一克隆，数据库和浏览器就自己长出来。</p></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card top-three">
+          <div class="project-header">
+            <div class="project-rank">02</div>
+            <div class="project-info"><h3 class="project-name"><a href="https://github.com/PostHog/posthog">PostHog/posthog</a></h3><p class="project-tagline">产品分析、回放、功能开关、实验、错误追踪、日志和 AI 可观测性平台。</p><div class="project-meta"><span class="meta-item">⭐ <strong>36,319</strong></span><span class="meta-item">今日 <strong>+438</strong></span><span class="meta-item">⑂ <strong>3,012</strong></span><span class="meta-item">Python</span></div></div>
+            <button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button>
+          </div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>把用户行为、会话回放、错误、日志、实验、数据仓库和 Agent 主动诊断放进同一产品体系。官方推荐云服务，开源自托管定位为高级用户的 hobby 部署。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>产品数据与错误上下文统一。</li><li>SDK、API、Slack、Web、桌面和 MCP 多入口。</li><li>支持分析、实验、功能开关和数据管线。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Python</span><span class="tag">TypeScript</span><span class="tag">React</span><span class="tag">Data Pipelines</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>产品增长、实验、错误诊断和 LLM 应用追踪；大规模自托管需独立容量规划。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>像产品数据百货商场，东西齐；自己开分店前，先看看仓库、电梯和消防够不够用。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card top-three">
+          <div class="project-header">
+            <div class="project-rank">03</div>
+            <div class="project-info"><h3 class="project-name"><a href="https://github.com/HenryNdubuaku/maths-cs-ai-compendium">HenryNdubuaku/maths-cs-ai-compendium</a></h3><p class="project-tagline">从数学、计算机系统到现代 AI 推理与 ML 系统设计的开放教材。</p><div class="project-meta"><span class="meta-item">⭐ <strong>6,801</strong></span><span class="meta-item">今日 <strong>+200</strong></span><span class="meta-item">⑂ <strong>820</strong></span><span class="meta-item">TypeScript</span></div></div>
+            <button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button>
+          </div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>覆盖向量、概率、机器学习、视觉、语音、GPU、推理和 ML 系统设计的体系化教材，并附带本地 MCP Server 供 AI 助手检索。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>从基础数学一路到生产系统。</li><li>强调直觉、背景和实现。</li><li>MCP 可把教材接入本地 AI 助手。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Markdown</span><span class="tag">TypeScript</span><span class="tag">MCP</span><span class="tag">GitHub Pages</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>AI/ML 系统化学习、补基础和面试准备；不能自动替代经过同行评审的标准教材。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>像一整桌自助餐，吃得下很补；盘子多不等于每道菜都经过期刊盖章。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">04</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/Nutlope/hallmark">Nutlope/hallmark</a></h3><p class="project-tagline">为 Claude Code、Cursor 和 Codex 提供的反“AI 套路页面”设计 Skill。</p><div class="project-meta"><span class="meta-item">⭐ <strong>12,396</strong></span><span class="meta-item">今日 <strong>+1,485</strong></span><span class="meta-item">⑂ <strong>618</strong></span><span class="meta-item">CSS</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>生成前选择宏观结构和主题，交付前执行 57 项反套路检查与自我审查，提供 build、audit、redesign、study 四种工作方式。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>20 套主题与 Custom 分支。</li><li>支持审计、改版和设计 DNA 提取。</li><li>可安装到多种编码 Agent。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Agent Skill</span><span class="tag">HTML/CSS</span><span class="tag">Design Gates</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>AI 辅助落地页、营销页、设计审计；关键品牌与无障碍仍需人工验收。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>不是给 AI 换件西装，是先检查它有没有又穿同一件渐变紫色工服来上班。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">05</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/github/copilot-sdk">github/copilot-sdk</a></h3><p class="project-tagline">将 Copilot Agent 工作流嵌入应用与服务的多语言 SDK。</p><div class="project-meta"><span class="meta-item">⭐ <strong>9,844</strong></span><span class="meta-item">今日 <strong>+233</strong></span><span class="meta-item">⑂ <strong>1,336</strong></span><span class="meta-item">Java</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>SDK 通过 JSON-RPC 连接 Copilot CLI runtime，管理进程、会话、流式事件、工具、MCP 和权限回调；提供六种语言实现。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>自动管理或连接外部 CLI runtime。</li><li>支持自定义工具、Skill、MCP 和 Hooks。</li><li>GitHub 登录或 BYOK 认证路径。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">JSON-RPC</span><span class="tag">TypeScript</span><span class="tag">Python/Go/.NET</span><span class="tag">Java/Rust</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>IDE、桌面工具和后台服务嵌入 Agent；需治理订阅、认证、工具审批和隔离。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>SDK 给 Agent 办了应用内营业执照，但权限章还得你自己一枚枚盖。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">06</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/anthropics/cwc-workshops">anthropics/cwc-workshops</a></h3><p class="project-tagline">Anthropic Code with Claude 活动使用的 Agent、记忆、评测和多 Agent 工作坊材料。</p><div class="project-meta"><span class="meta-item">⭐ <strong>1,664</strong></span><span class="meta-item">今日 <strong>+45</strong></span><span class="meta-item">⑂ <strong>491</strong></span><span class="meta-item">TypeScript</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>官方活动工作坊快照，覆盖模型选择、Agent 分解、记忆、评测驱动开发、研究台和多 Agent 协作；仓库明确不维护。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>每个 Workshop 聚焦一个工程主题。</li><li>包含 MCP、记忆、工具与评测练习。</li><li>适合复盘官方教学流程。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">Managed Agents</span><span class="tag">MCP</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>团队培训、课程设计和概念验证；不应依赖为长期维护的生产框架。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>这是培训班留下的全套讲义，不是售后七年的企业中间件。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">07</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/PrismML-Eng/Bonsai-demo">PrismML-Eng/Bonsai-demo</a></h3><p class="project-tagline">在多种硬件上运行 1-bit 与 ternary Bonsai 模型的本地演示仓库。</p><div class="project-meta"><span class="meta-item">⭐ <strong>1,768</strong></span><span class="meta-item">今日 <strong>+278</strong></span><span class="meta-item">⑂ <strong>170</strong></span><span class="meta-item">Shell</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>提供模型下载、编译和运行脚本，支持 Bonsai / Ternary-Bonsai 多尺寸，并通过 llama.cpp 或 MLX 覆盖 CPU、Metal、CUDA、Vulkan 与 ROCm。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>一键准备模型与二进制。</li><li>模型家族、尺寸和后端可切换。</li><li>明确列出上游格式迁移状态。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Shell</span><span class="tag">llama.cpp</span><span class="tag">MLX</span><span class="tag">GGUF</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>本地模型试用、硬件兼容和低比特研究；生产前需复核模型许可、质量和基准。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>它把神秘二进制整理成能走的路；路牌写的速度，最好自己开一圈再信。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">08</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/protocolbuffers/protobuf">protocolbuffers/protobuf</a></h3><p class="project-tagline">Google 的跨语言结构化数据格式、编译器和运行时实现。</p><div class="project-meta"><span class="meta-item">⭐ <strong>71,569</strong></span><span class="meta-item">今日 <strong>+11</strong></span><span class="meta-item">⑂ <strong>16,194</strong></span><span class="meta-item">C++</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>通过 <code>.proto</code> Schema 定义数据结构，由 <code>protoc</code> 生成多语言代码，用紧凑二进制格式完成存储和通信。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>Schema 优先与跨语言代码生成。</li><li>支持兼容演进。</li><li>成熟的 RPC 与存储生态。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">C++</span><span class="tag">protoc</span><span class="tag">Bazel/CMake</span><span class="tag">Multi-runtime</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>服务协议、配置和持久化 Schema；不适合追求人类可读文本或完全无 Schema 的交换。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>今天没冲刺，是老将散步也进前十二——基础设施江湖地位就在那儿。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">09</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/tirth8205/code-review-graph">tirth8205/code-review-graph</a></h3><p class="project-tagline">本地优先的代码知识图，为 AI 审查提供影响半径和最小上下文。</p><div class="project-meta"><span class="meta-item">⭐ <strong>19,905</strong></span><span class="meta-item">今日 <strong>+74</strong></span><span class="meta-item">⑂ <strong>2,113</strong></span><span class="meta-item">Python</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>用 Tree-sitter 解析 AST，把函数、类、调用、继承和测试关系写入 SQLite 图；变化时增量更新，再通过 MCP 返回影响范围与审查上下文。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>多语言结构解析与本地持久化。</li><li>Git diff、哈希和 Watch 增量更新。</li><li>影响半径、流程、测试和最小上下文工具。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Python</span><span class="tag">Tree-sitter</span><span class="tag">SQLite</span><span class="tag">FastMCP</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>大仓库 AI 代码审查、影响分析和本地 CI；动态调用与反射需人工复核。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>先给代码库画地图，再让 Agent 出门，比蒙着眼背整个仓库省事多了。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">10</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/docusealco/docuseal">docusealco/docuseal</a></h3><p class="project-tagline">可自托管的开源文档填写和电子签署平台。</p><div class="project-meta"><span class="meta-item">⭐ <strong>17,951</strong></span><span class="meta-item">今日 <strong>+91</strong></span><span class="meta-item">⑂ <strong>1,774</strong></span><span class="meta-item">Ruby</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>提供 PDF 表单构建、多签署人、移动端填写、邮件、签名验证、API 和 Webhook。默认 Docker 使用 SQLite，也支持外部数据库与对象存储。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>WYSIWYG 字段与多签署人顺序。</li><li>事务校验、完成事件和异步任务。</li><li>API、Webhook、SMTP 与多存储后端。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Ruby on Rails</span><span class="tag">Active Storage</span><span class="tag">Sidekiq</span><span class="tag">SQL</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>合同、授权书、表单签署和嵌入式流程；强监管场景需额外身份、审计和法律评估。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>自托管能把钥匙拿回来，但合规、备份和送达证明不会顺便替你下班。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">11</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/openinterpreter/openinterpreter">openinterpreter/openinterpreter</a></h3><p class="project-tagline">兼容 ACP 与 Codex 执行协议、面向开放模型的 Rust 编码 Agent。</p><div class="project-meta"><span class="meta-item">⭐ <strong>66,551</strong></span><span class="meta-item">今日 <strong>+431</strong></span><span class="meta-item">⑂ <strong>5,716</strong></span><span class="meta-item">Rust</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>新版基于 Codex 的 Rust 实现，重点复刻不同模型推荐的 Agent harness，支持运行时切换模型、ACP 编辑器接入与 Codex SDK 兼容。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>多种 harness 动态切换。</li><li>ACP、Codex、MCP、Skills 与 Hooks。</li><li>跨平台原生沙箱和本地状态。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Rust</span><span class="tag">ACP</span><span class="tag">Codex Protocol</span><span class="tag">Sandbox</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>开放模型编码 Agent、编辑器接入和 harness 对比；命令执行必须启用审批与沙箱。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>同一位演员换不同导演，效果真会差一截；让它碰终端前，保安制度别省。</p></div>
+          </div></div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header"><div class="project-rank">12</div><div class="project-info"><h3 class="project-name"><a href="https://github.com/RyanCodrai/turbovec">RyanCodrai/turbovec</a></h3><p class="project-tagline">基于 TurboQuant 的 Rust 向量索引，带 Python 绑定、低比特压缩和 SIMD 搜索。</p><div class="project-meta"><span class="meta-item">⭐ <strong>13,420</strong></span><span class="meta-item">今日 <strong>+280</strong></span><span class="meta-item">⑂ <strong>1,182</strong></span><span class="meta-item">Python</span></div></div><button class="project-action" type="button" onclick="toggleDetail(this)">查看详情</button></div>
+          <div class="project-details"><div class="detail-grid">
+            <div class="detail-block wide"><h4>📖 项目摘要</h4><p>将向量归一化、随机旋转、低比特量化与长度校正结合，支持在线写入、过滤搜索、稳定外部 ID 和索引持久化。</p></div>
+            <div class="detail-block"><h4>✨ 核心特性</h4><ul><li>2-bit/4-bit 压缩，无独立训练阶段。</li><li>ARM NEON 与 x86 SIMD 内核。</li><li>Rust/Python API 和常见 RAG 框架适配。</li></ul></div>
+            <div class="detail-block"><h4>🔧 技术栈</h4><p><span class="tag">Rust</span><span class="tag">PyO3/Maturin</span><span class="tag">SIMD</span><span class="tag">TurboQuant</span></p></div>
+            <div class="detail-block"><h4>🎯 适用场景</h4><p>本地或内网 RAG、内存敏感向量检索；生产替换前需验证召回、并发和恢复。</p></div>
+            <div class="detail-block"><h4>💬 一句话推荐</h4><p>想把向量索引从大衣柜压成登机箱；你的数据能不能都装下，还得自己称重。</p></div>
+          </div></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">编程语言分布</h2>
+      <div class="language-list">
+        <div class="language-item"><span class="language-name">Python</span><div class="language-track"><div class="language-bar" style="width:100%"></div></div><span class="language-count">3 · 25%</span></div>
+        <div class="language-item"><span class="language-name">TypeScript</span><div class="language-track"><div class="language-bar" style="width:66.8%"></div></div><span class="language-count">2 · 16.7%</span></div>
+        <div class="language-item"><span class="language-name">Markdown</span><div class="language-track"><div class="language-bar" style="width:33.2%"></div></div><span class="language-count">1 · 8.3%</span></div>
+        <div class="language-item"><span class="language-name">CSS</span><div class="language-track"><div class="language-bar" style="width:33.2%"></div></div><span class="language-count">1 · 8.3%</span></div>
+        <div class="language-item"><span class="language-name">Java</span><div class="language-track"><div class="language-bar" style="width:33.2%"></div></div><span class="language-count">1 · 8.3%</span></div>
+        <div class="language-item"><span class="language-name">Shell</span><div class="language-track"><div class="language-bar" style="width:33.2%"></div></div><span class="language-count">1 · 8.3%</span></div>
+        <div class="language-item"><span class="language-name">C++</span><div class="language-track"><div class="language-bar" style="width:33.2%"></div></div><span class="language-count">1 · 8.3%</span></div>
+        <div class="language-item"><span class="language-name">Ruby</span><div class="language-track"><div class="language-bar" style="width:33.2%"></div></div><span class="language-count">1 · 8.3%</span></div>
+        <div class="language-item"><span class="language-name">Rust</span><div class="language-track"><div class="language-bar" style="width:33.2%"></div></div><span class="language-count">1 · 8.3%</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">GitHub Explore 补充</h2>
+      <ol class="explore-list">
+        <li class="explore-item"><span class="explore-index">E1</span><p><strong>Rubber Duck Thursdays</strong> — GitHub 推荐的开源直播活动，强调轻量协作与现场编码。</p></li>
+        <li class="explore-item"><span class="explore-index">E2</span><p><strong>build-your-own-x</strong> — Explore 同时推荐，并标注 programming、tutorials 与 awesome-list 主题。</p></li>
+        <li class="explore-item"><span class="explore-index">E3</span><p><strong>PostHog</strong> — Explore 强调产品分析、回放、功能开关、数据仓库与 AI 分析。</p></li>
+        <li class="explore-item"><span class="explore-index">E4</span><p><strong>GitHub Checkout</strong> — 演示 Copilot cloud agent 修复合并冲突与 Pull Request。</p></li>
+        <li class="explore-item"><span class="explore-index">E5</span><p><strong>Popular topic: Node.js</strong> — 当日热门技术主题入口。</p></li>
+        <li class="explore-item"><span class="explore-index">E6</span><p><strong>Hallmark</strong> — 反 AI 套路设计 Skill，与当天最高 Stars Today 增量呼应。</p></li>
+        <li class="explore-item"><span class="explore-index">E7</span><p><strong>Learn to Code</strong> — GitHub 官方学习编程资源集合。</p></li>
+        <li class="explore-item"><span class="explore-index">E8</span><p><strong>Mokuren for GitHub</strong> — GitHub staff 推荐的 Issue 侧栏组织工具。</p></li>
+      </ol>
+    </section>
+
+    <footer class="footer">
+      <p>数据来源：<a href="https://github.com/trending?since=daily">GitHub Trending</a>、<a href="https://github.com/explore">GitHub Explore</a> 与项目官方仓库。Stars Today 是页面时点快照，性能和效果主张未做独立复测。</p>
+      <p>深度架构分析：<a href="../analysis/2026-07-18/README.md">analysis/2026-07-18/README.md</a></p>
+    </footer>
+  </main>
+
+  <script>
+    function toggleDetail(btn) {
+      const card = btn.closest('.project-card');
+      const details = card.querySelector('.project-details');
+      const isOpen = details.classList.toggle('open');
+      btn.textContent = isOpen ? '收起详情' : '查看详情';
+      btn.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    function toggleTheme() {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('github-trending-theme', next);
+    }
+
+    (function restoreTheme() {
+      const saved = localStorage.getItem('github-trending-theme');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    })();
+  </script>
+</body>
+</html>
