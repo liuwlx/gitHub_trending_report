@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-07-20</title>
+<style>
+  :root{--bg:#0D1117;--surface:#161B22;--surface2:#21262D;--border:#30363D;--text:#C9D1D9;--text-muted:#8B949E;--blue:#58A6FF;--green:#3FB950;--orange:#D29922;--purple:#BC8CFF;--red:#F85149;--yellow:#E3B341}
+  *{box-sizing:border-box;margin:0;padding:0} body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6} a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+  .container{max-width:1100px;margin:0 auto;padding:24px 16px}.header{text-align:center;padding:48px 0 32px;border-bottom:1px solid var(--border);margin-bottom:32px}.header h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:8px}.header h1 span{color:var(--blue)}.header .subtitle{color:var(--text-muted);font-size:15px;max-width:780px;margin:0 auto}.header .date-badge{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 16px;margin-top:12px;font-size:13px;color:var(--text-muted)}
+  .theme-toggle{position:fixed;top:16px;right:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;color:var(--text);z-index:100}.theme-toggle:hover{background:var(--border)}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px}.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}.stat-card .stat-num{font-size:32px;font-weight:700;color:var(--blue)}.stat-card .stat-label{color:var(--text-muted);font-size:13px;margin-top:4px}.stat-card .stat-icon{font-size:24px;margin-bottom:8px}
+  .section{margin-bottom:40px}.section-title{font-size:20px;font-weight:600;color:#fff;margin-bottom:20px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px}.section-title span{font-size:20px}
+  .project-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;transition:border-color .2s,box-shadow .2s}.project-card:hover{border-color:var(--blue);box-shadow:0 0 0 1px #58A6FF22}.project-card.top-card{border-left:3px solid var(--orange)}.project-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.project-rank{font-size:22px;font-weight:700;color:var(--orange);min-width:36px}.project-rank.rank-1{color:#FFD700}.project-rank.rank-2{color:#C0C0C0}.project-rank.rank-3{color:#CD7F32}.project-info{flex:1}.project-name{font-size:18px;font-weight:600}.project-name a{color:#fff}.project-name a:hover{color:var(--blue);text-decoration:none}.project-desc{color:var(--text-muted);margin-top:6px;font-size:13px;line-height:1.6}.project-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:13px;color:var(--text-muted)}.meta-item{display:flex;align-items:center;gap:5px}.meta-item .icon{font-size:14px}.stars{color:var(--green);font-weight:600}.forks{color:var(--text-muted)}.lang-dot{width:12px;height:12px;border-radius:50%;display:inline-block}.today{color:var(--orange);font-weight:600}
+  .topics{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.topic-badge{background:var(--surface2);border:1px solid #1f6feb;color:var(--blue);border-radius:20px;padding:2px 10px;font-size:12px}.detail-toggle{background:none;border:1px solid var(--border);border-radius:6px;color:var(--blue);padding:6px 14px;font-size:12px;cursor:pointer;margin-top:12px;transition:background .15s}.detail-toggle:hover{background:var(--surface2)}.project-details{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}.project-details.open{display:block}.detail-section{margin-bottom:16px}.detail-section h4{font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}.detail-section p{color:var(--text);font-size:13px;line-height:1.7}.feature-list{list-style:none}.feature-list li{padding:4px 0;color:var(--text);font-size:13px}.feature-list li::before{content:"✨ "}.tech-tags{display:flex;flex-wrap:wrap;gap:6px}.tech-tag{background:#1c2c3e;border:1px solid #1f6feb44;color:var(--blue);border-radius:4px;padding:2px 8px;font-size:12px}.recommend-quote{background:var(--surface2);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;padding:10px 14px;font-style:italic;color:var(--text);font-size:13px;margin-top:8px}
+  .lang-chart{margin-bottom:32px}.lang-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}.lang-name{width:110px;font-size:13px;color:var(--text);flex-shrink:0}.lang-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:18px;overflow:hidden}.lang-bar{height:100%;border-radius:4px;transition:width .4s}.lang-count{width:110px;text-align:right;font-size:12px;color:var(--text-muted);flex-shrink:0}
+  .insight-box{background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border:1px solid var(--border);border-radius:10px;padding:24px}.insight-box .insight-item{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}.insight-box .insight-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}.insight-box .insight-title{font-weight:600;color:var(--blue);margin-bottom:6px;font-size:14px}.insight-box p{color:var(--text-muted);font-size:13px;line-height:1.7}.trending-list{}.trending-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}.trending-item:last-child{border-bottom:none}.trending-num{font-size:16px;font-weight:700;color:var(--text-muted);width:28px;flex-shrink:0}.footer{text-align:center;padding:32px 0;border-top:1px solid var(--border);margin-top:40px;color:var(--text-muted);font-size:13px}.footer a{color:var(--text-muted)}
+  body.light{--bg:#FFF;--surface:#F6F8FA;--surface2:#EAECF0;--border:#D0D7DE;--text:#24292F;--text-muted:#57606A;--blue:#0969DA;--green:#1A7F37} body.light .header h1,body.light .section-title,body.light .project-name a{color:#24292F} body.light .insight-box{background:linear-gradient(135deg,#fff 0%,#f6f8fa 100%)} body.light .tech-tag{background:#ddf4ff}
+  @media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr)}.project-header{flex-direction:column}.lang-name{width:80px}.lang-count{width:86px}.theme-toggle{position:absolute}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">从本地推理、语音工作台到联网与编码 Agent，今天看的是“怎么把事办完”</div>
+    <div class="date-badge">📅 2026-07-20 · 数据源：GitHub Trending + Explore · 原始排名顺序</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">3,410</div><div class="stat-label">今日累计新增 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">6</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">10</div><div class="stat-label">AI 相关项目</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item"><div class="insight-title">🤖 AI 工具开始争夺“最后一公里”</div><p>Voicebox、Wigolo、Jcode、Kimi CLI 分别把能力落到桌面语音、Agent 联网、终端编码和 IDE 协议接入。竞争焦点已从“能不能回答”变成“能不能在真实环境把事办完”。</p></div>
+      <div class="insight-item"><div class="insight-title">🏠 本地优先，不等于功能缩水</div><p>Wigolo 用浏览器路由、SQLite 和可选向量检索组成完整网页研究链路；Voicebox 把模型、转写和项目管理放进桌面端。隐私更可控，但浏览器、模型和机器资源还是得自己掏。</p></div>
+      <div class="insight-item"><div class="insight-title">⌨️ 编码 Agent 正在变成多入口系统</div><p>Copilot SDK 面向应用嵌入，Jcode 面向终端重度工作流，Kimi CLI 同时接 ACP 与 MCP。选型时不能只盯模型，还得看权限、会话、协议和失败恢复。</p></div>
+      <div class="insight-item"><div class="insight-title">📚 教程仓库很热，生产能力另算</div><p>AI Engineering from Scratch 说明系统化学习材料仍有强需求，但课程目录不能替代真实项目中的数据治理、评测、安全、成本和上线运维。</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（GitHub 原始顺序）</div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-1">01</div><div class="project-info"><div class="project-name"><a href="https://github.com/kvcache-ai/ktransformers" target="_blank">kvcache-ai / ktransformers</a></div><div class="project-desc">面向 CPU、GPU 等异构硬件的本地大模型推理与微调优化框架。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">18,480</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+360 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,457</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 Apache-2.0</span></div><div class="topics"><span class="topic-badge">llm-inference</span><span class="topic-badge">heterogeneous-computing</span><span class="topic-badge">deepseek</span><span class="topic-badge">sglang</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>KTransformers 通过把不同算子分配到 CPU、GPU 等设备，降低超大模型本地推理的显存门槛。当前主线拆分为 kt-kernel 推理内核和 kt-sft 微调能力，适合研究异构推理与低成本部署。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>针对 MoE 与大模型算子做 CPU/GPU 异构调度</li><li>与 SGLang 等推理栈协作，提供服务化与模型适配</li><li>支持量化和 CPU 指令集优化，效果依赖具体硬件</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">C++/CUDA</span><span class="tech-tag">SGLang</span><span class="tech-tag">CPU SIMD</span><span class="tech-tag">GPU Offload</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>本地研究超大模型推理、验证 CPU 内存换显存方案和构建异构推理原型；严格 SLA 场景必须先在目标机器压测。</p></div><div class="recommend-quote">💬 想看“大模型塞不进显卡时还能怎么拆算子、搬数据”，它比泛泛部署教程更有研究价值。</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-2">02</div><div class="project-info"><div class="project-name"><a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank">rohitg00 / ai-engineering-from-scratch</a></div><div class="project-desc">从基础概念到可交付 AI 系统的开源学习路线与实践材料。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">39,912</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+501 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">6,651</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">ai-engineering</span><span class="topic-badge">rag</span><span class="topic-badge">agents</span><span class="topic-badge">learning-path</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>这是面向学习者的 AI 工程课程仓库，把概念、示例、提示词和技能模板组织成渐进路线。适合搭知识地图和动手练习，但不是一套可以原样部署的生产平台。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>按阶段组织 LLM、RAG、Agent 与工程实践</li><li>提供可复用示例、提示词和技能模板</li><li>覆盖面广，上线仍需补评测、治理、监控与成本设计</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LLM APIs</span><span class="tech-tag">RAG</span><span class="tech-tag">Agents</span><span class="tech-tag">Prompt/Skill</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 工程入门、团队培训、知识地图梳理和面试复习；不要把示例代码不加审查地搬进生产。</p></div><div class="recommend-quote">💬 像一本不断更新的 AI 工程练习册：适合搭地图，不适合拿来冒充已经盖好的楼。</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-3">03</div><div class="project-info"><div class="project-name"><a href="https://github.com/jamiepine/voicebox" target="_blank">jamiepine / voicebox</a></div><div class="project-desc">本地优先的开源 AI 语音工作台，覆盖克隆、合成、听写和项目管理。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">43,577</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+610 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">5,315</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span>TypeScript</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">text-to-speech</span><span class="topic-badge">voice-cloning</span><span class="topic-badge">tauri</span><span class="topic-badge">local-first</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Voicebox 把语音克隆、文本转语音、听写和素材管理整合进桌面应用，强调本地运行与多引擎切换。它更像创作者工作台，而不是只能跑一次的模型脚本。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>支持多种 TTS 引擎和语音克隆路径</li><li>集成转写、项目与素材管理</li><li>提供 MCP/REST 接口，便于接入 Agent 与自动化</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Tauri</span><span class="tech-tag">TypeScript</span><span class="tech-tag">Rust</span><span class="tech-tag">Python</span><span class="tech-tag">Whisper</span><span class="tech-tag">MCP/REST</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>播客、视频配音、无障碍朗读、语音原型和本地隐私场景；商业使用前需核对声音素材和人格权授权。</p></div><div class="recommend-quote">💬 想把“跑一个 TTS 模型”升级成“日常能用的语音工作台”，它值得点开。</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank">04</div><div class="project-info"><div class="project-name"><a href="https://github.com/KnockOutEZ/wigolo" target="_blank">KnockOutEZ / wigolo</a></div><div class="project-desc">给 AI 编码代理使用的本地优先网页搜索、抓取、爬取与研究 MCP 服务。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">2,031</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+595 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">125</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span>TypeScript</span><span class="meta-item">📄 AGPL-3.0-only</span></div><div class="topics"><span class="topic-badge">mcp</span><span class="topic-badge">web-search</span><span class="topic-badge">playwright</span><span class="topic-badge">local-first</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Wigolo 通过 stdio 暴露 search、fetch、crawl、extract、research 等 MCP 工具。它先尝试轻量 HTTP，再按需要升级浏览器渲染，并把缓存和向量数据留在本地。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>核心路径可使用 Bing、DuckDuckGo，无强制云 API Key</li><li>SmartRouter 在 HTTP 与 Playwright 浏览器池之间降级</li><li>SQLite、sqlite-vec 与本地嵌入支持缓存和相似检索</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Node.js 20+</span><span class="tech-tag">TypeScript</span><span class="tech-tag">MCP</span><span class="tech-tag">Playwright</span><span class="tech-tag">SQLite</span><span class="tech-tag">FastEmbed</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>编码 Agent 的联网补证、文档抓取和本地研究；大规模生产爬虫仍需流控、合规和容量设计。</p></div><div class="recommend-quote">💬 这是“给 Agent 装浏览器和资料柜”，不是再套一层收费搜索接口。</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank">05</div><div class="project-info"><div class="project-name"><a href="https://github.com/andrewrabert/jellium-desktop" target="_blank">andrewrabert / jellium-desktop</a></div><div class="project-desc">面向 Jellyfin 的非官方跨平台桌面客户端。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">1,336</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+43 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">111</span></span><span class="meta-item"><span class="lang-dot" style="background:#DEA584"></span>Rust</span><span class="meta-item">📄 以仓库 License 为准</span></div><div class="topics"><span class="topic-badge">jellyfin</span><span class="topic-badge">desktop</span><span class="topic-badge">media-player</span><span class="topic-badge">self-hosted</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Jellium Desktop 是第三方 Jellyfin 桌面客户端，目标是为已有 Jellyfin Server 的用户提供独立播放器体验。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>连接既有 Jellyfin 服务并浏览、播放媒体库</li><li>桌面形态便于窗口、快捷键和系统集成</li><li>Rust 实现利于分发和资源控制，平台成熟度需看 Release</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Rust</span><span class="tech-tag">Desktop UI</span><span class="tech-tag">Jellyfin API</span><span class="tech-tag">Media Playback</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>家庭媒体库、自托管影音和 Jellyfin 重度用户；没有 Jellyfin Server 的用户用不上。</p></div><div class="recommend-quote">💬 Jellyfin 有了，浏览器嫌别扭，可以看看这个非官方桌面壳儿合不合手。</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">06</div><div class="project-info"><div class="project-name"><a href="https://github.com/github/copilot-sdk" target="_blank">github / copilot-sdk</a></div><div class="project-desc">将 GitHub Copilot Agent 能力嵌入应用和开发工具的多语言 SDK。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">9,997</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+39 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,352</span></span><span class="meta-item"><span class="lang-dot" style="background:#B07219"></span>Java</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">copilot</span><span class="topic-badge">sdk</span><span class="topic-badge">coding-agent</span><span class="topic-badge">json-rpc</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Copilot SDK 为多种语言提供客户端封装，通过 Copilot CLI 的服务端模式调用会话、工具和 Agent 能力，适合构建定制开发助手和内部自动化。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多语言 SDK 统一接入 Agent 会话与工具调用</li><li>通过 JSON-RPC 与本地 Copilot CLI 进程通信</li><li>处于 Public Preview，接口和行为仍可能变化</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Java</span><span class="tech-tag">TypeScript</span><span class="tech-tag">Python</span><span class="tech-tag">Go</span><span class="tech-tag">.NET</span><span class="tech-tag">JSON-RPC</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>IDE 插件、内部工程平台、代码审查和定制开发助手；强合规系统需等待接口稳定并做权限审计。</p></div><div class="recommend-quote">💬 想把 Copilot 从“现成产品”拆成“应用里的一个能力模块”，这是官方入口。</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">07</div><div class="project-info"><div class="project-name"><a href="https://github.com/PostHog/posthog" target="_blank">PostHog / posthog</a></div><div class="project-desc">把产品分析、回放、实验、开关、数据管道和 AI 可观测性放在一起的开发者平台。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">37,012</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+411 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">3,059</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 以仓库说明为准</span></div><div class="topics"><span class="topic-badge">product-analytics</span><span class="topic-badge">session-replay</span><span class="topic-badge">feature-flags</span><span class="topic-badge">experimentation</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>PostHog 覆盖事件采集、漏斗留存、会话回放、功能开关、实验与数据仓库集成。它提供云服务和自托管，但两者的运维成本与能力边界不同。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>分析、回放和用户行为共享统一事件上下文</li><li>功能开关与实验直接连接实际行为数据</li><li>自托管组件多，规模上来后需要成熟数据基础设施</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Django</span><span class="tech-tag">ClickHouse</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Kafka</span><span class="tech-tag">React</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>SaaS 产品团队、增长实验、数据驱动研发和需要自托管数据的组织；小团队应先比较云版和自建运维成本。</p></div><div class="recommend-quote">💬 想少养几套分析工具可以看它，但“一仓库全家桶”不等于“一键无运维”。</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">08</div><div class="project-info"><div class="project-name"><a href="https://github.com/microsoft/terminal" target="_blank">microsoft / terminal</a></div><div class="project-desc">Windows Terminal、控制台宿主及相关命令行基础组件。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">104,237</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+59 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">9,443</span></span><span class="meta-item"><span class="lang-dot" style="background:#F34B7D"></span>C++</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">terminal</span><span class="topic-badge">windows</span><span class="topic-badge">console</span><span class="topic-badge">command-line</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Microsoft Terminal 是 Windows 上的现代终端应用，仓库也包含控制台宿主和相关基础组件，支持多标签、窗格、Unicode、GPU 文本渲染和丰富配置。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>统一承载 PowerShell、CMD、WSL 与 SSH</li><li>多标签、分屏、配置文件和快捷键适合复杂工作流</li><li>与 Windows 平台深度集成，跨平台需求应选其他终端</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">C++</span><span class="tech-tag">C#</span><span class="tech-tag">WinUI</span><span class="tech-tag">Windows Console APIs</span><span class="tech-tag">DirectWrite</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>Windows 开发者、WSL 用户、运维和终端重度用户。</p></div><div class="recommend-quote">💬 它不是新鲜玩具，是 Windows 命令行这条街的基础路面。</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">09</div><div class="project-info"><div class="project-name"><a href="https://github.com/AstrBotDevs/AstrBot" target="_blank">AstrBotDevs / AstrBot</a></div><div class="project-desc">可接入多种即时通讯平台、模型和插件的开源 AI Agent 助手框架。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">36,773</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+83 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">2,551</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 AGPL-3.0</span></div><div class="topics"><span class="topic-badge">chatbot</span><span class="topic-badge">ai-agent</span><span class="topic-badge">plugins</span><span class="topic-badge">instant-messaging</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>AstrBot 提供消息平台适配、模型接入、插件和管理界面，让用户把 AI 助手部署到常见聊天平台。它的价值主要在工程整合，而不是新模型算法。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>统一接入多个即时通讯平台和模型服务</li><li>插件机制扩展指令、工具与业务逻辑</li><li>提供管理与部署路径，公网 Bot 仍需权限和内容安全</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">LLM Providers</span><span class="tech-tag">Plugin System</span><span class="tech-tag">Web Admin</span><span class="tech-tag">IM Adapters</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>社群助手、个人 Bot、内部问答和消息自动化；高敏感业务需先做审计与隔离。</p></div><div class="recommend-quote">💬 想让 Agent 真进群干活，它给的是脚手架；别把群聊搞炸，还得靠你守规矩。</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">10</div><div class="project-info"><div class="project-name"><a href="https://github.com/1jehuang/jcode" target="_blank">1jehuang / jcode</a></div><div class="project-desc">用 Rust 构建的多模型终端编码 Agent，强调多会话、工具、记忆和 Swarm 协作。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">9,046</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+235 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,045</span></span><span class="meta-item"><span class="lang-dot" style="background:#DEA584"></span>Rust</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">coding-agent</span><span class="topic-badge">terminal</span><span class="topic-badge">multi-model</span><span class="topic-badge">swarm</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Jcode 是一个大型 Rust 工作区，拆分出 TUI、Agent Runtime、Provider、工具、存储、记忆、Swarm 和协议等多个 crate，面向终端中的复杂编码任务。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>支持 OpenAI、Anthropic、Gemini、Copilot、OpenRouter 等 Provider</li><li>独立 crate 管理会话、工具、存储、记忆与 Swarm</li><li>面向长时间交互做分配器、输入延迟和平台适配优化</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Rust 2024</span><span class="tech-tag">Tokio</span><span class="tech-tag">Ratatui</span><span class="tech-tag">Crossterm</span><span class="tech-tag">Reqwest</span><span class="tech-tag">Local Embeddings</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>终端重度开发、模型对比、复杂代码任务和多 Agent 研究；权限敏感仓库应使用沙盒和细粒度审批。</p></div><div class="recommend-quote">💬 这是把编码 Agent 当操作系统来造的项目，东西多、野心大，研究价值也大。</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">11</div><div class="project-info"><div class="project-name"><a href="https://github.com/trycua/cua" target="_blank">trycua / cua</a></div><div class="project-desc">面向 Computer-Use Agent 的跨系统驱动、虚拟化、基准与运行基础设施。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">20,281</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+64 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,347</span></span><span class="meta-item"><span class="lang-dot" style="background:#E34C26"></span>HTML</span><span class="meta-item">📄 具体组件以仓库为准</span></div><div class="topics"><span class="topic-badge">computer-use</span><span class="topic-badge">agents</span><span class="topic-badge">virtual-machines</span><span class="topic-badge">benchmark</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>CUA 提供让 AI Agent 操作桌面和浏览器环境的基础组件，包括环境驱动、隔离运行、跨系统控制和基准工具。它更接近 Agent 实验室，而不是单一聊天机器人。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>为不同操作系统提供统一控制和生命周期抽象</li><li>支持创建、重置和并行运行 Agent 任务环境</li><li>提供基准路径，便于比较 Computer-Use 模型与策略</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python/TypeScript</span><span class="tech-tag">VM/Containers</span><span class="tech-tag">Computer-Use Models</span><span class="tech-tag">Benchmarks</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>GUI 自动化研究、Computer-Use Agent 评测、隔离执行和跨系统任务；生产操作必须增加权限与回滚。</p></div><div class="recommend-quote">💬 想研究 Agent 怎么“动手操作电脑”，先得有个不怕它乱点的试验场。</div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">12</div><div class="project-info"><div class="project-name"><a href="https://github.com/MoonshotAI/kimi-cli" target="_blank">MoonshotAI / kimi-cli</a></div><div class="project-desc">运行在终端中的 AI Agent，可读写代码、执行命令、联网检索并通过 ACP/MCP 集成。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">9,983</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today">+410 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,201</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 Apache-2.0</span></div><div class="topics"><span class="topic-badge">coding-agent</span><span class="topic-badge">cli</span><span class="topic-badge">acp</span><span class="topic-badge">mcp</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Kimi CLI 能在终端读取和编辑代码、执行 Shell、搜索网页并动态调整行动计划，同时支持 ACP 编辑器集成和 MCP 工具。官方已说明正在迁移到下一代 Kimi Code CLI。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>交互式 Agent 与 Shell 模式共存</li><li>ACP 让兼容编辑器把它作为 Agent Server，MCP 用于外部工具</li><li>Python 工作区包含 CLI、运行时、SDK 和 Web 组件</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python 3.12+</span><span class="tech-tag">Typer</span><span class="tech-tag">Prompt Toolkit</span><span class="tech-tag">FastMCP</span><span class="tech-tag">ACP</span><span class="tech-tag">FastAPI</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>终端代码任务、IDE Agent 接入、MCP 工具编排和内部原型；新采用者应优先评估后继 Kimi Code CLI。</p></div><div class="recommend-quote">💬 今天它依然能干活，但路牌已经写明“前方迁站”，上车前先看下一班。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row"><span class="lang-name">Python</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:41.7%;background:#3572A5"></div></div><span class="lang-count">5 项目 (41.7%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">TypeScript</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:16.7%;background:#3178C6"></div></div><span class="lang-count">2 项目 (16.7%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Rust</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:16.7%;background:#DEA584"></div></div><span class="lang-count">2 项目 (16.7%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Java</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#B07219"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">C++</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#F34B7D"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">HTML</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#E34C26"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Explore 仅作补充，不参与 Top 12 排名和 Stars Today 统计；页面内容会随时间动态变化。</p>
+      <div class="trending-list">
+        <div class="trending-item"><span class="trending-num">01</span><div><a href="https://github.com/bojieli/ai-agent-book" target="_blank" style="font-weight:600">bojieli/ai-agent-book</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px">开源 AI Agent 系统书与配套代码 · Python · 约 7.6k Stars</span></div></div>
+        <div class="trending-item"><span class="trending-num">02</span><div><a href="https://github.com/tirth8205/code-review-graph" target="_blank" style="font-weight:600">tirth8205/code-review-graph</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px">本地优先代码图 · 约 21.9k Stars</span></div></div>
+        <div class="trending-item"><span class="trending-num">03</span><div><a href="https://github.com/github/copilot-cli" target="_blank" style="font-weight:600">Copilot CLI 更新</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px">chronicle、plugins 与 fleet mode</span></div></div>
+        <div class="trending-item"><span class="trending-num">04</span><div><a href="https://www.youtube.com/@GitHub" target="_blank" style="font-weight:600">Rubber Duck Thursdays</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px">GitHub 官方开发者直播栏目</span></div></div>
+        <div class="trending-item"><span class="trending-num">05</span><div><span style="font-size:12px;color:var(--text-muted)">📌 Popular Topic: </span><a href="https://github.com/topics/python" target="_blank" style="font-weight:600">Python</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px">今日 Top 12 中有 5 个 Python 项目</span></div></div>
+        <div class="trending-item"><span class="trending-num">06</span><div><a href="https://github.com/kvcache-ai/ktransformers" target="_blank" style="font-weight:600">kvcache-ai/ktransformers</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px">异构大模型推理 · 与 Trending 第 1 名重合</span></div></div>
+        <div class="trending-item"><span class="trending-num">07</span><div><a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank" style="font-weight:600">rohitg00/ai-engineering-from-scratch</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px">AI 工程学习路线 · 与 Trending 第 2 名重合</span></div></div>
+        <div class="trending-item"><span class="trending-num">08</span><div><a href="https://github.com/explore" target="_blank" style="font-weight:600">GitHub Explore</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px">动态推荐源，详情以访问时页面为准</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📅 报告生成时间：2026-07-20 21:21 JST &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px">本报告保留 GitHub 原始排名；Stars Today 为晚间抓取快照，性能与成本主张未独立复测。Kimi CLI 正在向后继项目迁移。</p>
+  </div>
+</div>
+<script>
+  function toggleDetail(btn){const details=btn.nextElementSibling;const isOpen=details.classList.contains('open');details.classList.toggle('open');btn.textContent=isOpen?'▼ 展开详情':'▲ 收起详情'}
+  function toggleTheme(){document.body.classList.toggle('light')}
+</script>
+</body>
+</html>
