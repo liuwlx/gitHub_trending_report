@@ -14,11 +14,11 @@
 ## 最新报告
 
 <!-- latest-report:start -->
-- 报告日期：**2026-07-27**
-- [查看 Markdown 报告](md/github_trending_report_2026-07-27.md)
-- [查看 HTML 源文件](html/github_trending_report_2026-07-27.html)
-- [查看项目架构分析](analysis/2026-07-27/README.md)
-- 深度解析：[t3code](analysis/2026-07-27/pingdotgg__t3code.md) · [Instatic](analysis/2026-07-27/CoreBunch__Instatic.md) · [Chat2DB](analysis/2026-07-27/OtterMind__Chat2DB.md)
+- 报告日期：**2026-07-28**
+- [查看 Markdown 报告](md/github_trending_report_2026-07-28.md)
+- [查看 HTML 源文件](html/github_trending_report_2026-07-28.html)
+- [查看项目架构分析](analysis/2026-07-28/README.md)
+- 深度解析：[Amnezia VPN](analysis/2026-07-28/amnezia-vpn__amnezia-client.md) · [GeoLibre](analysis/2026-07-28/opengeos__GeoLibre.md) · [superfile](analysis/2026-07-28/yorukot__superfile.md)
 <!-- latest-report:end -->
 
 > GitHub 默认会把 HTML 当作源码显示。下载 `.html` 文件后用浏览器打开，可以查看完整的主题切换和项目详情展开效果。
