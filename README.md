@@ -14,11 +14,11 @@
 ## 最新报告
 
 <!-- latest-report:start -->
-- 报告日期：**2026-07-28**
-- [查看 Markdown 报告](md/github_trending_report_2026-07-28.md)
-- [查看 HTML 源文件](html/github_trending_report_2026-07-28.html)
-- [查看项目架构分析](analysis/2026-07-28/README.md)
-- 深度解析：[Amnezia VPN](analysis/2026-07-28/amnezia-vpn__amnezia-client.md) · [GeoLibre](analysis/2026-07-28/opengeos__GeoLibre.md) · [superfile](analysis/2026-07-28/yorukot__superfile.md)
+- 报告日期：**2026-07-29**
+- [查看 Markdown 报告](md/github_trending_report_2026-07-29.md)
+- [查看 HTML 源文件](html/github_trending_report_2026-07-29.html)
+- [查看项目架构分析](analysis/2026-07-29/README.md)
+- 深度解析：[Pascal Editor](analysis/2026-07-29/pascalorg__editor.md) · [Speech-to-Speech](analysis/2026-07-29/huggingface__speech-to-speech.md) · [Agent Governance Toolkit](analysis/2026-07-29/microsoft__agent-governance-toolkit.md)
 <!-- latest-report:end -->
 
 > GitHub 默认会把 HTML 当作源码显示。下载 `.html` 文件后用浏览器打开，可以查看完整的主题切换和项目详情展开效果。
@@ -137,50 +137,3 @@ html/github_trending_report_YYYY-MM-DD.html
 完整执行步骤、幂等规则、失败处理和验收标准见：
 
 [DAILY_TASK_PLAN.md](DAILY_TASK_PLAN.md)
-
-## 报告页面固定结构
-
-最终 HTML 始终保留以下阅读顺序：
-
-1. 主题切换按钮
-2. Header / Hero
-3. 4 张统计卡
-4. 今日洞察
-5. 今日热门 Top 12
-6. 编程语言分布
-7. GitHub Explore 精选
-8. Footer
-
-Top 12 的每个项目支持展开阅读，详情顺序固定为：
-
-1. 项目摘要
-2. 核心特性
-3. 技术栈
-4. 适用场景
-5. 一句话推荐
-
-## 数据说明
-
-- GitHub Trending 是动态页面，同一天不同时间看到的数据可能不同。
-- GitHub 没有公开 Trending 的完整排名算法，报告不会把排名解释成严格的质量评分。
-- Stars Today 适合观察热度变化，但不能单独证明项目成熟度、安全性或生产可用性。
-- 项目方自行披露的性能数据会标明来源，未经独立验证时不会作为确定事实下结论。
-
-## 失败策略
-
-- Trending 抓取失败：终止当日报告，不用旧数据冒充新数据。
-- Explore 抓取失败：允许降级，但必须在 Markdown 和 HTML 中说明。
-- 项目资料不足：保留能确认的事实，并写明 `Honest Caveat`。
-- GitHub 写入失败：明确指出失败文件和阶段，不声称已经发布成功。
-
-## 后续方向
-
-- 增加连续上榜天数和昨日排名变化。
-- 增加 Star 增速异常提醒。
-- 增加语言或技术领域专项榜单。
-- 通过 GitHub Pages 提供可直接浏览的历史报告站点。
-- 增加日报生成和模板结构的自动验收。
-
----
-
-本仓库中的报告基于公开信息整理，仅用于技术观察和项目发现，不构成安全审计、投资建议或生产选型结论。
