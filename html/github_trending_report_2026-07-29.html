@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-07-29</title>
+<style>
+  :root { --bg:#0D1117;--surface:#161B22;--surface2:#21262D;--border:#30363D;--text:#C9D1D9;--text-muted:#8B949E;--blue:#58A6FF;--green:#3FB950;--orange:#D29922;--purple:#BC8CFF;--red:#F85149;--yellow:#E3B341; }
+  * { box-sizing:border-box;margin:0;padding:0; }
+  body { background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6; }
+  a { color:var(--blue);text-decoration:none; } a:hover { text-decoration:underline; }
+  .container { max-width:1100px;margin:0 auto;padding:24px 16px; }
+  .header { text-align:center;padding:48px 0 32px;border-bottom:1px solid var(--border);margin-bottom:32px; }
+  .header h1 { font-size:28px;font-weight:700;color:#fff;margin-bottom:8px; }
+  .header h1 span { color:var(--blue); }
+  .header .subtitle { color:var(--text-muted);font-size:15px; }
+  .header .date-badge { display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 16px;margin-top:12px;font-size:13px;color:var(--text-muted); }
+  .theme-toggle { position:fixed;top:16px;right:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;color:var(--text);z-index:100; }
+  .theme-toggle:hover { background:var(--border); }
+  .stats-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px; }
+  .stat-card { background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center; }
+  .stat-card .stat-num { font-size:32px;font-weight:700;color:var(--blue); }
+  .stat-card .stat-label { color:var(--text-muted);font-size:13px;margin-top:4px; }
+  .stat-card .stat-icon { font-size:24px;margin-bottom:8px; }
+  .section { margin-bottom:40px; }
+  .section-title { font-size:20px;font-weight:600;color:#fff;margin-bottom:20px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px; }
+  .section-title span { font-size:20px; }
+  .project-card { background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;transition:border-color .2s,box-shadow .2s; }
+  .project-card:hover { border-color:var(--blue);box-shadow:0 0 0 1px #58A6FF22; }
+  .project-card.top-card { border-left:3px solid var(--orange); }
+  .project-header { display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap; }
+  .project-rank { font-size:22px;font-weight:700;color:var(--orange);min-width:36px; }
+  .project-rank.rank-1 { color:#FFD700; }.project-rank.rank-2 { color:#C0C0C0; }.project-rank.rank-3 { color:#CD7F32; }
+  .project-info { flex:1; }.project-name { font-size:18px;font-weight:600; }.project-name a { color:#fff; }.project-name a:hover { color:var(--blue);text-decoration:none; }
+  .project-desc { color:var(--text-muted);margin-top:6px;font-size:13px;line-height:1.6; }
+  .project-meta { display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:13px;color:var(--text-muted); }
+  .meta-item { display:flex;align-items:center;gap:5px; }.meta-item .icon { font-size:14px; }.stars { color:var(--green);font-weight:600; }.forks { color:var(--text-muted); }
+  .lang-dot { width:12px;height:12px;border-radius:50%;display:inline-block; }
+  .topics { display:flex;flex-wrap:wrap;gap:6px;margin-top:10px; }.topic-badge { background:var(--surface2);border:1px solid #1f6feb;color:var(--blue);border-radius:20px;padding:2px 10px;font-size:12px; }
+  .detail-toggle { background:none;border:1px solid var(--border);border-radius:6px;color:var(--blue);padding:6px 14px;font-size:12px;cursor:pointer;margin-top:12px;transition:background .15s; }
+  .detail-toggle:hover { background:var(--surface2); }.project-details { display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border); }.project-details.open { display:block; }
+  .detail-section { margin-bottom:16px; }.detail-section h4 { font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px; }.detail-section p { color:var(--text);font-size:13px;line-height:1.7; }
+  .feature-list { list-style:none; }.feature-list li { padding:4px 0;color:var(--text);font-size:13px; }.feature-list li::before { content:"✨ "; }
+  .info-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px; }.info-item { background:var(--surface2);border-radius:6px;padding:8px 12px; }.info-item .info-key { font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px; }.info-item .info-val { font-size:13px;color:var(--text);font-weight:500;margin-top:2px; }
+  .tech-tags { display:flex;flex-wrap:wrap;gap:6px; }.tech-tag { background:#1c2c3e;border:1px solid #1f6feb44;color:var(--blue);border-radius:4px;padding:2px 8px;font-size:12px; }
+  .recommend-quote { background:var(--surface2);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;padding:10px 14px;font-style:italic;color:var(--text);font-size:13px;margin-top:8px; }
+  .lang-chart { margin-bottom:32px; }.lang-bar-row { display:flex;align-items:center;gap:12px;margin-bottom:10px; }.lang-name { width:110px;font-size:13px;color:var(--text);flex-shrink:0; }.lang-bar-wrap { flex:1;background:var(--surface2);border-radius:4px;height:18px;overflow:hidden; }.lang-bar { height:100%;border-radius:4px;transition:width .4s; }.lang-count { width:120px;text-align:right;font-size:12px;color:var(--text-muted);flex-shrink:0; }
+  .insight-box { background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);border:1px solid var(--border);border-radius:10px;padding:24px; }.insight-box .insight-item { margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border); }.insight-box .insight-item:last-child { border-bottom:none;margin-bottom:0;padding-bottom:0; }.insight-box .insight-title { font-weight:600;color:var(--blue);margin-bottom:6px;font-size:14px; }.insight-box p { color:var(--text-muted);font-size:13px;line-height:1.7; }
+  .trending-list { }.trending-item { display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border); }.trending-item:last-child { border-bottom:none; }.trending-num { font-size:16px;font-weight:700;color:var(--text-muted);width:28px;flex-shrink:0; }
+  .footer { text-align:center;padding:32px 0;border-top:1px solid var(--border);margin-top:40px;color:var(--text-muted);font-size:13px; }.footer a { color:var(--text-muted); }
+  body.light { --bg:#FFFFFF;--surface:#F6F8FA;--surface2:#EAECEF;--border:#D0D7DE;--text:#24292F;--text-muted:#57606A;--blue:#0969DA;--green:#1A7F37; }
+  body.light .header h1,body.light .section-title,body.light .project-name a { color:#24292F; }
+  @media (max-width:600px) { .stats-grid { grid-template-columns:repeat(2,1fr); }.project-header { flex-direction:column; }.info-grid { grid-template-columns:repeat(2,1fr); }.lang-count { width:92px; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">Agent 会说话、会看视频，也得先学会守规矩</div>
+    <div class="date-badge">📅 2026-07-29 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">5,278</div><div class="stat-label">Stars Today 合计</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">5</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">7</div><div class="stat-label">AI 相关项目（编辑分类）</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item"><div class="insight-title">🎙️ Agent 从文字框走向实时语音与多媒体</div><p>AIRI、speech-to-speech 与 claude-video 分别覆盖实时语音伴侣、模块化语音代理后端和视频理解工作流。今天的共同信号不是“又多了几个聊天机器人”，而是 Agent 的输入输出边界正在从文本扩展到音频、视频和实时交互。</p></div>
+      <div class="insight-item"><div class="insight-title">🛡️ 会调用工具之后，治理开始补课</div><p>Microsoft Agent Governance Toolkit 把策略执行、身份、沙箱与审计放到模型之外的确定性代码路径中。Agent 连接高权限工具后，真正难的不是让它更敢干，而是让不该干的事在结构上干不了。</p></div>
+      <div class="insight-item"><div class="insight-title">🏗️ 浏览器正在接管更重的专业工作</div><p>排名第 1 的 Pascal Editor 用 React Three Fiber 与 WebGPU 构建 3D 建筑编辑器；GeoLibre 则把 GIS 带到浏览器、桌面、移动端和 Jupyter。浏览器正逐渐承担过去更依赖厚客户端的专业工作。</p></div>
+      <div class="insight-item"><div class="insight-title">📈 热度集中，老牌工程平台仍在场</div><p>Stars Today 前五项目合计 3,690，占 Top 12 当日新增约 69.9%。与此同时，Jenkins 仍以原始第 2 名出现：AI 和新工具抢镜，成熟自动化基础设施并没有退场。</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（GitHub 原始排名）</div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-1">01</div><div class="project-info"><div class="project-name"><a href="https://github.com/pascalorg/editor" target="_blank">pascalorg / editor</a></div><div class="project-desc">Create and share 3D architectural projects. 基于 React Three Fiber 与 WebGPU 的浏览器端 3D 建筑编辑器。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">19,196 累计</span></span><span class="meta-item">🔥 341 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">2,560</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span>TypeScript</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">3d-editor</span><span class="topic-badge">webgpu</span><span class="topic-badge">architecture</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Pascal Editor 用扁平节点模型描述建筑场景，分离 Core、Viewer、Editor 与内置 Nodes，并以 dirty-node 机制只重算发生变化的几何。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>Site、Building、Level、Wall、Slab、Item 等统一节点模型</li><li>sceneRegistry 将节点 ID 映射到 Three.js 对象</li><li>IndexedDB 持久化、Zundo 撤销重做与统一插件契约</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">React 19</span><span class="tech-tag">Next.js 16</span><span class="tech-tag">WebGPU</span><span class="tech-tag">Zustand</span><span class="tech-tag">Turborepo</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>浏览器建筑概念设计、可嵌入 3D Viewer、垂直节点插件和专业 3D 编辑器架构研究。</p></div>
+        <div class="recommend-quote">💬 想研究浏览器如何扛起专业 3D 编辑器，它比一摞宣传稿更有嚼头。</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-2">02</div><div class="project-info"><div class="project-name"><a href="https://github.com/jenkinsci/jenkins" target="_blank">jenkinsci / jenkins</a></div><div class="project-desc">Jenkins automation server. 长期维护的可扩展 CI/CD 与自动化服务器核心。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">26,181 累计</span></span><span class="meta-item">🔥 180 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">9,704</span></span><span class="meta-item"><span class="lang-dot" style="background:#B07219"></span>Java</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">ci</span><span class="topic-badge">cd</span><span class="topic-badge">automation</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Jenkins 通过核心服务、Pipeline 和庞大的插件生态连接代码、构建、测试、发布与通知系统。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>Pipeline 与任务执行模型</li><li>插件连接 SCM、云、构建工具与凭据</li><li>控制器与代理节点适配异构环境</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Java</span><span class="tech-tag">Maven</span><span class="tech-tag">Stapler</span><span class="tech-tag">Plugins</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>企业 CI/CD、内网自动化和已有 Jenkins 插件资产的工程平台。</p></div><div class="recommend-quote">💬 很多公司的发布按钮后面，还真站着这位老伙计。</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-3">03</div><div class="project-info"><div class="project-name"><a href="https://github.com/moeru-ai/airi" target="_blank">moeru-ai / airi</a></div><div class="project-desc">Self-hosted, user-owned AI companion with realtime voice and desktop/game interaction.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">45,090 累计</span></span><span class="meta-item">🔥 797 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">4,465</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span>TypeScript</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">ai-companion</span><span class="topic-badge">realtime-voice</span><span class="topic-badge">self-hosted</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>AIRI 试图把虚拟角色从聊天窗口带入实时语音、桌面和 Minecraft、Factorio 等游戏互动。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>实时语音持续对话</li><li>强调自托管与用户拥有</li><li>覆盖 Web、macOS、Windows 与游戏交互探索</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Realtime Voice</span><span class="tech-tag">Desktop</span><span class="tech-tag">LLM</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>虚拟主播、个人 AI 伴侣、实时语音角色和游戏互动实验。</p></div><div class="recommend-quote">💬 看 AI 伴侣怎么从“会聊天”长出声音、形象和行动能力。</div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank">04</div><div class="project-info"><div class="project-name"><a href="https://github.com/andrewyng/aisuite" target="_blank">andrewyng / aisuite</a></div><div class="project-desc">Simple, unified interface to multiple Generative AI providers.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">15,785 累计</span></span><span class="meta-item">🔥 62 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,663</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">llm</span><span class="topic-badge">providers</span><span class="topic-badge">python-sdk</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>aisuite 用相近的客户端和消息结构封装多家生成式 AI 提供商，降低模型切换与对比实验成本。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>统一客户端与消息接口</li><li>Provider adapter 隔离 SDK 差异</li><li>适合快速模型对比</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Provider Adapters</span><span class="tech-tag">LLM APIs</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>LLM 原型、模型 A/B 测试与多供应商接入验证。</p></div><div class="recommend-quote">💬 模型接口各唱各的调，它负责先把谱子翻到同一页。</div></div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank">05</div><div class="project-info"><div class="project-name"><a href="https://github.com/affaan-m/ECC" target="_blank">affaan-m / ECC</a></div><div class="project-desc">Agent harness performance optimization system: skills, instincts, memory, security and research-first development.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">235,184 累计</span></span><span class="meta-item">🔥 636 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">35,822</span></span><span class="meta-item"><span class="lang-dot" style="background:#F1E05A"></span>JavaScript</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">agent-harness</span><span class="topic-badge">skills</span><span class="topic-badge">memory</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>ECC 更接近一套跨 Agent 工具的技能、记忆、安全与研究优先方法体系，而不是单一运行时。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>可复用技能与开发规范</li><li>强调记忆、安全和研究后实现</li><li>支持多种 AI 编程代理</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">JavaScript</span><span class="tech-tag">Markdown Skills</span><span class="tech-tag">Agent Config</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>团队 Agent 工作流标准化、技能库和行为规范管理。</p></div><div class="recommend-quote">💬 更像“怎么带好 Agent 干活”的班规，不是另一个编译器。</div></div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">06</div><div class="project-info"><div class="project-name"><a href="https://github.com/huggingface/speech-to-speech" target="_blank">huggingface / speech-to-speech</a></div><div class="project-desc">Build local voice agents with open-source models. VAD → STT → LLM → TTS 模块化实时语音后端。</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">7,545 累计</span></span><span class="meta-item">🔥 227 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">978</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 Apache-2.0</span></div><div class="topics"><span class="topic-badge">voice-agent</span><span class="topic-badge">realtime-api</span><span class="topic-badge">open-source-models</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>四个处理阶段运行在线程中并通过队列连接，支持 OpenAI Realtime 兼容接口、本地音频、原始 WebSocket 和 TCP。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>VAD、STT、LLM、TTS 后端均可替换</li><li>流式转写、文本、工具与音频事件</li><li>支持打断、托管模型与本地 vLLM/llama.cpp</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PyTorch</span><span class="tech-tag">Transformers</span><span class="tech-tag">WebSocket</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>机器人语音后端、实时助手、自托管 Realtime API 与模型组合实验。</p></div><div class="recommend-quote">💬 想换耳朵、换脑子、换嗓子，它把插槽都给你留好了。</div></div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">07</div><div class="project-info"><div class="project-name"><a href="https://github.com/virgiliojr94/book-to-skill" target="_blank">virgiliojr94 / book-to-skill</a></div><div class="project-desc">Turn any technical book PDF into a Claude Code skill.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">12,051 累计</span></span><span class="meta-item">🔥 423 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,376</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 未确认</span></div><div class="topics"><span class="topic-badge">pdf</span><span class="topic-badge">claude-code</span><span class="topic-badge">skill</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>从技术 PDF 提取结构化知识并生成 Claude Code Skill，让书中内容可在开发过程中被引用。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>PDF 章节与知识提取</li><li>按 Skill 结构整理材料</li><li>把学习资料带入编码工作流</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">PDF</span><span class="tech-tag">Claude Code Skills</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>技术书学习、内部手册转换和离线资料辅助编码。</p></div><div class="recommend-quote">💬 书还是得读，它只是少让你折腾几回“翻哪一页”。</div></div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">08</div><div class="project-info"><div class="project-name"><a href="https://github.com/opengeos/GeoLibre" target="_blank">opengeos / GeoLibre</a></div><div class="project-desc">A lightweight, cloud-native GIS platform for browser, desktop, mobile and Jupyter.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">3,657 累计</span></span><span class="meta-item">🔥 607 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">409</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span>TypeScript</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">gis</span><span class="topic-badge">geospatial</span><span class="topic-badge">jupyter</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>GeoLibre 用一套轻量 GIS 体验覆盖网页、桌面、移动设备与 Notebook，面向地理数据可视化、探索和分析。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多端共享 GIS 能力</li><li>浏览器内交互分析</li><li>可嵌入 Jupyter 工作流</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Web GIS</span><span class="tech-tag">Jupyter</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>教学、轻量空间分析、Notebook 可视化和跨设备地图浏览。</p></div><div class="recommend-quote">💬 GIS 不一定先装一大套桌面软件，先在浏览器摊开也能办正事。</div></div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">09</div><div class="project-info"><div class="project-name"><a href="https://github.com/paperswithbacktest/awesome-systematic-trading" target="_blank">paperswithbacktest / awesome-systematic-trading</a></div><div class="project-desc">A curated list of libraries, strategies, books, blogs and tutorials for systematic trading.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">10,039 累计</span></span><span class="meta-item">🔥 309 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,322</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 未确认</span></div><div class="topics"><span class="topic-badge">systematic-trading</span><span class="topic-badge">resources</span><span class="topic-badge">backtesting</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>系统化交易相关库、策略、书籍和教程的导航清单；它是资源入口，不是可执行交易系统。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>按主题聚合工具与资料</li><li>帮助建立领域地图</li><li>便于发现回测与策略资源</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Markdown</span><span class="tech-tag">Python Ecosystem</span><span class="tech-tag">Resources</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>量化交易资料导航、课程准备和工具选型前调研。</p></div><div class="recommend-quote">💬 它是书架和路标，不是替你下单的交易员。</div></div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">10</div><div class="project-info"><div class="project-name"><a href="https://github.com/microsoft/agent-governance-toolkit" target="_blank">microsoft / agent-governance-toolkit</a></div><div class="project-desc">Policy enforcement, zero-trust identity, sandboxing and reliability engineering for autonomous agents.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">5,392 累计</span></span><span class="meta-item">🔥 46 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">854</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">governance</span><span class="topic-badge">policy-engine</span><span class="topic-badge">zero-trust</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>在模型意图抵达真实工具前拦截动作，以策略引擎给出 allow、deny 或 require approval，并可逐步叠加身份、沙箱、审计与 SRE。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>govern() 包装器执行 YAML 策略</li><li>ACS 无状态、确定性、fail-closed 决策运行时</li><li>多语言 SDK、MCP 与合规工具</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Rust</span><span class="tech-tag">YAML/OPA/Cedar</span><span class="tech-tag">MCP</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>连接邮件、数据库、Shell 或企业 API 的 Agent，以及需要审批和审计的多 Agent 系统。</p></div><div class="recommend-quote">💬 提示词可以劝 Agent 讲规矩，治理层负责把门真锁上。</div></div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">11</div><div class="project-info"><div class="project-name"><a href="https://github.com/yorukot/superfile" target="_blank">yorukot / superfile</a></div><div class="project-desc">Pretty fancy and modern terminal file manager.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">21,740 累计</span></span><span class="meta-item">🔥 662 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">713</span></span><span class="meta-item"><span class="lang-dot" style="background:#00ADD8"></span>Go</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">tui</span><span class="topic-badge">file-manager</span><span class="topic-badge">golang</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>用键盘优先、多面板 TUI 集中文件浏览、复制、移动、搜索和配置工作流。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多面板文件浏览</li><li>复制移动删除与搜索</li><li>主题和跨平台终端体验</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Go</span><span class="tech-tag">Bubble Tea</span><span class="tech-tag">Filesystem</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>远程服务器、终端重度用户和开发环境文件整理。</p></div><div class="recommend-quote">💬 命令行也能把文件收拾得挺利索。</div></div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">12</div><div class="project-info"><div class="project-name"><a href="https://github.com/bradautomates/claude-video" target="_blank">bradautomates / claude-video</a></div><div class="project-desc">/watch downloads video, extracts frames, transcribes and hands the result to Claude.</div><div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">12,448 累计</span></span><span class="meta-item">🔥 988 today</span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,237</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span>Python</span><span class="meta-item">📄 MIT</span></div><div class="topics"><span class="topic-badge">video</span><span class="topic-badge">transcription</span><span class="topic-badge">claude-code</span></div></div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button><div class="project-details"><div class="detail-section"><h4>📖 项目摘要</h4><p>通过 /watch 获取视频、提取关键帧并转写音轨，再把视觉和文本材料交给 Claude 分析。</p></div><div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>视频下载、抽帧和转写一体化</li><li>长视频转成模型可消费上下文</li><li>Claude Code Skill 工作方式</li></ul></div><div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Video</span><span class="tech-tag">Frames</span><span class="tech-tag">Transcription</span></div></div><div class="detail-section"><h4>🎯 适用场景</h4><p>技术演示总结、课程笔记、录屏分析与故障视频初筛。</p></div><div class="recommend-quote">💬 让 Claude 看视频之前，先把片子拆成它吃得下的盘子。</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row"><span class="lang-name">Python</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:50%;background:#3572A5"></div></div><span class="lang-count">6 项目 (50.0%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">TypeScript</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:25%;background:#3178C6"></div></div><span class="lang-count">3 项目 (25.0%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Java</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#B07219"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">JavaScript</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#F1E05A"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Go</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#00ADD8"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Explore 获取成功，与今日 Trending 高度重合；以下仅作补充，不参与排名与 Stars Today 统计。</p>
+      <div class="trending-list">
+        <div class="trending-item"><span class="trending-num">01</span><div><a href="https://github.com/pascalorg/editor" target="_blank" style="font-weight:600">pascalorg/editor</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">3D 建筑编辑器</span></div></div>
+        <div class="trending-item"><span class="trending-num">02</span><div><a href="https://github.com/moeru-ai/airi" target="_blank" style="font-weight:600">moeru-ai/airi</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">实时语音 AI 伴侣</span></div></div>
+        <div class="trending-item"><span class="trending-num">03</span><div><a href="https://github.com/huggingface/speech-to-speech" target="_blank" style="font-weight:600">huggingface/speech-to-speech</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">开源语音 Agent 后端</span></div></div>
+        <div class="trending-item"><span class="trending-num">04</span><div><a href="https://github.com/microsoft/agent-governance-toolkit" target="_blank" style="font-weight:600">microsoft/agent-governance-toolkit</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">Agent 治理与策略执行</span></div></div>
+        <div class="trending-item"><span class="trending-num">05</span><div><span style="font-size:12px;color:var(--text-muted);">📌 Popular Topic: </span><a href="https://github.com/topics/react-native" target="_blank" style="font-weight:600">React Native</a></div></div>
+        <div class="trending-item"><span class="trending-num">06</span><div><span style="font-size:12px;color:var(--text-muted);">📚 Collection: </span><a href="https://github.com/collections/made-in-brazil" target="_blank" style="font-weight:600">Made in Brazil</a></div></div>
+        <div class="trending-item"><span class="trending-num">07</span><div><a href="https://github.com/explore" target="_blank" style="font-weight:600">GitHub Checkout / The Download</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">开发者与开源新闻</span></div></div>
+        <div class="trending-item"><span class="trending-num">08</span><div><a href="https://github.com/explore" target="_blank" style="font-weight:600">Staff recommendations</a><span style="color:var(--text-muted);font-size:12px;margin-left:8px;">PullFlow、Deploybot 等编辑精选</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🏛️</span> 今日源码架构分析</div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-key">3D Editor</div><div class="info-val"><a href="../analysis/2026-07-29/pascalorg__editor.md">pascalorg/editor</a></div></div>
+      <div class="info-item"><div class="info-key">Voice Pipeline</div><div class="info-val"><a href="../analysis/2026-07-29/huggingface__speech-to-speech.md">speech-to-speech</a></div></div>
+      <div class="info-item"><div class="info-key">Agent Governance</div><div class="info-val"><a href="../analysis/2026-07-29/microsoft__agent-governance-toolkit.md">agent-governance-toolkit</a></div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📅 报告日期：2026-07-29 &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending?since=daily" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">Stars Today 为晚间动态快照；AI 项目数为编辑分类。性能、安全与生产主张未独立复测。</p>
+    <p style="margin-top:8px;"><a href="../md/github_trending_report_2026-07-29.md">Markdown 内容底稿</a> · <a href="../analysis/2026-07-29/README.md">源码架构分析索引</a></p>
+  </div>
+</div>
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>
