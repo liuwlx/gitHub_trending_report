@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Trending 日报 · 2026-07-30</title>
+<style>
+  :root {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --surface2: #21262D;
+    --border: #30363D;
+    --text: #C9D1D9;
+    --text-muted: #8B949E;
+    --blue: #58A6FF;
+    --green: #3FB950;
+    --orange: #D29922;
+    --purple: #BC8CFF;
+    --red: #F85149;
+    --yellow: #E3B341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .header { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .header h1 span { color: var(--blue); }
+  .header .subtitle { color: var(--text-muted); font-size: 15px; max-width: 840px; margin: 0 auto; }
+  .header .date-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 16px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .theme-toggle { position: fixed; top: 16px; right: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+  .stat-card .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card .stat-label { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title span { font-size: 20px; }
+  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .project-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue)22; }
+  .project-card.top-card { border-left: 3px solid var(--orange); }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .project-rank { font-size: 22px; font-weight: 700; color: var(--orange); min-width: 36px; }
+  .project-rank.rank-1 { color: #FFD700; }
+  .project-rank.rank-2 { color: #C0C0C0; }
+  .project-rank.rank-3 { color: #CD7F32; }
+  .project-info { flex: 1; }
+  .project-name { font-size: 18px; font-weight: 600; }
+  .project-name a { color: #fff; }
+  .project-name a:hover { color: var(--blue); text-decoration: none; }
+  .project-desc { color: var(--text-muted); margin-top: 6px; font-size: 13px; line-height: 1.6; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+  .meta-item { display: flex; align-items: center; gap: 5px; }
+  .meta-item .icon { font-size: 14px; }
+  .stars { color: var(--green); font-weight: 600; }
+  .today-stars { color: var(--orange); font-weight: 600; }
+  .forks { color: var(--text-muted); }
+  .lang-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .topic-badge { background: var(--surface2); border: 1px solid #1f6feb; color: var(--blue); border-radius: 20px; padding: 2px 10px; font-size: 12px; }
+  .detail-toggle { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--blue); padding: 6px 14px; font-size: 12px; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .detail-toggle:hover { background: var(--surface2); }
+  .project-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .project-details.open { display: block; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h4 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .detail-section p { color: var(--text); font-size: 13px; line-height: 1.7; }
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 4px 0; color: var(--text); font-size: 13px; }
+  .feature-list li::before { content: "✨ "; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag { background: #1c2c3e; border: 1px solid #1f6feb44; color: var(--blue); border-radius: 4px; padding: 2px 8px; font-size: 12px; }
+  .recommend-quote { background: var(--surface2); border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; padding: 10px 14px; font-style: italic; color: var(--text); font-size: 13px; margin-top: 8px; }
+  .lang-chart { margin-bottom: 32px; }
+  .lang-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lang-name { width: 110px; font-size: 13px; color: var(--text); flex-shrink: 0; }
+  .lang-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lang-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .lang-count { width: 120px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .insight-box { background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .insight-box .insight-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .insight-box .insight-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .insight-box .insight-title { font-weight: 600; color: var(--blue); margin-bottom: 6px; font-size: 14px; }
+  .insight-box p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+  .trending-list { }
+  .trending-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .trending-item:last-child { border-bottom: none; }
+  .trending-num { font-size: 16px; font-weight: 700; color: var(--text-muted); width: 28px; flex-shrink: 0; }
+  .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--border); margin-top: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--text-muted); }
+  body.light { --bg: #FFFFFF; --surface: #F6F8FA; --surface2: #EAECEF; --border: #D0D7DE; --text: #24292F; --text-muted: #57606A; --blue: #0969DA; --green: #1A7F37; }
+  body.light .header h1, body.light .section-title, body.light .project-name a { color: #24292F; }
+  body.light .insight-box { background: linear-gradient(135deg, #ffffff 0%, #f6f8fa 100%); }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .project-header { flex-direction: column; }
+    .lang-name { width: 82px; }
+    .lang-count { width: 92px; }
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+<div class="container">
+  <div class="header">
+    <h1>🐙 GitHub Trending <span>日报</span></h1>
+    <div class="subtitle">今天的热度从 Agent 工程、语音流水线一路铺到 GIS 与资产管理；先分清 Stars Today 和累计 Stars，再决定哪个仓库值得点开。</div>
+    <div class="date-badge">📅 2026-07-30 · 数据源：GitHub Trending + Explore</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-num">12</div><div class="stat-label">Trending 项目</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-num">5,301</div><div class="stat-label">今日累计新增 Stars</div></div>
+    <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-num">7</div><div class="stat-label">编程语言</div></div>
+    <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-num">9</div><div class="stat-label">AI 相关项目（编辑分类）</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔍</span> 今日洞察</div>
+    <div class="insight-box">
+      <div class="insight-item"><div class="insight-title">🤖 Agent 工程开始抢过模型的麦克风</div><p>ECC、jcode、OpenWork 与 Superpowers 都在解决“如何让代理稳定做事”，重点从一次回答转向计划、执行、测试、权限、会话恢复和可复用能力。热度不只追模型大小，也追工程闭环。</p></div>
+      <div class="insight-item"><div class="insight-title">🎙️ 语音 AI 正在拆成可替换的流水线</div><p>speech-to-speech 明确采用 VAD → STT → LLM → TTS 的模块化线程与队列，VibeVoice 覆盖 ASR、实时 TTS 和长音频模型，AIRI 再把语音输入接到虚拟角色交互。三者分别站在管线、模型和产品层。</p></div>
+      <div class="insight-item"><div class="insight-title">🧰 老牌业务软件照样能回到前排</div><p>Snipe-IT、faceswap 与 MediaCrawler 都不是刚搭的演示壳。它们分别具备成熟业务流程、完整训练转换链路或多平台采集架构，说明 Trending 不只奖励新概念，也会把长期维护的系统重新推到台前。</p></div>
+      <div class="insight-item"><div class="insight-title">⚖️ License 和运行门槛比宣传语更值得先看</div><p>OpenWork 存在 MIT 与 <code>/ee</code> Fair Source 的混合边界，MediaCrawler 明确限制非商业学习用途，FlashKDA 要求 SM90+ 与 CUDA 12.9+，VibeVoice 也明确不建议未经进一步测试直接用于商业或现实场景。先看边界，再谈落地，省得项目跑起来了，法务和显卡一起冒烟。</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🔥</span> 今日热门 Top 12（GitHub 原始排名）</div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-1">01</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/opengeos/GeoLibre" target="_blank">opengeos / GeoLibre</a></div>
+        <div class="project-desc">可在浏览器、桌面、移动端和 Jupyter 运行的轻量云原生 GIS。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">4,266 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">671 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">444</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">geospatial</span><span class="topic-badge">duckdb</span><span class="topic-badge">tauri</span><span class="topic-badge">maplibre</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>GeoLibre 将地图渲染、空间 SQL、矢量分析、3D 图层和项目分享整合在同一工作区，核心卖点是数据尽量留在用户设备上，并覆盖 Web、桌面、Android 与 Notebook。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>浏览器内通过 DuckDB-WASM Spatial 执行空间查询和分析</li><li>同一代码工作区适配 Web、Tauri 桌面、Android 和 Jupyter</li><li>支持 MapLibre、deck.gl、插件 API、项目格式和分享服务</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Tauri v2</span><span class="tech-tag">React</span><span class="tech-tag">TypeScript</span><span class="tech-tag">MapLibre GL JS</span><span class="tech-tag">DuckDB-WASM Spatial</span><span class="tech-tag">deck.gl</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>轻量 GIS 工作台、教育演示、离线或隐私敏感的空间分析，以及跨端地图应用原型。浏览器内大规模数据性能和复杂桌面 GIS 的功能等价性仍需实测。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">想把传统桌面 GIS 的一部分能力搬进浏览器，又不愿先搭一整套后端，可以先看它。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-2">02</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/moeru-ai/airi" target="_blank">moeru-ai / airi</a></div>
+        <div class="project-desc">自托管、用户拥有的实时 AI 虚拟角色与数字伴侣平台。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">45,578 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">682 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">4,501</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">ai-companion</span><span class="topic-badge">live2d</span><span class="topic-badge">vrm</span><span class="topic-badge">realtime-voice</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>AIRI 由多个 apps、packages、services 和 engines 组成，提供 Web、桌面与移动形态，并围绕 Hearing、Provider、Stage UI、角色渲染和服务运行时组织能力。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>支持实时语音输入、转写提供方选择、自动发送和角色交互</li><li>Monorepo 同时维护 Stage Web、桌面 Tamagotchi、Pocket 移动端和服务端运行时</li><li>面向 Live2D/VRM、游戏互动、记忆与 RAG 等扩展方向</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">Vue</span><span class="tech-tag">Pinia</span><span class="tech-tag">pnpm</span><span class="tech-tag">Turbo</span><span class="tech-tag">Electron</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>自托管数字伴侣、AI VTuber、语音角色应用和游戏辅助角色实验。完整 LLM 回复到 TTS 与动作驱动链路，本次未逐函数跑通。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">想研究“AI 角色如何从一个回答器变成持续在线的应用系统”，AIRI 的工程面比宣传图更值得看。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card top-card">
+      <div class="project-header"><div class="project-rank rank-3">03</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/affaan-m/ECC" target="_blank">affaan-m / ECC</a></div>
+        <div class="project-desc">为多种编码代理提供计划、测试、评审、记忆与安全能力的工程系统。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">235,802 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">857 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">35,893</span></span><span class="meta-item"><span class="lang-dot" style="background:#F1E05A"></span> JavaScript</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">coding-agents</span><span class="topic-badge">skills</span><span class="topic-badge">memory</span><span class="topic-badge">security</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>ECC 将 agents、skills、commands、hooks、rules、memory 和 AgentShield 组合为可安装的代理工程环境，覆盖 Claude Code、Codex、Cursor、OpenCode 等多种 harness。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>以 plan → test → implement → review → verify → remember → improve 组织开发循环</li><li>提供规划、架构、安全、构建修复和领域任务的 agents 与 skills</li><li>支持多种编码代理的插件、同步和规则安装路径</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Shell</span><span class="tech-tag">TypeScript</span><span class="tech-tag">Python</span><span class="tech-tag">Go</span><span class="tech-tag">Java</span><span class="tech-tag">Hooks</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>团队统一编码代理工作流、个人代理能力库、代码代理安全扫描和持续学习实验。公开数量和效率收益仍需独立盘点。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">需要的不是“再写一条神奇提示词”，而是一套能约束代理干活方式的工具箱时，可以研究 ECC。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">04</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/huggingface/speech-to-speech" target="_blank">huggingface / speech-to-speech</a></div>
+        <div class="project-desc">通过开放模型构建低延迟、可替换组件的模块化语音代理。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">8,070 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">827 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,020</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 Apache-2.0</span></div>
+        <div class="topics"><span class="topic-badge">voice-agent</span><span class="topic-badge">vad</span><span class="topic-badge">stt</span><span class="topic-badge">tts</span><span class="topic-badge">websocket</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>项目采用 VAD → STT → LLM → TTS 的级联管线，各阶段独立在线程中运行并通过队列连接，默认暴露 OpenAI Realtime 兼容 WebSocket API。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>VAD、STT、LLM、TTS 后端均可替换</li><li>支持 realtime、local 和原始 PCM WebSocket 三种运行模式</li><li>LLM 可指向 OpenAI 兼容服务、Hugging Face Providers、vLLM 或 llama.cpp</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Threads</span><span class="tech-tag">Queues</span><span class="tech-tag">Silero VAD</span><span class="tech-tag">WebSocket</span><span class="tech-tag">OpenAI Realtime API</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>机器人语音后端、客服语音代理、全本地语音助手和 Realtime API 兼容服务。端到端延迟受模型、硬件、网络和音频设备共同影响。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">需要一条能换零件的语音流水线，而不是把模型绑死在一锅里，这个仓库很合适。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">05</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/1jehuang/jcode" target="_blank">1jehuang / jcode</a></div>
+        <div class="project-desc">以低内存和多会话效率为卖点的 Rust 编码代理 harness。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">13,652 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">640 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,498</span></span><span class="meta-item"><span class="lang-dot" style="background:#DEA584"></span> Rust</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">coding-agent</span><span class="topic-badge">cli</span><span class="topic-badge">rust</span><span class="topic-badge">agent-harness</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>jcode 面向 Linux、macOS 和 Windows，强调快速启动、低内存与多会话工作流，并提供文档、基准和安装脚本。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>Rust 实现的跨平台代理 harness</li><li>面向多会话运行优化内存与启动开销</li><li>提供本地嵌入开关、安装器和公开基准页面</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Rust</span><span class="tech-tag">Cross-platform CLI</span><span class="tech-tag">Agent Sessions</span><span class="tech-tag">Local Embeddings</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>资源敏感的编码代理终端、多并发本地会话，以及希望研究 Rust Agent Runtime 的开发者。内存排名和“最智能”属于项目自述。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">代理开十个窗口，电脑先替你辞职时，可以看看它怎么压资源。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">06</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/grokability/snipe-it" target="_blank">grokability / snipe-it</a></div>
+        <div class="project-desc">面向 IT 运维的开源资产、许可证和领用管理系统。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">14,548 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">164 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">3,906</span></span><span class="meta-item"><span class="lang-dot" style="background:#4F5D95"></span> PHP</span><span class="meta-item">📄 AGPL-3.0-or-later</span></div>
+        <div class="topics"><span class="topic-badge">asset-management</span><span class="topic-badge">inventory</span><span class="topic-badge">it-operations</span><span class="topic-badge">laravel</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Snipe-IT 是成熟的 Web 资产管理系统，覆盖硬件、软件许可证、配件、耗材、用户、位置、签收与通知等业务对象。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>资产领用、归还、审计、折旧与状态管理</li><li>JSON REST API、OAuth/Passport、SCIM 与多种通知集成</li><li>Web 部署、Docker 镜像、数据库迁移和完整 PHPUnit 测试体系</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">PHP 8.2</span><span class="tech-tag">Laravel 12</span><span class="tech-tag">Eloquent</span><span class="tech-tag">Passport</span><span class="tech-tag">Livewire</span><span class="tech-tag">Docker</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>企业 IT 资产台账、设备领用审计、许可证席位管理，以及学校或组织设备管理。生产部署要配好数据库、邮件、权限和备份。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">不想再用一张“设备去哪儿了.xlsx”撑起整个 IT 运维，可以从它开始。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">07</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/deepfakes/faceswap" target="_blank">deepfakes / faceswap</a></div>
+        <div class="project-desc">面向图片和视频的人脸提取、训练与转换工具。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">56,508 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">166 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">13,445</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 GPL-3.0</span></div>
+        <div class="topics"><span class="topic-badge">deep-learning</span><span class="topic-badge">face-swap</span><span class="topic-badge">computer-vision</span><span class="topic-badge">gpu</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>FaceSwap 以 Extract → Train → Convert 为主流程，同时提供 GUI、视频转换辅助工具和跨平台安装说明。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>从图片或视频中检测、对齐并提取人脸</li><li>训练换脸模型并将结果转换回图片或视频</li><li>支持 GUI、CUDA 和部分 AMD ROCm 环境</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Deep Learning</span><span class="tech-tag">OpenCV</span><span class="tech-tag">CUDA</span><span class="tech-tag">ROCm</span><span class="tech-tag">FFmpeg</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>仅限明确授权的影视特效、计算机视觉研究、教育实验和合成媒体检测对照。存在冒用、欺诈、隐私和肖像权风险。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">只适合在明确授权和合规边界内研究，技术门槛能降，责任门槛不能降。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">08</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/microsoft/VibeVoice" target="_blank">microsoft / VibeVoice</a></div>
+        <div class="project-desc">微软开源的 ASR、长音频与实时 TTS 语音模型家族。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">51,476 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">336 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">5,721</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 MIT（代码）</span></div>
+        <div class="topics"><span class="topic-badge">speech-recognition</span><span class="topic-badge">text-to-speech</span><span class="topic-badge">streaming</span><span class="topic-badge">voice-ai</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>VibeVoice 包含长音频 ASR、实时 TTS 与相关研究实现，强调低帧率连续语音 tokenizer 和长上下文处理。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>ASR 面向长音频并输出 Who、When、What 结构</li><li>实时 TTS 支持流式文本输入和长段语音生成</li><li>提供 Hugging Face 权重、Colab、vLLM 推理与微调材料</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Transformers</span><span class="tech-tag">vLLM</span><span class="tech-tag">Speech Tokenizer</span><span class="tech-tag">Diffusion</span><span class="tech-tag">Hugging Face</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>会议转写、长音频结构化、语音研究和实时合成原型。项目明确不建议未经进一步测试直接用于商业或现实场景，模型权重条款也要单独核对。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">做长音频和实时语音研究值得跟，但上线前别把 README 当验收报告。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">09</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/different-ai/openwork" target="_blank">different-ai / openwork</a></div>
+        <div class="project-desc">基于 OpenCode 的开源 AI 工作桌面与团队能力分发平台。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">18,174 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">97 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">1,865</span></span><span class="meta-item"><span class="lang-dot" style="background:#3178C6"></span> TypeScript</span><span class="meta-item">📄 MIT + /ee Fair Source</span></div>
+        <div class="topics"><span class="topic-badge">desktop-agent</span><span class="topic-badge">opencode</span><span class="topic-badge">mcp</span><span class="topic-badge">electron</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>OpenWork 的 UI 同时服务 Electron 和 Web，通过 HTTP 连接 openwork-server、OpenCode 与 Den；核心层、Kernel、Shell 和领域模块有明确依赖规则。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>桌面工作区和 Web UI 共用 React/Vite 应用</li><li>使用 OpenCode SDK 处理代理会话、工具结果、事件和错误恢复</li><li>通过 MCP 暴露能力搜索与执行，并提供组织级能力管理</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">TypeScript</span><span class="tech-tag">React 19</span><span class="tech-tag">Vite</span><span class="tech-tag">Electron</span><span class="tech-tag">OpenCode SDK</span><span class="tech-tag">MCP</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>AI 桌面工作台、团队技能与 MCP 分发、多工作区编码或办公代理，以及企业控制面实验。部分云、组织和托管能力依赖 Den 或官方服务。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">想研究“代理桌面产品”如何从聊天框长出工作区、控制面和恢复机制，OpenWork 很有代表性。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">10</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/obra/superpowers" target="_blank">obra / superpowers</a></div>
+        <div class="project-desc">为编码代理提供可组合技能和强制软件开发方法论。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">263,525 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">616 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">23,530</span></span><span class="meta-item"><span class="lang-dot" style="background:#89E051"></span> Shell</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">agent-skills</span><span class="topic-badge">tdd</span><span class="topic-badge">worktrees</span><span class="topic-badge">code-review</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>Superpowers 用 brainstorming、worktrees、writing-plans、TDD、subagent development、code review 和 branch finishing 组成强制工作流。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多种编码代理和插件市场的安装适配</li><li>设计确认、细粒度计划、红绿重构和双阶段评审</li><li>通过 skills 在任务开始前自动触发对应方法</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Shell</span><span class="tech-tag">Markdown Skills</span><span class="tech-tag">Git Worktree</span><span class="tech-tag">TDD</span><span class="tech-tag">Code Review</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>编码代理流程规范、TDD 教学、个人或团队 Agent SDLC 模板。主要价值在方法、skills 和适配层，不是复杂运行时业务系统。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">它更像给代理请了个严厉项目经理，不一定写代码，但会盯着流程别跑偏。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">11</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/MoonshotAI/FlashKDA" target="_blank">MoonshotAI / FlashKDA</a></div>
+        <div class="project-desc">基于 CUTLASS 的高性能 Kimi Delta Attention CUDA Kernel。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">1,054 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">91 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">101</span></span><span class="meta-item"><span class="lang-dot" style="background:#3A4E3A"></span> Cuda</span><span class="meta-item">📄 MIT</span></div>
+        <div class="topics"><span class="topic-badge">cuda</span><span class="topic-badge">cutlass</span><span class="topic-badge">attention</span><span class="topic-badge">pytorch</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>FlashKDA 提供 KDA 前向 Kernel，可被 flash-linear-attention 的 <code>chunk_kda</code> 自动调度，支持状态输入输出和变长序列。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>面向 SM90+ 的 CUTLASS Kernel 实现</li><li>与 flash-linear-attention 自动调度并支持回退 Triton 路径</li><li>提供 Torch 参考实现精确匹配测试与公开基准文档</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">CUDA</span><span class="tech-tag">C++</span><span class="tech-tag">CUTLASS</span><span class="tech-tag">PyTorch</span><span class="tech-tag">flash-linear-attention</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>KDA 模型推理优化、CUDA Kernel 研究和 Hopper/Blackwell 平台性能实验。需要 SM90+、CUDA 12.9+，性能数据未独立复测。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">有合适显卡和 Kernel 胃口再进，普通笔记本看一眼需求就可以礼貌告辞。</div></div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header"><div class="project-rank">12</div><div class="project-info">
+        <div class="project-name"><a href="https://github.com/NanmiCoder/MediaCrawler" target="_blank">NanmiCoder / MediaCrawler</a></div>
+        <div class="project-desc">基于浏览器登录态的多平台公开内容与评论采集工具。</div>
+        <div class="project-meta"><span class="meta-item"><span class="icon">⭐</span><span class="stars">59,274 累计</span></span><span class="meta-item"><span class="icon">🔥</span><span class="today-stars">154 today</span></span><span class="meta-item"><span class="icon">🍴</span><span class="forks">11,695</span></span><span class="meta-item"><span class="lang-dot" style="background:#3572A5"></span> Python</span><span class="meta-item">📄 Non-Commercial Learning License 1.1</span></div>
+        <div class="topics"><span class="topic-badge">crawler</span><span class="topic-badge">playwright</span><span class="topic-badge">xiaohongshu</span><span class="topic-badge">douyin</span><span class="topic-badge">webui</span></div>
+      </div></div>
+      <button class="detail-toggle" onclick="toggleDetail(this)">▼ 展开详情</button>
+      <div class="project-details">
+        <div class="detail-section"><h4>📖 项目摘要</h4><p>MediaCrawler 支持小红书、抖音、快手、B 站、微博、贴吧和知乎等平台，通过 Playwright 或 CDP 复用浏览器登录状态并采集公开信息。</p></div>
+        <div class="detail-section"><h4>✨ 核心特性</h4><ul class="feature-list"><li>多平台关键词、详情、创作者和多级评论采集</li><li>默认 CDP 连接已有 Chrome，也可切换标准 Playwright</li><li>提供 FastAPI 后端和 Vite WebUI，用于配置、日志、预览与导出</li></ul></div>
+        <div class="detail-section"><h4>🔧 技术栈</h4><div class="tech-tags"><span class="tech-tag">Python</span><span class="tech-tag">Playwright</span><span class="tech-tag">CDP</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Vite</span><span class="tech-tag">Platform Adapters</span></div></div>
+        <div class="detail-section"><h4>🎯 适用场景</h4><p>仅限非商业学习、爬虫架构研究和经授权的小规模公开数据采集实验。登录、验证码、平台协议、隐私和当地法律均需自行合规。</p></div>
+        <div class="detail-section"><h4>💬 一句话推荐</h4><div class="recommend-quote">架构能学，数据不能乱拿；先读许可证和平台规则，再敲运行命令。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊</span> 编程语言分布</div>
+    <div class="lang-chart">
+      <div class="lang-bar-row"><span class="lang-name">Python</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:33.3%;background:#3572A5"></div></div><span class="lang-count">4 项目 (33.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">TypeScript</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:25%;background:#3178C6"></div></div><span class="lang-count">3 项目 (25.0%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">JavaScript</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#F1E05A"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Rust</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#DEA584"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">PHP</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#4F5D95"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Shell</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#89E051"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+      <div class="lang-bar-row"><span class="lang-name">Cuda</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:8.3%;background:#3A4E3A"></div></div><span class="lang-count">1 项目 (8.3%)</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🌟</span> GitHub Explore 精选</div>
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Explore 获取成功，但与 Trending 高度重合。以下条目只作补充，不参与原始排名与 Stars Today 统计。</p>
+      <div class="trending-list">
+        <div class="trending-item"><span class="trending-num">01</span><div><a href="https://github.com/opengeos/GeoLibre" target="_blank" style="font-weight:600">opengeos/GeoLibre</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">跨端本地优先 GIS · TypeScript</span></div></div>
+        <div class="trending-item"><span class="trending-num">02</span><div><a href="https://github.com/moeru-ai/airi" target="_blank" style="font-weight:600">moeru-ai/airi</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">自托管实时 AI 角色</span></div></div>
+        <div class="trending-item"><span class="trending-num">03</span><div><a href="https://github.com/affaan-m/ECC" target="_blank" style="font-weight:600">affaan-m/ECC</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">编码代理工程治理</span></div></div>
+        <div class="trending-item"><span class="trending-num">04</span><div><a href="https://github.com/huggingface/speech-to-speech" target="_blank" style="font-weight:600">huggingface/speech-to-speech</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">模块化语音代理管线</span></div></div>
+        <div class="trending-item"><span class="trending-num">05</span><div><a href="https://github.com/collections/pixel-art-tools" target="_blank" style="font-weight:600">Pixel Art Tools</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">GitHub Collection · 17 items</span></div></div>
+        <div class="trending-item"><span class="trending-num">06</span><div><a href="https://gitnotebooks.com/" target="_blank" style="font-weight:600">Notebook Reviews Done Right</a><span style="color:var(--text-muted); font-size:12px; margin-left:8px;">GitHub Staff 推荐 · Notebook 评审工作流</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>📅 报告生成时间：2026-07-30 &nbsp;|&nbsp; 🌐 数据来源：<a href="https://github.com/trending" target="_blank">GitHub Trending</a> · <a href="https://github.com/explore" target="_blank">GitHub Explore</a></p>
+    <p style="margin-top:8px;">原始排名保持不变，累计 Stars 与 Stars Today 分开呈现。Stars Today 为抓取时动态快照；性能、模型效果、生产规模和兼容性未独立复测。</p>
+    <p style="margin-top:8px;">源码深度解析：<a href="../analysis/2026-07-30/README.md">AIRI · Snipe-IT · OpenWork</a></p>
+  </div>
+</div>
+<script>
+  function toggleDetail(btn) {
+    const details = btn.nextElementSibling;
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.textContent = isOpen ? '▼ 展开详情' : '▲ 收起详情';
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
+</script>
+</body>
+</html>
