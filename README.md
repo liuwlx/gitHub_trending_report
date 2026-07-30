@@ -14,11 +14,11 @@
 ## 最新报告
 
 <!-- latest-report:start -->
-- 报告日期：**2026-07-29**
-- [查看 Markdown 报告](md/github_trending_report_2026-07-29.md)
-- [查看 HTML 源文件](html/github_trending_report_2026-07-29.html)
-- [查看项目架构分析](analysis/2026-07-29/README.md)
-- 深度解析：[Pascal Editor](analysis/2026-07-29/pascalorg__editor.md) · [Speech-to-Speech](analysis/2026-07-29/huggingface__speech-to-speech.md) · [Agent Governance Toolkit](analysis/2026-07-29/microsoft__agent-governance-toolkit.md)
+- 报告日期：**2026-07-30**
+- [查看 Markdown 报告](md/github_trending_report_2026-07-30.md)
+- [查看 HTML 源文件](html/github_trending_report_2026-07-30.html)
+- [查看项目架构分析](analysis/2026-07-30/README.md)
+- 深度解析：[AIRI](analysis/2026-07-30/moeru-ai__airi.md) · [Snipe-IT](analysis/2026-07-30/grokability__snipe-it.md) · [OpenWork](analysis/2026-07-30/different-ai__openwork.md)
 <!-- latest-report:end -->
 
 > GitHub 默认会把 HTML 当作源码显示。下载 `.html` 文件后用浏览器打开，可以查看完整的主题切换和项目详情展开效果。
