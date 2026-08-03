@@ -14,11 +14,11 @@
 ## 最新报告
 
 <!-- latest-report:start -->
-- 报告日期：**2026-08-02**
-- [查看 Markdown 报告](md/github_trending_report_2026-08-02.md)
-- [查看 HTML 源文件](html/github_trending_report_2026-08-02.html)
-- [查看项目架构分析](analysis/2026-08-02/README.md)
-- 深度解析：[gh-stack](analysis/2026-08-02/github__gh-stack.md) · [Voice-Pro](analysis/2026-08-02/abus-aikorea__voice-pro.md) · [Invidious](analysis/2026-08-02/iv-org__invidious.md)
+- 报告日期：**2026-08-03**
+- [查看 Markdown 报告](md/github_trending_report_2026-08-03.md)
+- [查看 HTML 源文件](html/github_trending_report_2026-08-03.html)
+- [查看项目架构分析](analysis/2026-08-03/README.md)
+- 深度解析：[AirLLM](analysis/2026-08-03/lyogavin__airllm.md) · [Agent Reach](analysis/2026-08-03/Panniantong__Agent-Reach.md) · [TencentDB Agent Memory](analysis/2026-08-03/TencentCloud__TencentDB-Agent-Memory.md)
 <!-- latest-report:end -->
 
 > GitHub 默认会把 HTML 当作源码显示。下载 `.html` 文件后用浏览器打开，可以查看完整的主题切换和项目详情展开效果。
